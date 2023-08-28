@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
     <head>
-        <meta charset='utf-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
-        <title>Destiny</title>
+        <meta charset="UTF-8">
+        <title>Google Calendar Sharing</title>
+        <script src="https://accounts.google.com/gsi/client">
+        </script>
     </head>
     <body>
-        Hello
+        <button id="authorize-button" style="display: none;">Authorize</button>
+        <div id="calendar-events"></div>
+        <script src="script.js"></script>
     </body>
 </html>
