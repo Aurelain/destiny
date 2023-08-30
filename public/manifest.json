@@ -15,7 +15,7 @@
             "purpose": "any"
         }
     ],
-    "start_url": "/destiny/",
+    "start_url": "./",
     "display": "standalone",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
