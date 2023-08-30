@@ -3,19 +3,19 @@
     "name": "Destiny",
     "icons": [
         {
-            "src": "/favicons/192.png",
+            "src": "favicons/192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "any maskable"
         },
         {
-            "src": "/favicons/512.png",
+            "src": "favicons/512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any"
         }
     ],
-    "start_url": "/",
+    "start_url": "/destiny/",
     "display": "standalone",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
