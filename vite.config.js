@@ -8,7 +8,7 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             strategies: 'injectManifest',
-            srcDir: 'src/sw',
+            srcDir: 'sw',
             filename: 'sw.js',
             manifest: false,
             injectRegister: false,
@@ -23,5 +23,6 @@ export default defineConfig({
     },
     server: {
         port: 1000,
+        // https: true,
     },
 });

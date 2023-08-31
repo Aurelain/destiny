@@ -1,4 +1,5 @@
 import React from 'react';
+import getList from '../system/getList.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -15,12 +16,15 @@ class App extends React.PureComponent {
         return (
             <div>
                 <button onClick={this.onSendClick}>Send</button>
+                <button onClick={this.onFetchClick}>Fetch</button>
                 <div>{this.state.response}</div>
             </div>
         );
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        const list = await getList();
+        console.log('list:', list);
         //listen to messages
         navigator.serviceWorker.onmessage = (event) => {
             if (event.data && event.data.type === 'DESTINY') {
@@ -45,6 +49,14 @@ class App extends React.PureComponent {
         };
         console.log('Client will send:', data.payload);
         navigator.serviceWorker.controller.postMessage(data);
+    };
+
+    /**
+     *
+     */
+    onFetchClick = async () => {
+        const response = await fetch('foo');
+        console.log('response:', response.text());
     };
 }
 

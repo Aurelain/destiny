@@ -1,17 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
+import App from './components/App.jsx';
+import interceptErrors from './utils/interceptErrors.js';
 
-if ('serviceWorker' in navigator) {
+/**
+ *
+ */
+const run = async () => {
+    interceptErrors();
+
     if (import.meta.env.MODE === 'development') {
-        navigator.serviceWorker.register('./dev-sw.js?dev-sw', {scope: './', type: 'module'});
+        await navigator.serviceWorker.register('./dev-sw.js?dev-sw', {scope: './', type: 'module'});
     } else {
-        navigator.serviceWorker.register('./sw.js', {scope: './'});
+        await navigator.serviceWorker.register('./sw.js', {scope: './'});
     }
-}
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-);
+    ReactDOM.createRoot(document.getElementById('root')).render(
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>,
+    );
+};
+
+run();
