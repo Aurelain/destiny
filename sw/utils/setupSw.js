@@ -2,6 +2,10 @@ import announceClients from './announceClients.js';
 import {VERSION} from '../../src/COMMON.js';
 
 // =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+
+// =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
 /**
@@ -9,6 +13,7 @@ import {VERSION} from '../../src/COMMON.js';
  */
 const setupSw = (version, cachedPaths, virtualEndpoints) => {
     console.log('SW: Setup of', version);
+    console.log('WorkerGlobalScope:', self.location);
     self.skipWaiting();
 
     self.addEventListener('install', (event) => {
@@ -21,6 +26,7 @@ const setupSw = (version, cachedPaths, virtualEndpoints) => {
         );
     });
 
+    // Clear garbage (old caches):
     self.addEventListener('activate', (event) => {
         console.log('SW: Activation of', version);
         event.waitUntil(

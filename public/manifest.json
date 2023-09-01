@@ -3,13 +3,13 @@
     "name": "Destiny",
     "icons": [
         {
-            "src": "favicons/192.png",
+            "src": "meta/192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "any maskable"
         },
         {
-            "src": "favicons/512.png",
+            "src": "meta/512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any"
