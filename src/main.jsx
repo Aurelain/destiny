@@ -26,11 +26,9 @@ const run = async () => {
         return;
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>,
-    );
+    // We're not using <React.StrictMode> to avoid 2 renders:
+    // https://upmostly.com/tutorials/why-is-my-useeffect-hook-running-twice-in-react
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 };
 
 run();
