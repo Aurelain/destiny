@@ -1,3 +1,5 @@
+import announceClients from './announceClients.js';
+
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
@@ -30,16 +32,7 @@ const onUnhandledRejection = (event) => {
  *
  */
 const panic = (type, stack) => {
-    self.clients.matchAll().then(function (clients) {
-        if (clients) {
-            for (const client of clients) {
-                client.postMessage({
-                    type: 'PANIC',
-                    panic: {type, stack},
-                });
-            }
-        }
-    });
+    announceClients({type: 'PANIC', panic: {type, stack}});
 };
 
 // =====================================================================================================================

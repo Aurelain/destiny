@@ -1,5 +1,5 @@
 import React from 'react';
-import getList from '../system/getList.js';
+import requestList from '../system/requestList.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -23,7 +23,7 @@ class App extends React.PureComponent {
     }
 
     async componentDidMount() {
-        const list = await getList();
+        const list = await requestList();
         console.log('list:', list);
         //listen to messages
         navigator.serviceWorker.onmessage = (event) => {

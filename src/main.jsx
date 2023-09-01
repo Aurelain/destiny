@@ -2,17 +2,28 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App.jsx';
 import interceptErrors from './utils/interceptErrors.js';
+import {VERSION} from './COMMON.js';
+import requestVersion from './system/requestVersion.js';
 
 /**
  *
  */
 const run = async () => {
     interceptErrors();
+    console.log('Client: The Client has version', VERSION);
 
-    if (import.meta.env.MODE === 'development') {
-        await navigator.serviceWorker.register('./dev-sw.js?dev-sw', {scope: './', type: 'module'});
-    } else {
-        await navigator.serviceWorker.register('./sw.js', {scope: './'});
+    await navigator.serviceWorker.register('./sw.js', {scope: './'});
+
+    const swVersion = await requestVersion();
+    console.log('Client: The SW has version', swVersion);
+    if (swVersion !== VERSION) {
+        navigator.serviceWorker.onmessage = (event) => {
+            if (event.data?.type === 'ACTIVATED') {
+                console.log(`Client: Reloading to get SW ${event.data.version}...`);
+                window.location.reload();
+            }
+        };
+        return;
     }
 
     ReactDOM.createRoot(document.getElementById('root')).render(
