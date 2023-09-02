@@ -18,7 +18,6 @@ const setupSw = async (version, cachedPaths, virtualEndpoints) => {
     currentCachedPaths = cachedPaths;
     currentVirtualEndpoints = virtualEndpoints;
 
-    console.log('SW: Setup of', version);
     self.skipWaiting();
     self.addEventListener('install', onWorkerInstall);
     self.addEventListener('activate', onWorkerActivate);
@@ -32,7 +31,7 @@ const setupSw = async (version, cachedPaths, virtualEndpoints) => {
  *
  */
 const onWorkerInstall = (event) => {
-    console.log('SW: Install of', currentVersion);
+    // console.log('SW: Install of', currentVersion);
     event.waitUntil(
         (async () => {
             const cache = await caches.open(currentVersion);
@@ -45,7 +44,7 @@ const onWorkerInstall = (event) => {
  *
  */
 const onWorkerActivate = (event) => {
-    console.log('SW: Activation of', currentVersion);
+    // console.log('SW: Activation of', currentVersion);
     event.waitUntil(
         (async () => {
             const names = await caches.keys();
@@ -78,55 +77,6 @@ const onWorkerFetch = (event) => {
         responsePromise = respondToFile(url);
     }
     event.respondWith(responsePromise);
-};
-
-/**
- *
- */
-const onWorkerFetch1 = (event) => {
-    // console.log('SW: Fetch', event.request.url);
-    // logHowWeWouldRespond(event);
-    const endpoint = event.request.url.split('/').pop();
-    if (endpoint in currentVirtualEndpoints) {
-        event.respondWith(
-            (async () => {
-                const body = {};
-                try {
-                    body.data = await currentVirtualEndpoints[endpoint]();
-                } catch (e) {
-                    body.error = e.message;
-                }
-                console.log(`Reply to ${event.request.url} with body!`);
-                return new Response(JSON.stringify(body));
-            })(),
-        );
-        return;
-    }
-
-    // when seeking an HTML page
-    if (event.request.mode === 'navigate') {
-        // Return to the index.html page
-        console.log(`Reply to ${event.request.url} with cached root!`);
-        event.respondWith(caches.match('/'));
-        return;
-    }
-
-    // For every other request type
-    event.respondWith(
-        (async () => {
-            const cache = await caches.open(currentVersion);
-            const cachedResponse = await cache.match(event.request.url);
-            if (cachedResponse) {
-                // Return the cached response if it's available.
-                console.log(`Reply to ${event.request.url} with cache!`);
-                return cachedResponse;
-            } else {
-                console.log(`Reply to ${event.request.url} with 404!`);
-                // Respond with an HTTP 404 response status.
-                return new Response(null, {status: 404});
-            }
-        })(),
-    );
 };
 
 /**
