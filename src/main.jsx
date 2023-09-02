@@ -12,12 +12,15 @@ const run = async () => {
     interceptErrors();
     console.log('Client: The Client has version', VERSION);
 
+    // TODO
     await navigator.serviceWorker.register('./sw.js', {scope: './'});
 
     const swVersion = await requestVersion();
     console.log('Client: The SW has version', swVersion);
     if (swVersion !== VERSION) {
+        console.log(`Mismatched version (Client has ${VERSION}, SW has ${swVersion})!`);
         navigator.serviceWorker.onmessage = (event) => {
+            console.log('Client received message', event.data);
             if (event.data?.type === 'ACTIVATED') {
                 console.log(`Client: Reloading to get SW ${event.data.version}...`);
                 window.location.reload();

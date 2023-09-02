@@ -8,6 +8,7 @@ const announceClients = (message) => {
     self.clients.matchAll().then(function (clients) {
         if (clients) {
             for (const client of clients) {
+                console.log('Posting', message, 'to', client);
                 client.postMessage(message);
             }
         }

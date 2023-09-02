@@ -4,13 +4,15 @@ import esbuild from 'esbuild';
 import sendkeys from 'sendkeys-js';
 import process from 'node:process';
 import {hashElement} from 'folder-hash';
+import findFiles from './utils/findFiles.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const OUTPUT_DIR = 'docs';
-const BUILD_VERSION_MARKER = '$BUILD_VERSION';
-const CLIENT_PATH_MARKER = '$CLIENT_PATH';
+const BUILD_VERSION_MARKER = '@BUILD_VERSION';
+const CLIENT_PATH_MARKER = '@CLIENT_PATH';
+const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -32,7 +34,10 @@ const run = async () => {
     // Inject version and cache filenames:
     // tweakClient(clientBundle);
     updateVersion(clientBundle, swBundle, hash);
+    updateCachedPaths(swBundle);
     updateIndex(clientBundle);
+    fs.writeFileSync(clientBundle.filePath, clientBundle.content);
+    fs.writeFileSync(swBundle.filePath, swBundle.content);
 
     console.log(`Done in ${Date.now() - time} ms.`);
     await refreshBrowser();
@@ -86,11 +91,21 @@ const tweakClient = (clientBundle) => {
  *
  */
 const updateVersion = (clientBundle, swBundle, hash) => {
-    const freshClientContent = clientBundle.content.replace(BUILD_VERSION_MARKER, hash);
-    fs.writeFileSync(clientBundle.filePath, freshClientContent);
+    clientBundle.content = clientBundle.content.replace(BUILD_VERSION_MARKER, hash);
+    swBundle.content = swBundle.content.replace(BUILD_VERSION_MARKER, hash);
+};
 
-    const freshSwContent = swBundle.content.replace(BUILD_VERSION_MARKER, hash);
-    fs.writeFileSync(swBundle.filePath, freshSwContent);
+/**
+ *
+ */
+const updateCachedPaths = (swBundle) => {
+    const filePaths = findFiles(OUTPUT_DIR);
+    const outputDirNameLength = OUTPUT_DIR.length;
+    const relativePaths = filePaths.map((filePath) => filePath.substring(outputDirNameLength));
+    const cachedPaths = relativePaths.filter((relativePath) => !relativePath.includes('/sw.js'));
+    cachedPaths.unshift('/');
+    const cachedPathsMarkerRegExp = new RegExp(`['"]${CACHED_PATHS_MARKER}['"]`);
+    swBundle.content = swBundle.content.replace(cachedPathsMarkerRegExp, JSON.stringify(cachedPaths));
 };
 
 /**
