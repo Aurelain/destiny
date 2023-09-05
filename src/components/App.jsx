@@ -1,5 +1,6 @@
 import React from 'react';
-import requestList from '../system/requestList.js';
+import requestUser from '../system/requestUser.js';
+import connectGoogle from '../system/connectGoogle.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -10,35 +11,49 @@ import requestList from '../system/requestList.js';
 // =====================================================================================================================
 class App extends React.PureComponent {
     state = {
-        response: 'nothing',
+        isInitialized: false,
+        user: null,
+
+        database: [], // ALL known events
     };
     render() {
-        return (
-            <div>
-                <button onClick={this.onSendClick}>Send</button>
-                <button onClick={this.onFetchClick}>Fetch</button>
-                <div>{this.state.response}</div>
-            </div>
-        );
+        const {isInitialized, user} = this.state;
+
+        if (!isInitialized) {
+            // The initialization is performed upon mount.
+            return null;
+        }
+
+        if (!user) {
+            return (
+                <div>
+                    <button onClick={this.onConnectClick}>Connect your Google Calendar</button>
+                </div>
+            );
+        }
+
+        return <div>Hello</div>;
     }
 
     async componentDidMount() {
-        const list = await requestList();
-        console.log('list:', list);
-        //listen to messages
-        navigator.serviceWorker.onmessage = (event) => {
-            if (event.data && event.data.type === 'DESTINY') {
-                console.log('Client received:', event.data.payload);
-                this.setState({
-                    response: event.data.payload,
-                });
-            }
-        };
+        const user = await requestUser();
+        document.body.removeChild(document.getElementById('spinner'));
+        this.setState({
+            isInitialized: true,
+            user,
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
+    onConnectClick = async () => {
+        await connectGoogle();
+    };
+
     /**
      *
      */

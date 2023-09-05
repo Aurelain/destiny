@@ -6,6 +6,7 @@ import announceClients from './announceClients.js';
 let currentVersion;
 let currentCachedPaths;
 let currentVirtualEndpoints;
+let currentIgnoredEndpoints;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -13,10 +14,11 @@ let currentVirtualEndpoints;
 /**
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/CycleTracker/Service_workers
  */
-const setupSw = async (version, cachedPaths, virtualEndpoints) => {
+const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints) => {
     currentVersion = version;
     currentCachedPaths = cachedPaths;
     currentVirtualEndpoints = virtualEndpoints;
+    currentIgnoredEndpoints = ignoredEndpoints;
 
     self.skipWaiting();
     self.addEventListener('install', onWorkerInstall);
@@ -68,6 +70,10 @@ const onWorkerFetch = (event) => {
     // console.log('SW: Fetch', event.request.url);
     const {url, mode} = event.request;
     const endpoint = url.split('/').pop();
+    if (endpoint in currentIgnoredEndpoints) {
+        return;
+    }
+
     let responsePromise;
     if (endpoint in currentVirtualEndpoints) {
         responsePromise = respondToEndpoint(endpoint);
