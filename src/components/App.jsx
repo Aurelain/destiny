@@ -1,6 +1,6 @@
 import React from 'react';
 import connectGoogle from '../system/connectGoogle.js';
-import {ENDPOINT_GET_USER} from '../COMMON.js';
+import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 
 // =====================================================================================================================
@@ -22,18 +22,28 @@ class App extends React.PureComponent {
 
         if (!isInitialized) {
             // The initialization is performed upon mount.
-            return null;
+            return (
+                <div>
+                    <button onClick={this.onReload}>Reload {VERSION}</button>
+                </div>
+            );
         }
 
         if (!user) {
             return (
                 <div>
+                    <button onClick={this.onReload}>Reload {VERSION}</button>
                     <button onClick={this.onConnectClick}>Connect your Google Calendar</button>
                 </div>
             );
         }
 
-        return <div>Hello, {user.email}</div>;
+        return (
+            <div>
+                <button onClick={this.onReload}>Reload {VERSION}</button>
+                Hello, {user.email}
+            </div>
+        );
     }
 
     async componentDidMount() {
@@ -55,6 +65,13 @@ class App extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
+    onReload = () => {
+        window.location.reload();
+    };
+
     /**
      *
      */
