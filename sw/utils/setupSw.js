@@ -33,7 +33,7 @@ const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints)
  *
  */
 const onWorkerInstall = (event) => {
-    // console.log('SW: Install of', currentVersion);
+    console.log('SW: Install of', currentVersion);
     event.waitUntil(
         (async () => {
             const cache = await caches.open(currentVersion);
@@ -52,7 +52,7 @@ const onWorkerInstall = (event) => {
  *
  */
 const onWorkerActivate = (event) => {
-    // console.log('SW: Activation of', currentVersion);
+    console.log('SW: Activation of', currentVersion);
     event.waitUntil(
         (async () => {
             const names = await caches.keys();
@@ -73,9 +73,10 @@ const onWorkerActivate = (event) => {
  *
  */
 const onWorkerFetch = (event) => {
-    // console.log('SW: Fetch', event.request.url);
+    console.log('SW: Fetch', event.request.url);
     const {url, mode} = event.request;
     const endpoint = url.split('/').pop();
+    console.log('endpoint:', endpoint);
     if (endpoint in currentIgnoredEndpoints) {
         return;
     }
@@ -95,6 +96,7 @@ const onWorkerFetch = (event) => {
  *
  */
 const respondToEndpoint = async (endpoint, request) => {
+    console.log('respondToEndpoint:');
     const body = {};
     try {
         body.data = await currentVirtualEndpoints[endpoint](request);
@@ -108,15 +110,19 @@ const respondToEndpoint = async (endpoint, request) => {
  *
  */
 const respondToRoot = async () => {
-    return caches.match('/');
+    console.log('respondToRoot:');
+    const prefix = self.location.href.replace(/\/[^/]*$/, '');
+    return caches.match(prefix + '/');
 };
 
 /**
  *
  */
 const respondToFile = async (url) => {
+    console.log('respondToFile:');
     // const cache = await caches.open(currentVersion);
     const cachedResponse = await caches.match(url);
+    console.log('cachedResponse:', cachedResponse);
     return cachedResponse || new Response(null, {status: 404});
 };
 
