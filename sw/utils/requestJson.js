@@ -1,26 +1,33 @@
-import localforage from 'localforage';
-import {TOKENS_KEY} from '../system/SW.js';
-import assume from '../utils/assume.js';
-
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
 /**
  *
  */
-const setTokens = async (request) => {
-    let tokens;
-    try {
-        tokens = await request.json();
-    } catch (e) {
-        throw new Error('Expecting json payload in request body!');
+const requestJson = async (url, body) => {
+    let config;
+    if (body) {
+        config = {
+            method: 'POST',
+            body: JSON.stringify(body),
+        };
     }
-    assume(tokens.access_token && tokens.refresh_token, 'Unexpected tokens shape!');
-    await localforage.setItem(TOKENS_KEY, tokens);
-    return true;
+    let response;
+    try {
+        response = await fetch(url, config);
+    } catch (e) {
+        throw new Error(`Fetch to "${url}" failed! ${e.message}`);
+    }
+    let json;
+    try {
+        json = await response.json();
+    } catch (e) {
+        throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
+    }
+    return json;
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default setTokens;
+export default requestJson;

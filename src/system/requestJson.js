@@ -4,7 +4,7 @@
 /**
  *
  */
-const request = async (endpoint, body) => {
+const requestJson = async (url, body) => {
     let config;
     if (body) {
         config = {
@@ -12,11 +12,22 @@ const request = async (endpoint, body) => {
             body: JSON.stringify(body),
         };
     }
-    const response = await fetch(endpoint, config);
-    return await response.json();
+    let response;
+    try {
+        response = await fetch(url, config);
+    } catch (e) {
+        throw new Error(`Fetch to "${url}" failed! ${e.message}`);
+    }
+    let json;
+    try {
+        json = await response.json();
+    } catch (e) {
+        throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
+    }
+    return json.data; // TODO
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default request;
+export default requestJson;

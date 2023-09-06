@@ -1,6 +1,7 @@
 import React from 'react';
-import requestUser from '../system/requestUser.js';
 import connectGoogle from '../system/connectGoogle.js';
+import requestJson from '../system/requestJson.js';
+import {ENDPOINT_GET_USER} from '../COMMON.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,6 +25,7 @@ class App extends React.PureComponent {
             return null;
         }
 
+        console.log('render:', user);
         if (!user) {
             return (
                 <div>
@@ -32,11 +34,16 @@ class App extends React.PureComponent {
             );
         }
 
-        return <div>Hello</div>;
+        return <div>Hello, {user.email}</div>;
     }
 
     async componentDidMount() {
-        const user = await requestUser();
+        let user = await requestJson(ENDPOINT_GET_USER);
+        console.log('componentDidMount:', user);
+        if (user.error) {
+            user = null;
+        }
+
         document.body.removeChild(document.getElementById('spinner'));
         this.setState({
             isInitialized: true,
