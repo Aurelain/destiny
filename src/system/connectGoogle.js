@@ -1,5 +1,5 @@
 import {ENDPOINT_SET_TOKENS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../COMMON.js';
-import requestJson from './requestJson.js';
+import requestEndpoint from './requestEndpoint.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -58,7 +58,7 @@ const onCodeReceived = async (response) => {
     const tokens = await tokenResponse.json();
     console.log('tokens from google:', tokens);
 
-    const backEndReply = await requestJson(ENDPOINT_SET_TOKENS, tokens);
+    const backEndReply = await requestEndpoint(ENDPOINT_SET_TOKENS, tokens);
     console.log('backEndReply:', backEndReply);
     currentResolve(backEndReply);
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import connectGoogle from '../system/connectGoogle.js';
-import requestJson from '../system/requestJson.js';
 import {ENDPOINT_GET_USER} from '../COMMON.js';
+import requestEndpoint from '../system/requestEndpoint.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -14,9 +14,9 @@ class App extends React.PureComponent {
     state = {
         isInitialized: false,
         user: null,
-
         database: [], // ALL known events
     };
+
     render() {
         const {isInitialized, user} = this.state;
 
@@ -25,7 +25,6 @@ class App extends React.PureComponent {
             return null;
         }
 
-        console.log('render:', user);
         if (!user) {
             return (
                 <div>
@@ -38,9 +37,11 @@ class App extends React.PureComponent {
     }
 
     async componentDidMount() {
-        let user = await requestJson(ENDPOINT_GET_USER);
-        console.log('componentDidMount:', user);
-        if (user.error) {
+        let user;
+        try {
+            user = await requestEndpoint(ENDPOINT_GET_USER);
+        } catch (e) {
+            console.log(`Could not get user! ${e.message}`);
             user = null;
         }
 

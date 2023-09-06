@@ -14,11 +14,6 @@ import assume from '../utils/assume.js';
 const refreshTokens = async () => {
     let tokens = await localforage.getItem(TOKENS_KEY);
 
-    // const formData = new FormData();
-    // formData.set('client_id', GOOGLE_CLIENT_ID);
-    // formData.set('client_secret', GOOGLE_CLIENT_SECRET);
-    // formData.set('refresh_token', tokens.refresh_token);
-    // formData.set('grant_type', 'refresh_token');
     const freshTokens = await requestJson('https://oauth2.googleapis.com/token', {
         client_id: GOOGLE_CLIENT_ID,
         client_secret: GOOGLE_CLIENT_SECRET,
