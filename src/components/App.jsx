@@ -51,7 +51,9 @@ class App extends React.PureComponent {
      *
      */
     onConnectClick = async () => {
-        await connectGoogle();
+        console.log('Connecting to Google...');
+        const result = await connectGoogle();
+        console.log('Finished connecting:', result);
     };
 
     /**

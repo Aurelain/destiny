@@ -76,7 +76,7 @@ const onWorkerFetch = (event) => {
 
     let responsePromise;
     if (endpoint in currentVirtualEndpoints) {
-        responsePromise = respondToEndpoint(endpoint);
+        responsePromise = respondToEndpoint(endpoint, event.request);
     } else if (mode === 'navigate') {
         responsePromise = respondToRoot();
     } else {
@@ -88,10 +88,10 @@ const onWorkerFetch = (event) => {
 /**
  *
  */
-const respondToEndpoint = async (endpoint) => {
+const respondToEndpoint = async (endpoint, request) => {
     const body = {};
     try {
-        body.data = await currentVirtualEndpoints[endpoint]();
+        body.data = await currentVirtualEndpoints[endpoint](request);
     } catch (e) {
         body.error = e.message;
     }
