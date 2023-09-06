@@ -42,6 +42,7 @@ const onWorkerInstall = (event) => {
             for (const relativePath of currentCachedPaths) {
                 absolutePaths.push(prefix + relativePath);
             }
+            console.log('absolutePaths: ' + JSON.stringify(absolutePaths, null, 4));
             await cache.addAll(absolutePaths);
         })(),
     );
