@@ -6,7 +6,7 @@
  */
 const requestJson = async (url, body = null, settings = null) => {
     let tolerateFail;
-    if (settings.tolerateFail) {
+    if (settings?.tolerateFail) {
         tolerateFail = true;
         delete settings.tolerateFail;
     }

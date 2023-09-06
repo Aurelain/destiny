@@ -27,13 +27,17 @@ const run = async () => {
     // Build fresh:
     fsExtra.emptyDirSync(OUTPUT_DIR);
     fsExtra.copySync('public', OUTPUT_DIR);
-    const clientBundle = await createBundle('src/main.jsx', 'js/[name]-[hash]', isDev);
+    const clientBundle = await createBundle('src/main.jsx', 'js/[name]', isDev);
     const swBundle = await createBundle('sw/sw.js', '[name]', isDev);
+
+    // Rename `main.js`:
     const {hash} = await hashElement(OUTPUT_DIR);
+    const cleanHash = hash.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
+    renameClient(clientBundle, cleanHash);
 
     // Inject version and cache filenames:
     // tweakClient(clientBundle);
-    updateVersion(clientBundle, swBundle, hash);
+    updateVersion(clientBundle, swBundle, cleanHash);
     updateCachedPaths(swBundle);
     updateIndex(clientBundle);
     fs.writeFileSync(clientBundle.filePath, clientBundle.content);
@@ -86,6 +90,21 @@ const tweakClient = (clientBundle) => {
     const freshClientContent = clientBundle.content.replace('console.info', 'false&&console.info');
     clientBundle.content = freshClientContent;
 };*/
+
+/**
+ *
+ */
+const renameClient = (clientBundle, hash) => {
+    const freshFilePath = clientBundle.filePath.replace('main.js', `main-${hash}.js`);
+    fs.renameSync(clientBundle.filePath, freshFilePath);
+    const mapFilePath = clientBundle.filePath + '.map';
+    if (fs.existsSync(mapFilePath)) {
+        const freshMapFilePath = mapFilePath.replace('main.js', `main-${hash}.js`);
+        fs.renameSync(mapFilePath, freshMapFilePath);
+    }
+    clientBundle.filePath = freshFilePath;
+    clientBundle.content = clientBundle.content.replace('main.js.map', `main-${hash}.js.map`);
+};
 
 /**
  *

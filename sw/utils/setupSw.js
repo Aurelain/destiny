@@ -37,7 +37,12 @@ const onWorkerInstall = (event) => {
     event.waitUntil(
         (async () => {
             const cache = await caches.open(currentVersion);
-            await cache.addAll(currentCachedPaths);
+            const prefix = self.location.href.replace(/\/[^/]*$/, '');
+            const absolutePaths = [];
+            for (const relativePath of currentCachedPaths) {
+                absolutePaths.push(prefix + relativePath);
+            }
+            await cache.addAll(absolutePaths);
         })(),
     );
 };
