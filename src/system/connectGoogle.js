@@ -54,7 +54,7 @@ const onCodeReceived = async (response) => {
             client_secret: GOOGLE_CLIENT_SECRET,
             code: response.code,
             grant_type: 'authorization_code',
-            redirect_uri: window.location.href.replace(/\/$/, ''),
+            redirect_uri: window.location.origin,
         }),
     });
     const tokens = await tokenResponse.json();
