@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import {LOCAL_TOKENS_KEY} from './SW.js';
+import {LOCAL_USER_KEY} from './SW.js';
 import assume from '../utils/assume.js';
 import checkPojo from '../utils/checkPojo.js';
 
@@ -10,20 +10,19 @@ import checkPojo from '../utils/checkPojo.js';
 /**
  *
  */
-const readTokens = async () => {
-    let tokens;
+const readUser = async () => {
+    let user;
     try {
-        tokens = await localforage.getItem(LOCAL_TOKENS_KEY);
+        user = await localforage.getItem(LOCAL_USER_KEY);
     } catch (e) {
-        throw new Error('No linked account!');
+        throw new Error('No cached user!');
     }
-
-    assume(checkPojo(tokens), 'Unexpected tokens type!');
-    assume(tokens.access_token && tokens.refresh_token, 'Unexpected tokens shape!');
-    return tokens;
+    assume(checkPojo(user), 'Unexpected user type!');
+    assume(user.email, 'Unexpected user shape!');
+    return user;
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default readTokens;
+export default readUser;

@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import {TOKENS_KEY} from '../system/SW.js';
+import {LOCAL_TOKENS_KEY} from '../system/SW.js';
 import assume from '../utils/assume.js';
 
 // =====================================================================================================================
@@ -16,7 +16,7 @@ const setTokens = async (request) => {
         throw new Error('Expecting json payload in request body!');
     }
     assume(tokens.access_token && tokens.refresh_token, 'Unexpected tokens shape!');
-    await localforage.setItem(TOKENS_KEY, tokens);
+    await localforage.setItem(LOCAL_TOKENS_KEY, tokens);
     return true;
 };
 

@@ -1,5 +1,6 @@
 import {ENDPOINT_SET_TOKENS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../COMMON.js';
 import requestEndpoint from './requestEndpoint.js';
+import embedScriptFile from '../utils/embedScriptFile.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -14,6 +15,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://www.googlea
  *
  */
 const connectGoogle = async () => {
+    await embedScriptFile('https://accounts.google.com/gsi/client');
     const initCodeClient = window.google?.accounts?.oauth2?.initCodeClient;
     if (typeof initCodeClient !== 'function') {
         return {error: 'Invalid gis library!'};

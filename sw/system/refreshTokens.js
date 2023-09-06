@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import {TOKENS_KEY} from './SW.js';
+import {LOCAL_TOKENS_KEY} from './SW.js';
 import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../../src/COMMON.js';
 import requestJson from '../utils/requestJson.js';
 import assume from '../utils/assume.js';
@@ -12,7 +12,7 @@ import assume from '../utils/assume.js';
  *
  */
 const refreshTokens = async () => {
-    let tokens = await localforage.getItem(TOKENS_KEY);
+    let tokens = await localforage.getItem(LOCAL_TOKENS_KEY);
 
     const freshTokens = await requestJson('https://oauth2.googleapis.com/token', {
         client_id: GOOGLE_CLIENT_ID,
@@ -26,7 +26,7 @@ const refreshTokens = async () => {
     console.log('freshTokens:', freshTokens);
 
     tokens = {...tokens, access_token: freshAccess};
-    await localforage.setItem(TOKENS_KEY, tokens);
+    await localforage.setItem(LOCAL_TOKENS_KEY, tokens);
 
     return tokens;
 };

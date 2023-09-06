@@ -17,7 +17,7 @@ const requestJson = async (url, body = null, settings = null) => {
     try {
         response = await fetch(url, config);
     } catch (e) {
-        throw new Error(`Fetch to "${url}" failed! ${e.message}`);
+        throw new Error(`Failed to fetch "${url}"!`);
     }
     let json;
     try {
