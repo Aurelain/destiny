@@ -15,10 +15,12 @@ class App extends React.PureComponent {
         isInitialized: false,
         user: null,
         database: [], // ALL known events
+        documentHidden: '',
+        windowFocus: '',
     };
 
     render() {
-        const {isInitialized, user} = this.state;
+        const {isInitialized, user, documentHidden, windowFocus} = this.state;
 
         if (!isInitialized) {
             // The initialization is performed upon mount.
@@ -42,11 +44,19 @@ class App extends React.PureComponent {
             <div>
                 <button onClick={this.onReload}>Reload {VERSION}</button>
                 Hello, {user.email}
+                <br />
+                documentHidden = {documentHidden}
+                <br />
+                windowFocus = {windowFocus}
+                <br />
             </div>
         );
     }
 
     async componentDidMount() {
+        window.addEventListener('focus', this.onWindowFocus);
+        window.addEventListener('blur', this.onWindowBlur);
+        document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {
             user = await requestEndpoint(ENDPOINT_GET_USER);
@@ -99,6 +109,33 @@ class App extends React.PureComponent {
     onFetchClick = async () => {
         const response = await fetch('foo');
         console.log('response:', response.text());
+    };
+
+    /**
+     *
+     */
+    onWindowFocus = async () => {
+        this.setState({
+            windowFocus: new Date().toISOString() + ' true',
+        });
+    };
+
+    /**
+     *
+     */
+    onWindowBlur = async () => {
+        this.setState({
+            windowFocus: new Date().toISOString() + ' false',
+        });
+    };
+
+    /**
+     *
+     */
+    onDocumentVisibilityChange = async () => {
+        this.setState({
+            documentHidden: new Date().toISOString() + ' ' + document.hidden,
+        });
     };
 }
 
