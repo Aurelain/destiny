@@ -22,6 +22,12 @@ module.exports = {
                 code: 120,
             },
         ],
+        'react/no-unknown-property': [
+            'error',
+            {
+                ignore: ['css'],
+            },
+        ],
         quotes: ['warn', 'single', 'avoid-escape'],
     },
 };

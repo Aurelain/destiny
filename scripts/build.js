@@ -5,6 +5,7 @@ import sendkeys from 'sendkeys-js';
 import process from 'node:process';
 import {hashElement} from 'folder-hash';
 import findFiles from './utils/findFiles.js';
+import EsbuildEmotionPlugin from './plugins/EsbuildEmotionPlugin.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -63,6 +64,9 @@ const createBundle = async (target, outputPattern, isDev) => {
         entryNames: outputPattern,
         // logLevel: 'info',
         legalComments: 'none',
+        jsx: 'automatic', // this option, along with the next one, allow us to avoid using the jsx emotion pragma
+        jsxImportSource: '@emotion/react',
+        plugins: [EsbuildEmotionPlugin],
     });
 
     const filePath = getOutputFilePath(outputPattern);

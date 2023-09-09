@@ -6,6 +6,15 @@ import requestEndpoint from '../system/requestEndpoint.js';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+const LIVE = false;
+const SX = {
+    root: {
+        padding: 32,
+        backgroundColor: 'hotpink',
+        fontSize: 24,
+        borderRadius: 4,
+    },
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -15,51 +24,30 @@ class App extends React.PureComponent {
         isInitialized: false,
         user: null,
         database: [], // ALL known events
-        documentHidden: '',
-        windowFocus: '',
     };
 
     render() {
-        const {isInitialized, user, documentHidden, windowFocus} = this.state;
-
-        if (!isInitialized) {
-            // The initialization is performed upon mount.
-            return (
-                <div>
-                    <button onClick={this.onReload}>Reload {VERSION}</button>
-                </div>
-            );
-        }
-
-        if (!user) {
-            return (
-                <div>
-                    <button onClick={this.onReload}>Reload {VERSION}</button>
-                    <button onClick={this.onConnectClick}>Connect your Google Calendar</button>
-                </div>
-            );
-        }
-
+        const {user} = this.state;
         return (
-            <div>
+            <div css={SX.root}>
                 <button onClick={this.onReload}>Reload {VERSION}</button>
-                Hello, {user.email}
                 <br />
-                documentHidden = {documentHidden}
-                <br />
-                windowFocus = {windowFocus}
-                <br />
+                {user ? (
+                    <div>Hello, {user.email}</div>
+                ) : (
+                    <button onClick={this.onConnectClick}>Connect your Google Calendar</button>
+                )}
             </div>
         );
     }
 
     async componentDidMount() {
-        window.addEventListener('focus', this.onWindowFocus);
-        window.addEventListener('blur', this.onWindowBlur);
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {
-            user = await requestEndpoint(ENDPOINT_GET_USER);
+            if (LIVE) {
+                user = await requestEndpoint(ENDPOINT_GET_USER);
+            }
         } catch (e) {
             console.log(`Could not get user! ${e.message}`);
             user = null;
@@ -94,48 +82,8 @@ class App extends React.PureComponent {
     /**
      *
      */
-    onSendClick = async () => {
-        const data = {
-            type: 'DESTINY',
-            payload: Math.random(),
-        };
-        console.log('Client will send:', data.payload);
-        navigator.serviceWorker.controller.postMessage(data);
-    };
-
-    /**
-     *
-     */
-    onFetchClick = async () => {
-        const response = await fetch('foo');
-        console.log('response:', response.text());
-    };
-
-    /**
-     *
-     */
-    onWindowFocus = async () => {
-        this.setState({
-            windowFocus: new Date().toISOString() + ' true',
-        });
-    };
-
-    /**
-     *
-     */
-    onWindowBlur = async () => {
-        this.setState({
-            windowFocus: new Date().toISOString() + ' false',
-        });
-    };
-
-    /**
-     *
-     */
     onDocumentVisibilityChange = async () => {
-        this.setState({
-            documentHidden: new Date().toISOString() + ' ' + document.hidden,
-        });
+        console.log('document.hidden', document.hidden);
     };
 }
 
