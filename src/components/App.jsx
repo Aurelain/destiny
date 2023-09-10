@@ -34,7 +34,7 @@ class App extends React.PureComponent {
                 <br />
                 <br />
                 <br />
-                <Button>Testing</Button>
+                <Button onClick={this.onToggleConsoleClick}>Toggle Console</Button>
                 <br />
                 <br />
                 <br />
@@ -49,6 +49,7 @@ class App extends React.PureComponent {
 
     async componentDidMount() {
         console.log('componentDidMount');
+        console.log('Hello0');
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {
@@ -74,6 +75,18 @@ class App extends React.PureComponent {
      *
      */
     onReloadClick = () => {
+        window.location.reload();
+    };
+
+    /**
+     *
+     */
+    onToggleConsoleClick = () => {
+        if (localStorage.getItem('console')) {
+            localStorage.removeItem('console');
+        } else {
+            localStorage.setItem('console', 'emulated');
+        }
         window.location.reload();
     };
 

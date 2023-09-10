@@ -5,6 +5,7 @@ WIP
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+const CONSOLE_HEIGHT = 300;
 const PROPERTIES = ['memory'];
 const METHODS = {
     assert: log,
@@ -40,6 +41,9 @@ let nativeConsole;
 let emulatedConsole;
 let lines;
 let textArea;
+let emuc;
+let initialConsoleHeight;
+let initialPointerY;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -55,7 +59,6 @@ const interceptConsole = () => {
     switch (localStorage.getItem('console')) {
         case 'native':
             return;
-        default:
         case 'emulated': {
             lines = [];
             emulatedConsole = {};
@@ -73,7 +76,7 @@ const interceptConsole = () => {
             window.console = emulatedConsole;
             createConsoleElement();
             break;
-        } /*
+        }
         default: {
             // silent
             const noopConsole = {};
@@ -89,7 +92,7 @@ const interceptConsole = () => {
             }
 
             window.console = noopConsole;
-        }*/
+        }
     }
 };
 
@@ -104,6 +107,15 @@ const createConsoleElement = () => {
         const emulatedConsoleMarkup = createConsoleMarkup();
         document.body.insertAdjacentHTML('beforeend', emulatedConsoleMarkup);
         textArea = document.getElementById('emulatedConsoleText');
+
+        emuc = document.getElementById('emuc');
+        const consoleHeight = localStorage.getItem('consoleHeight') || CONSOLE_HEIGHT;
+        emuc.style.height = consoleHeight + 'px';
+
+        document.getElementById('emucClear').addEventListener('click', onClearClick);
+        document.getElementById('emucClose').addEventListener('click', onCloseClick);
+        document.getElementById('emucResize').addEventListener('pointerdown', onResizePointerDown);
+
         updateTextArea();
     } else {
         document.addEventListener('DOMContentLoaded', onDocumentDomContentLoaded);
@@ -124,41 +136,62 @@ const onDocumentDomContentLoaded = () => {
 const createConsoleMarkup = () => {
     return `
         <style>
-            #emulatedConsole {
+            #emuc {
                 position:fixed;
                 bottom:0;
                 left:0;
                 right:0;
-                height:300px;
                 background:#fff;
-                border-top:solid 1px silver;
+                font-size:16px;
+            }
+            #emucBar {
+                height: 28px;
+                background: #f1f3f4;
+                border:solid 1px #cacdd1;
+                border-left:0;
+                border-right:0;
+                display: flex;
+            }
+            .emucButton {
+                width:26px;
+                height:26px;
+                line-height: 26px;
+                text-align: center;
+                cursor:pointer;
+                color:#6e6e6e;
+            }
+            .emucButton:hover {
+                color:#000;
+                background: #dee1e6;
+            }
+            .emucButton:active {
+                background: #cecece;
+            }
+            #emucResize {
+                flex-grow:1;
+                cursor:ns-resize;
+                touch-action: none;
             }
             #emulatedConsoleText {
                 width:100%;
-                height:100%;
+                height:calc(100% - 26px);
                 padding:4px;
                 overflow-y:scroll;
                 resize: none;
                 border:0;
                 border-radius: 0;
                 font-family: Consolas, monospace;
+                outline: 0;
             }
-            #emulatedConsoleClose {
-                position:absolute;
-                right:0;
-                top:0;
-                width:17px;
-                height:17px;
-                line-height: 17px;
-                font-size:12px;
-                text-align: center;
-                background:red;
-                color:#fff;
-            }
+            
         </style>
-        <div id='emulatedConsole'>
-            <textarea id='emulatedConsoleText'></textarea>
-            <div id='emulatedConsoleClose'>✖</div>
+        <div id='emuc'>
+            <div id='emucBar'>
+                <div id='emucClear' class='emucButton'>🛇</div>
+                <div id='emucResize'></div>
+                <div id='emucClose' class='emucButton'>✕</div>
+            </div>
+            <textarea id='emulatedConsoleText' spellcheck='false'></textarea>
         </div>
     `;
 };
@@ -189,6 +222,50 @@ const addLine = (line) => {
 const updateTextArea = () => {
     textArea.value = lines.join('\n');
     textArea.scrollTop = textArea.scrollHeight;
+};
+
+/**
+ *
+ */
+const onClearClick = () => {
+    lines = [];
+    updateTextArea();
+};
+
+/**
+ *
+ */
+const onCloseClick = () => {
+    localStorage.removeItem('console');
+    window.location.reload();
+};
+
+/**
+ *
+ */
+const onResizePointerDown = (event) => {
+    window.addEventListener('pointermove', onWindowPointerMove);
+    window.addEventListener('pointerup', onWindowPointerUp);
+    initialConsoleHeight = emuc.offsetHeight;
+    initialPointerY = event.clientY;
+};
+
+/**
+ *
+ */
+const onWindowPointerMove = (event) => {
+    const deltaY = event.clientY - initialPointerY;
+    const futureHeight = Math.max(initialConsoleHeight - deltaY, 50);
+    localStorage.setItem('consoleHeight', String(futureHeight));
+    emuc.style.height = futureHeight + 'px';
+};
+
+/**
+ *
+ */
+const onWindowPointerUp = () => {
+    window.removeEventListener('pointermove', onWindowPointerMove);
+    window.removeEventListener('pointerup', onWindowPointerUp);
 };
 
 // =====================================================================================================================

@@ -11,6 +11,7 @@ const SX = {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
+        touchAction: 'none', // so dragging/scrolling doesn't mess with us
     },
     hover: {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
@@ -63,7 +64,7 @@ class Button extends React.PureComponent {
     onPointerDown = () => {
         console.log('onPointerDown');
         window.addEventListener('pointerup', this.onWindowPointerUp);
-        // window.addEventListener('pointermove', this.onWindowPointerMove);
+        window.addEventListener('pointermove', this.onWindowPointerMove);
     };
 
     /**
@@ -79,7 +80,7 @@ class Button extends React.PureComponent {
     onWindowPointerUp = () => {
         console.log('onWindowPointerUp');
         window.removeEventListener('pointerup', this.onWindowPointerUp);
-        // window.removeEventListener('pointermove', this.onWindowPointerMove);
+        window.removeEventListener('pointermove', this.onWindowPointerMove);
     };
 }
 
