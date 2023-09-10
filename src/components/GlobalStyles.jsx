@@ -7,13 +7,18 @@ import PropTypes from 'prop-types';
 // =====================================================================================================================
 const THEME = {};
 const GLOBAL = {
+    '*': {
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        fontFamily: 'system-ui',
+    },
     html: {
-        padding: 0,
-        margin: 0,
+        lineHeight: 1,
+        textSizeAdjust: '100%',
     },
     body: {
         margin: 0,
-        padding: 0,
+        overscrollBehaviorY: 'contain', // https://stackoverflow.com/a/58614274/844393
     },
 };
 

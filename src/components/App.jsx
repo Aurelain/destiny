@@ -2,6 +2,7 @@ import React from 'react';
 import connectGoogle from '../system/connectGoogle.js';
 import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import requestEndpoint from '../system/requestEndpoint.js';
+import Button from './Button.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -10,9 +11,8 @@ const LIVE = false;
 const SX = {
     root: {
         padding: 32,
-        backgroundColor: 'hotpink',
+        // backgroundColor: 'hotpink',
         fontSize: 24,
-        borderRadius: 4,
     },
 };
 
@@ -30,7 +30,13 @@ class App extends React.PureComponent {
         const {user} = this.state;
         return (
             <div css={SX.root}>
-                <button onClick={this.onReload}>Reload {VERSION}</button>
+                <Button onClick={this.onReloadClick}>Reload {VERSION}</Button>
+                <br />
+                <br />
+                <br />
+                <Button>Testing</Button>
+                <br />
+                <br />
                 <br />
                 {user ? (
                     <div>Hello, {user.email}</div>
@@ -42,6 +48,7 @@ class App extends React.PureComponent {
     }
 
     async componentDidMount() {
+        console.log('componentDidMount');
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {
@@ -66,7 +73,7 @@ class App extends React.PureComponent {
     /**
      *
      */
-    onReload = () => {
+    onReloadClick = () => {
         window.location.reload();
     };
 

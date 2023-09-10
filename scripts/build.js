@@ -24,6 +24,7 @@ const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 const run = async () => {
     const time = Date.now();
     const isDev = process.argv.includes('--dev');
+    // const isDev = false;
 
     // Build fresh:
     fsExtra.emptyDirSync(OUTPUT_DIR);
