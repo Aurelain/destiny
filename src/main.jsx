@@ -1,17 +1,18 @@
 import './utils/interceptConsole.js';
-import interceptErrors from './utils/interceptErrors.js';
+import './utils/interceptErrors.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App.jsx';
 import registerWorker from './system/registerWorker.js';
 import GlobalStyles from './components/GlobalStyles.jsx';
 
+// =====================================================================================================================
+//  P U B L I C
+// =====================================================================================================================
 /**
  *
  */
 const run = async () => {
-    interceptErrors();
-
     if (!(await registerWorker())) {
         return;
     }
@@ -25,4 +26,7 @@ const run = async () => {
     );
 };
 
+// =====================================================================================================================
+//  R U N
+// =====================================================================================================================
 run();

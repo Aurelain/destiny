@@ -48,8 +48,6 @@ class App extends React.PureComponent {
     }
 
     async componentDidMount() {
-        console.log('componentDidMount');
-        console.log('Hello0');
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {
