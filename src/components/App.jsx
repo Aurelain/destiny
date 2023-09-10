@@ -2,7 +2,8 @@ import React from 'react';
 import connectGoogle from '../system/connectGoogle.js';
 import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import requestEndpoint from '../system/requestEndpoint.js';
-import Button from './Button.jsx';
+import Button from '../utils/ui/Button.jsx';
+import Bar from './Bar.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -10,9 +11,8 @@ import Button from './Button.jsx';
 const LIVE = false;
 const SX = {
     root: {
-        padding: 32,
-        // backgroundColor: 'hotpink',
-        fontSize: 24,
+        display: 'flex',
+        flexDirection: 'column',
     },
 };
 
@@ -21,7 +21,6 @@ const SX = {
 // =====================================================================================================================
 class App extends React.PureComponent {
     state = {
-        isInitialized: false,
         user: null,
         database: [], // ALL known events
     };
@@ -30,7 +29,7 @@ class App extends React.PureComponent {
         const {user} = this.state;
         return (
             <div css={SX.root}>
-                <Button onClick={this.onReloadClick}>Reload {VERSION}</Button>
+                <Bar />
                 <br />
                 <br />
                 <br />
@@ -48,6 +47,7 @@ class App extends React.PureComponent {
     }
 
     async componentDidMount() {
+        console.log(`Version ${VERSION}`);
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         let user;
         try {

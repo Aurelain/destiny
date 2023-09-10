@@ -12,9 +12,14 @@ const SX = {
         alignItems: 'center',
         justifyContent: 'center',
         touchAction: 'none', // so dragging/scrolling doesn't mess with us
+        cursor: 'pointer',
+        padding: 2,
     },
     hover: {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    },
+    active: {
+        backgroundColor: 'rgba(0, 0, 0, 0.14)',
     },
 };
 
@@ -23,14 +28,22 @@ const SX = {
 // =====================================================================================================================
 class Button extends React.PureComponent {
     state = {
-        isHover: false,
-        isPress: false,
+        isHovering: false,
+        isPressing: false,
     };
+
     render() {
-        const {children, css, onClick} = this.props;
+        const {children, css, onClick, cssHover, cssActive} = this.props;
+        const {isHovering, isPressing} = this.state;
+
         return (
             <div
-                css={[SX.root, css]}
+                css={[
+                    SX.root,
+                    css,
+                    isHovering && (cssHover || SX.hover), // hover
+                    isHovering && isPressing && (cssActive || SX.active), // active
+                ]}
                 onPointerEnter={this.onPointerEnter}
                 onPointerLeave={this.onPointerLeave}
                 onPointerDown={this.onPointerDown}
@@ -48,39 +61,30 @@ class Button extends React.PureComponent {
      *
      */
     onPointerEnter = () => {
-        console.log('onPointerEnter');
+        this.setState({isHovering: true});
     };
 
     /**
      *
      */
     onPointerLeave = () => {
-        console.log('onPointerLeave');
+        this.setState({isHovering: false});
     };
 
     /**
      *
      */
     onPointerDown = () => {
-        console.log('onPointerDown');
+        this.setState({isPressing: true});
         window.addEventListener('pointerup', this.onWindowPointerUp);
-        window.addEventListener('pointermove', this.onWindowPointerMove);
-    };
-
-    /**
-     *
-     */
-    onWindowPointerMove = () => {
-        console.log('onWindowPointerMove');
     };
 
     /**
      *
      */
     onWindowPointerUp = () => {
-        console.log('onWindowPointerUp');
+        this.setState({isPressing: false});
         window.removeEventListener('pointerup', this.onWindowPointerUp);
-        window.removeEventListener('pointermove', this.onWindowPointerMove);
     };
 }
 
@@ -91,5 +95,7 @@ Button.propTypes = {
     children: PropTypes.node,
     onClick: PropTypes.func,
     css: PropTypes.any,
+    cssHover: PropTypes.any,
+    cssActive: PropTypes.any,
 };
 export default Button;
