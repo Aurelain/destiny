@@ -33,7 +33,7 @@ class App extends React.PureComponent {
                 <br />
                 <br />
                 <br />
-                <Button onClick={this.onToggleConsoleClick}>Toggle Console</Button>
+                <Button label={'Toggle Console'} onClick={this.onToggleConsoleClick} />
                 <br />
                 <br />
                 <br />

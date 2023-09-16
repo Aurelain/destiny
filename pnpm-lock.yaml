@@ -17,6 +17,9 @@ dependencies:
   localforage:
     specifier: ^1.10.0
     version: 1.10.0
+  memoize-one:
+    specifier: ^6.0.0
+    version: 6.0.0
   prop-types:
     specifier: ^15.8.1
     version: 15.8.1
@@ -1511,6 +1514,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /memoize-one@6.0.0:
+    resolution: {integrity: sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw==}
+    dev: false
 
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}

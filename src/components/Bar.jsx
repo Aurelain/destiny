@@ -16,7 +16,7 @@ const SX = {
     grow: {
         flexGrow: 1,
     },
-    btnReload: {
+    btn: {
         padding: 8,
     },
 };
@@ -28,13 +28,9 @@ class Bar extends React.PureComponent {
     render() {
         return (
             <div css={SX.root}>
-                <Button onClick={this.onMenuClick}>
-                    <Menu />
-                </Button>
+                <Button label={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} />
                 <div css={SX.grow} />
-                <Button css={SX.btnReload} onClick={this.onReloadClick}>
-                    <Reload />
-                </Button>
+                <Button label={Reload} cssNormal={SX.btn} onClick={this.onReloadClick} />
             </div>
         );
     }
@@ -45,7 +41,7 @@ class Bar extends React.PureComponent {
      *
      */
     onMenuClick = () => {
-        window.location.reload();
+        console.log('onMenuClick');
     };
 
     /**

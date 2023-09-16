@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -33,14 +34,14 @@ class Button extends React.PureComponent {
     };
 
     render() {
-        const {children, css, onClick, cssHover, cssActive} = this.props;
+        const {label, cssNormal, onClick, cssHover, cssActive} = this.props;
         const {isHovering, isPressing} = this.state;
 
         return (
             <div
                 css={[
                     SX.root,
-                    css,
+                    cssNormal,
                     isHovering && (cssHover || SX.hover), // hover
                     isHovering && isPressing && (cssActive || SX.active), // active
                 ]}
@@ -49,7 +50,7 @@ class Button extends React.PureComponent {
                 onPointerDown={this.onPointerDown}
                 onClick={onClick}
             >
-                {children}
+                {this.memoContent(label)}
             </div>
         );
     }
@@ -57,6 +58,18 @@ class Button extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // I N T E R N A L
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
+    memoContent = memoize((label) => {
+        if (typeof label === 'function') {
+            const Icon = label;
+            return <Icon />;
+        } else {
+            return label;
+        }
+    });
+
     /**
      *
      */
@@ -92,9 +105,9 @@ class Button extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Button.propTypes = {
-    children: PropTypes.node,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
     onClick: PropTypes.func,
-    css: PropTypes.any,
+    cssNormal: PropTypes.any,
     cssHover: PropTypes.any,
     cssActive: PropTypes.any,
 };
