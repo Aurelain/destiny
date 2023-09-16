@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../utils/ui/Button.jsx';
 import Reload from '../icons/Reload.jsx';
 import Menu from '../icons/Menu.jsx';
+import SideMenu from '../utils/ui/SideMenu.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -25,12 +26,18 @@ const SX = {
 //  C O M P O N E N T
 // =====================================================================================================================
 class Bar extends React.PureComponent {
+    state = {
+        isMenuOpen: false,
+    };
+
     render() {
+        const {isMenuOpen} = this.state;
         return (
             <div css={SX.root}>
-                <Button label={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} />
+                <Button label={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
                 <div css={SX.grow} />
-                <Button label={Reload} cssNormal={SX.btn} onClick={this.onReloadClick} />
+                <Button label={Reload} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
+                <SideMenu isOpen={isMenuOpen} onClose={this.onMenuClose} />
             </div>
         );
     }
@@ -41,7 +48,18 @@ class Bar extends React.PureComponent {
      *
      */
     onMenuClick = () => {
-        console.log('onMenuClick');
+        this.setState({
+            isMenuOpen: true,
+        });
+    };
+
+    /**
+     *
+     */
+    onMenuClose = () => {
+        this.setState({
+            isMenuOpen: !this.state.isMenuOpen,
+        });
     };
 
     /**

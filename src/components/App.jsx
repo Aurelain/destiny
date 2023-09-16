@@ -3,6 +3,7 @@ import connectGoogle from '../system/connectGoogle.js';
 import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 import Button from '../utils/ui/Button.jsx';
+import Console from '../icons/Console.jsx';
 import Bar from './Bar.jsx';
 
 // =====================================================================================================================
@@ -33,7 +34,24 @@ class App extends React.PureComponent {
                 <br />
                 <br />
                 <br />
-                <Button label={'Toggle Console'} onClick={this.onToggleConsoleClick} />
+                <Button
+                    icon={Console}
+                    label={'Toggle Console'}
+                    onClick={this.onToggleConsoleClick}
+                    variant={'simple'}
+                />
+                <Button
+                    icon={Console}
+                    label={'Toggle Console'}
+                    onClick={this.onToggleConsoleClick}
+                    variant={'inverted'}
+                />
+                <Button
+                    icon={Console}
+                    label={'Toggle Console'}
+                    onClick={this.onToggleConsoleClick}
+                    variant={'contained'}
+                />
                 <br />
                 <br />
                 <br />

@@ -15,12 +15,46 @@ const SX = {
         touchAction: 'none', // so dragging/scrolling doesn't mess with us
         cursor: 'pointer',
         padding: 2,
+        transitionProperty: 'background-color,color',
+        transitionDuration: '250ms',
+        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
     },
-    hover: {
+
+    // Variant `simple`:
+    simple_normal: {
+        // no special styles
+    },
+    simple_hover: {
+        backgroundColor: 'rgba(25, 118, 210, 0.04)',
+        color: '#1976d2',
+    },
+    simple_active: {
+        backgroundColor: 'rgba(25, 118, 210, 0.14)',
+    },
+
+    // Variant `inverted`:
+    inverted_normal: {
+        color: '#fff',
+    },
+    inverted_hover: {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
+        color: 'yellow',
     },
-    active: {
+    inverted_active: {
         backgroundColor: 'rgba(0, 0, 0, 0.14)',
+    },
+
+    // Variant `contained`:
+    contained_normal: {
+        borderRadius: 6,
+        color: '#fff',
+        backgroundColor: '#1976d2',
+    },
+    contained_hover: {
+        backgroundColor: '#1565c0',
+    },
+    contained_active: {
+        backgroundColor: '#6093D0',
     },
 };
 
@@ -34,22 +68,30 @@ class Button extends React.PureComponent {
     };
 
     render() {
-        const {label, cssNormal, onClick, cssHover, cssActive} = this.props;
+        const {label, icon, cssNormal, onClick, cssHover, cssActive, variant} = this.props;
         const {isHovering, isPressing} = this.state;
 
         return (
             <div
                 css={[
                     SX.root,
+
+                    SX[variant + '_normal'],
                     cssNormal,
-                    isHovering && (cssHover || SX.hover), // hover
-                    isHovering && isPressing && (cssActive || SX.active), // active
+
+                    isHovering && SX[variant + '_hover'],
+                    isHovering && cssHover,
+
+                    isHovering && isPressing && SX[variant + '_active'],
+                    isHovering && isPressing && cssActive,
                 ]}
                 onPointerEnter={this.onPointerEnter}
                 onPointerLeave={this.onPointerLeave}
                 onPointerDown={this.onPointerDown}
                 onClick={onClick}
             >
+                {this.memoIcon(icon)}
+                {icon && label && ' '}
                 {this.memoContent(label)}
             </div>
         );
@@ -67,6 +109,18 @@ class Button extends React.PureComponent {
             return <Icon />;
         } else {
             return label;
+        }
+    });
+
+    /**
+     *
+     */
+    memoIcon = memoize((icon) => {
+        if (typeof icon === 'function') {
+            const Icon = icon;
+            return <Icon />;
+        } else {
+            return icon;
         }
     });
 
@@ -104,8 +158,13 @@ class Button extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
+Button.defaultProps = {
+    variant: 'contained',
+};
 Button.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
+    icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
     onClick: PropTypes.func,
     cssNormal: PropTypes.any,
     cssHover: PropTypes.any,
