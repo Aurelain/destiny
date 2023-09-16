@@ -7,7 +7,7 @@
 const interceptErrors = () => {
     window.addEventListener('error', onError, true);
     window.addEventListener('unhandledrejection', onUnhandledRejection, true);
-    navigator.serviceWorker.addEventListener('message', onServiceWorkerMessage, true);
+    navigator.serviceWorker?.addEventListener('message', onServiceWorkerMessage, true);
 };
 
 // =====================================================================================================================

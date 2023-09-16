@@ -68,7 +68,7 @@ class Button extends React.PureComponent {
     };
 
     render() {
-        const {label, icon, cssNormal, onClick, cssHover, cssActive, variant} = this.props;
+        const {label, icon, cssNormal, cssHover, cssActive, variant} = this.props;
         const {isHovering, isPressing} = this.state;
 
         return (
@@ -88,7 +88,7 @@ class Button extends React.PureComponent {
                 onPointerEnter={this.onPointerEnter}
                 onPointerLeave={this.onPointerLeave}
                 onPointerDown={this.onPointerDown}
-                onClick={onClick}
+                onClick={this.onRootClick}
             >
                 {this.memoIcon(icon)}
                 {icon && label && ' '}
@@ -153,6 +153,14 @@ class Button extends React.PureComponent {
         this.setState({isPressing: false});
         window.removeEventListener('pointerup', this.onWindowPointerUp);
     };
+
+    /**
+     *
+     */
+    onRootClick = (event) => {
+        const {onClick, name} = this.props;
+        onClick?.(event, name);
+    };
 }
 
 // =====================================================================================================================
@@ -165,6 +173,7 @@ Button.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
     icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
+    name: PropTypes.string,
     onClick: PropTypes.func,
     cssNormal: PropTypes.any,
     cssHover: PropTypes.any,

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
+import List from './List.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -26,6 +26,7 @@ const SX = {
         bottom: 0,
         width: '90%',
         maxWidth: 256,
+        color: '#000',
         background: '#fff',
         borderTopRightRadius: 16,
         borderBottomRightRadius: 16,
@@ -37,6 +38,14 @@ const SX = {
     menuIsOpen: {
         transform: 'translateX(0)',
     },
+    title: {
+        padding: 24,
+        borderBottom: 'solid 1px silver',
+        fontSize: '2em',
+    },
+    subtitle: {
+        fontSize: '0.5em',
+    },
 };
 
 // =====================================================================================================================
@@ -44,11 +53,15 @@ const SX = {
 // =====================================================================================================================
 class SideMenu extends React.PureComponent {
     render() {
-        const {isOpen} = this.props;
+        const {isOpen, title, subtitle, list, onClick} = this.props;
         return (
             <div css={[SX.overlay, isOpen && SX.overlayIsOpen]} onClick={this.onOverlayClick}>
                 <div css={[SX.menu, isOpen && SX.menuIsOpen]} onClick={this.onMenuClick}>
-                    foo
+                    <div css={SX.title}>
+                        {title}
+                        {subtitle && <div css={SX.subtitle}>{subtitle}</div>}
+                    </div>
+                    {list && <List items={list} onClick={onClick} />}
                 </div>
             </div>
         );
@@ -57,18 +70,6 @@ class SideMenu extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // I N T E R N A L
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    memoContent = memoize((label) => {
-        if (typeof label === 'function') {
-            const Icon = label;
-            return <Icon />;
-        } else {
-            return label;
-        }
-    });
-
     /**
      *
      */
@@ -88,6 +89,8 @@ class SideMenu extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 SideMenu.propTypes = {
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
     list: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string,

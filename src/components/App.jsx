@@ -2,8 +2,6 @@ import React from 'react';
 import connectGoogle from '../system/connectGoogle.js';
 import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import requestEndpoint from '../system/requestEndpoint.js';
-import Button from '../utils/ui/Button.jsx';
-import Console from '../icons/Console.jsx';
 import Bar from './Bar.jsx';
 
 // =====================================================================================================================
@@ -31,28 +29,6 @@ class App extends React.PureComponent {
         return (
             <div css={SX.root}>
                 <Bar />
-                <br />
-                <br />
-                <br />
-                <Button
-                    icon={Console}
-                    label={'Toggle Console'}
-                    onClick={this.onToggleConsoleClick}
-                    variant={'simple'}
-                />
-                <Button
-                    icon={Console}
-                    label={'Toggle Console'}
-                    onClick={this.onToggleConsoleClick}
-                    variant={'inverted'}
-                />
-                <Button
-                    icon={Console}
-                    label={'Toggle Console'}
-                    onClick={this.onToggleConsoleClick}
-                    variant={'contained'}
-                />
-                <br />
                 <br />
                 <br />
                 {user ? (
@@ -87,25 +63,6 @@ class App extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onReloadClick = () => {
-        window.location.reload();
-    };
-
-    /**
-     *
-     */
-    onToggleConsoleClick = () => {
-        if (localStorage.getItem('console')) {
-            localStorage.removeItem('console');
-        } else {
-            localStorage.setItem('console', 'emulated');
-        }
-        window.location.reload();
-    };
-
     /**
      *
      */

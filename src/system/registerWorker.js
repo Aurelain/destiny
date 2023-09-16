@@ -1,5 +1,6 @@
 import {ENDPOINT_GET_VERSION, VERSION} from '../COMMON.js';
 import requestEndpoint from './requestEndpoint.js';
+import assume from '../utils/assume.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -8,6 +9,8 @@ import requestEndpoint from './requestEndpoint.js';
  *
  */
 const registerWorker = async () => {
+    assume(navigator.serviceWorker, 'No service worker, check SSL!');
+
     // console.log('Client: The Client has version', VERSION);
 
     await navigator.serviceWorker.register('./sw.js', {scope: './'});
