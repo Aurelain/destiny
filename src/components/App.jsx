@@ -4,6 +4,8 @@ import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import New from './New.jsx';
+import assume from '../utils/assume.js';
+import {CLIENT_EVENTS_KEY, CLIENT_USER_KEY} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -14,17 +16,17 @@ import New from './New.jsx';
 // =====================================================================================================================
 class App extends React.PureComponent {
     state = {
-        user: null,
-        database: [], // ALL known events
+        user: readUserFromStorage(), // user info
+        events: readEventsFromStorage(), // ALL known events
     };
 
     render() {
-        const {user, database} = this.state;
+        const {user, events} = this.state;
         return (
             <>
                 <Bar />
                 {!user && <Connect onUser={this.onConnectUser} />}
-                {user && <Calendar database={database} onChange={this.onCalendarChange} />}
+                {user && <Calendar events={events} onChange={this.onCalendarChange} />}
                 {user && <New />}
             </>
         );
@@ -51,9 +53,9 @@ class App extends React.PureComponent {
     /**
      *
      */
-    onCalendarChange = (database) => {
+    onCalendarChange = (events) => {
         this.setState({
-            database,
+            events,
         });
     };
 
@@ -64,6 +66,36 @@ class App extends React.PureComponent {
         console.log('document.hidden', document.hidden);
     };
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const readUserFromStorage = () => {
+    try {
+        const user = JSON.parse(localStorage.getItem(CLIENT_USER_KEY));
+        assume(user.email);
+        return user;
+    } catch (e) {
+        return undefined;
+    }
+};
+
+/**
+ *
+ */
+const readEventsFromStorage = () => {
+    try {
+        const events = JSON.parse(localStorage.getItem(CLIENT_EVENTS_KEY));
+        assume(Array.isArray(events));
+        return events;
+    } catch (e) {
+        console.log(e);
+        return undefined;
+    }
+};
 
 // =====================================================================================================================
 //  E X P O R T

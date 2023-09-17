@@ -1,10 +1,9 @@
-import requestJson from '../utils/requestJson.js';
 import {LOCAL_LIST_KEY, USE_MOCK} from '../system/SW.js';
 import getList_MOCK from './getList_MOCK.js';
-import ensureTokens from '../system/ensureTokens.js';
 import checkOffline from '../utils/checkOffline.js';
 import assume from '../utils/assume.js';
 import localforage from 'localforage';
+import requestApiEndpoint from '../system/requestApiEndpoint.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -21,7 +20,12 @@ async function getList() {
         return await readListFromStorage();
     }
 
-    const list = await getOnlineEvents();
+    const calendarsList = await getOnlineCalendarsList();
+    const list = [];
+    for (const {id} of calendarsList) {
+        const events = await getOnlineEvents(id);
+        list.push(...events);
+    }
 
     // Cache the list for later use (e.g. when offline)
     await localforage.setItem(LOCAL_LIST_KEY, list);
@@ -35,25 +39,32 @@ async function getList() {
 /**
  *
  */
-const getOnlineEvents = async () => {
-    const tokens = await ensureTokens();
-    const result = await requestJson('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
+const getOnlineCalendarsList = async () => {
+    const result = await requestApiEndpoint('https://www.googleapis.com/calendar/v3/users/me/calendarList');
+    const list = result.items;
+    assume(list, 'Calendar list is missing from online reply!');
+    assume(Array.isArray(list), 'Unexpected calendar list type in online reply!');
+    return list;
+};
+
+/**
+ *
+ */
+const getOnlineEvents = async (calendarId) => {
+    const result = await requestApiEndpoint('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
         searchParams: {
-            calendarId: 'primary',
+            calendarId: calendarId,
             timeMin: new Date().toISOString(),
             showDeleted: false,
             singleEvents: true,
             maxResults: 9,
             orderBy: 'startTime',
         },
-        headers: {
-            Authorization: `Bearer ${tokens.access_token}`,
-        },
     });
     const list = result.items;
     assume(list, 'List is missing from online reply!');
     assume(Array.isArray(list), 'Unexpected list type in online reply!');
-    return result.items;
+    return list;
 };
 
 /**

@@ -4,7 +4,7 @@ import {ENDPOINT_GET_USER} from '../COMMON.js';
 import connectGoogle from '../system/connectGoogle.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 import PropTypes from 'prop-types';
-import {BAR_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT, CLIENT_USER_KEY} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -49,9 +49,7 @@ class Connect extends React.PureComponent {
      *
      */
     onButtonClick = async () => {
-        console.log('Connecting to Google...');
-        const result = await connectGoogle();
-        console.log('Finished connecting:', result);
+        await connectGoogle();
         this.requestUser();
     };
 
@@ -59,8 +57,10 @@ class Connect extends React.PureComponent {
      *
      */
     requestUser = async (silent) => {
+        let user;
         try {
-            const user = await requestEndpoint(ENDPOINT_GET_USER);
+            user = await requestEndpoint(ENDPOINT_GET_USER);
+            localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(user));
             this.props.onUser(user);
         } catch (e) {
             if (silent) {

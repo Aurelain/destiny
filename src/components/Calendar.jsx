@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import requestEndpoint from '../system/requestEndpoint.js';
 import {ENDPOINT_GET_LIST} from '../COMMON.js';
-import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT, CLIENT_EVENTS_KEY, NEW_HEIGHT} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -23,10 +23,11 @@ const SX = {
 // =====================================================================================================================
 class Calendar extends React.PureComponent {
     render() {
-        const {database} = this.props;
+        const {events} = this.props;
+        const list = events || [];
         return (
             <div css={SX.root}>
-                {database.map((item, index) => (
+                {list.map((item, index) => (
                     <div css={SX.event} key={index}>
                         {item.summary}
                     </div>
@@ -39,16 +40,16 @@ class Calendar extends React.PureComponent {
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
     componentDidMount() {
-        this.requestDatabase();
+        this.requestEvents();
     }
 
     /**
      *
      */
-    requestDatabase = async () => {
-        const database = await requestEndpoint(ENDPOINT_GET_LIST);
-        console.log('database:', database);
-        this.props.onChange(database);
+    requestEvents = async () => {
+        const events = await requestEndpoint(ENDPOINT_GET_LIST);
+        localStorage.setItem(CLIENT_EVENTS_KEY, JSON.stringify(events));
+        this.props.onChange(events);
     };
 }
 
@@ -56,7 +57,7 @@ class Calendar extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Calendar.propTypes = {
-    database: PropTypes.array.isRequired,
+    events: PropTypes.array,
     onChange: PropTypes.func.isRequired,
 };
 export default Calendar;
