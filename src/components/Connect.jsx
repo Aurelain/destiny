@@ -4,6 +4,7 @@ import {ENDPOINT_GET_USER} from '../COMMON.js';
 import connectGoogle from '../system/connectGoogle.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 import PropTypes from 'prop-types';
+import {BAR_HEIGHT} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -12,9 +13,8 @@ const SX = {
     root: {
         display: 'flex',
         flexGrow: 1,
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: 32,
+        paddingTop: BAR_HEIGHT + 32,
     },
 };
 

@@ -1,7 +1,7 @@
 import requestJson from '../utils/requestJson.js';
-import readTokens from '../system/readTokens.js';
 import {USE_MOCK} from '../system/SW.js';
 import getList_MOCK from './getList_MOCK.js';
+import ensureTokens from '../system/ensureTokens.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -14,7 +14,7 @@ async function getList() {
         return getList_MOCK.items;
     }
 
-    const tokens = await readTokens();
+    const tokens = await ensureTokens();
     const result = await requestJson('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
         searchParams: {
             calendarId: 'primary',

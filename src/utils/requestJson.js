@@ -7,12 +7,6 @@
 const requestJson = async (url, options = null) => {
     const fetchOptions = {...options};
 
-    let tolerateFail;
-    if (fetchOptions?.tolerateFail) {
-        tolerateFail = true;
-        delete fetchOptions.tolerateFail;
-    }
-
     if (fetchOptions.searchParams) {
         url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
         delete fetchOptions.searchParams;
@@ -35,11 +29,7 @@ const requestJson = async (url, options = null) => {
     try {
         response = await fetch(url, fetchOptions);
     } catch (e) {
-        if (tolerateFail) {
-            return null;
-        } else {
-            throw new Error(`Failed to fetch "${url}"!`);
-        }
+        throw new Error(`Failed to fetch "${url}"!`);
     }
 
     let json;
