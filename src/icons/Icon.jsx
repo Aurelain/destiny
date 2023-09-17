@@ -6,9 +6,10 @@ import PropTypes from 'prop-types';
 // =====================================================================================================================
 class Icon extends React.PureComponent {
     render() {
+        const {path, styling} = this.props;
         return (
-            <svg viewBox="0 0 24 24" width={24} height={24}>
-                <path d={this.props.path} style={{fill: 'currentcolor'}} />
+            <svg css={styling} viewBox="0 0 24 24" width={24} height={24}>
+                <path d={path} style={{fill: 'currentcolor'}} />
             </svg>
         );
     }
@@ -19,5 +20,6 @@ class Icon extends React.PureComponent {
 // =====================================================================================================================
 Icon.propTypes = {
     path: PropTypes.string,
+    styling: PropTypes.object,
 };
 export default Icon;

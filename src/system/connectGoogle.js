@@ -2,6 +2,7 @@ import {ENDPOINT_SET_TOKENS, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../CO
 import requestEndpoint from './requestEndpoint.js';
 import embedScriptFile from '../utils/embedScriptFile.js';
 import assume from '../utils/assume.js';
+import fetchWithLoading from '../utils/fetchWithLoading.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -46,7 +47,7 @@ const connectGoogle = async () => {
  * }
  */
 const onCodeReceived = async (response) => {
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    const tokenResponse = await fetchWithLoading('https://oauth2.googleapis.com/token', {
         method: 'POST',
         body: JSON.stringify({
             client_id: GOOGLE_CLIENT_ID,

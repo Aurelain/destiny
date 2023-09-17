@@ -1,3 +1,5 @@
+import fetchWithLoading from './fetchWithLoading.js';
+
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
@@ -27,7 +29,7 @@ const requestJson = async (url, options = null) => {
 
     let response;
     try {
-        response = await fetch(url, fetchOptions);
+        response = await fetchWithLoading(url, fetchOptions);
     } catch (e) {
         throw new Error(`Failed to fetch "${url}"!`);
     }

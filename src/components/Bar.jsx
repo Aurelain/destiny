@@ -7,6 +7,8 @@ import Console from '../icons/Console.jsx';
 import {VERSION} from '../COMMON.js';
 import {BAR_HEIGHT} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
+import Spin from '../icons/Spin.jsx';
+import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -31,12 +33,12 @@ const SX = {
     },
 };
 
-const MENU_ITEM_TOGGLE = 'MENU_ITEM_TOGGLE';
+const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU = [
     {
-        name: MENU_ITEM_TOGGLE,
+        name: MENU_SHOW_CONSOLE,
         icon: Console,
-        label: 'Toggle Console',
+        label: 'Show Console',
     },
 ];
 
@@ -46,15 +48,17 @@ const MENU = [
 class Bar extends React.PureComponent {
     state = {
         isMenuOpen: false,
+        isLoading: false,
     };
 
     render() {
-        const {isMenuOpen} = this.state;
+        const {isMenuOpen, isLoading} = this.state;
+        const reloadIcon = isLoading ? Spin : Reload;
         return (
             <div css={SX.root}>
                 <Button label={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
                 <div css={SX.grow} />
-                <Button label={Reload} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
+                <Button label={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <SideMenu
                     isOpen={isMenuOpen}
                     onClose={this.onMenuClose}
@@ -69,6 +73,17 @@ class Bar extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    componentDidMount() {
+        addFetchListener(this.onFetchChange);
+        this.setState({
+            isLoading: checkIsLoading(),
+        });
+    }
+
+    componentWillUnmount() {
+        removeFetchListener(this.onFetchChange);
+    }
+
     /**
      *
      */
@@ -92,12 +107,8 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = (event, name) => {
         switch (name) {
-            case MENU_ITEM_TOGGLE:
-                if (localStorage.getItem('console')) {
-                    localStorage.removeItem('console');
-                } else {
-                    localStorage.setItem('console', 'emulated');
-                }
+            case MENU_SHOW_CONSOLE:
+                localStorage.setItem('console', 'emulated');
                 window.location.reload();
                 break;
             default:
@@ -110,6 +121,13 @@ class Bar extends React.PureComponent {
      */
     onReloadClick = () => {
         window.location.reload();
+    };
+
+    /**
+     *
+     */
+    onFetchChange = (isLoading) => {
+        this.setState({isLoading});
     };
 }
 

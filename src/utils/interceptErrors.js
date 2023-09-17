@@ -1,7 +1,7 @@
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const DESTROY_TIMEOUT = 1000;
+const DESTROY_TIMEOUT = 2000;
 let queue;
 let destroyTimeout;
 let containerElement;
@@ -62,7 +62,7 @@ const panic = (type, stack) => {
             background:red;
             color:white;
             border-radius:4px;
-            font-family:monospace;
+            font-family:Arial, sans-serif;
             font-size:16px;
             white-space:pre-wrap;
             cursor:pointer;
@@ -106,6 +106,7 @@ const onContainerClick = () => {
     if (!isExpanded) {
         isExpanded = true;
         clearTimeout(destroyTimeout);
+        containerElement.style.fontFamily = 'monospace';
         renderQueue();
     } else {
         destroyContainerElement();
