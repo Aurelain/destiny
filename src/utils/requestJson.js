@@ -4,21 +4,44 @@
 /**
  *
  */
-const requestJson = async (url, body = null, settings = null) => {
-    const config = {};
-    if (body) {
-        config.method = 'POST';
-        config.body = JSON.stringify(body);
+const requestJson = async (url, options = null) => {
+    const fetchOptions = {...options};
+
+    let tolerateFail;
+    if (fetchOptions?.tolerateFail) {
+        tolerateFail = true;
+        delete fetchOptions.tolerateFail;
     }
-    if (settings) {
-        Object.assign(config, settings);
+
+    if (fetchOptions.searchParams) {
+        url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
+        delete fetchOptions.searchParams;
     }
+
+    if (fetchOptions.body) {
+        fetchOptions.method = fetchOptions.method || 'POST';
+        fetchOptions.body = JSON.stringify(fetchOptions.body);
+    }
+
+    if (fetchOptions.headers) {
+        const headers = new Headers();
+        for (const key in fetchOptions.headers) {
+            headers.append(key, fetchOptions.headers[key]);
+        }
+        fetchOptions.headers = headers;
+    }
+
     let response;
     try {
-        response = await fetch(url, config);
+        response = await fetch(url, fetchOptions);
     } catch (e) {
-        throw new Error(`Failed to fetch "${url}"!`);
+        if (tolerateFail) {
+            return null;
+        } else {
+            throw new Error(`Failed to fetch "${url}"!`);
+        }
     }
+
     let json;
     try {
         json = await response.json();

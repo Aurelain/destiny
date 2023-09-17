@@ -4,26 +4,36 @@
 /**
  *
  */
-const requestJson = async (url, body = null, settings = null) => {
+const requestJson = async (url, options = null) => {
+    const fetchOptions = {...options};
+
     let tolerateFail;
-    if (settings?.tolerateFail) {
+    if (fetchOptions?.tolerateFail) {
         tolerateFail = true;
-        delete settings.tolerateFail;
+        delete fetchOptions.tolerateFail;
     }
 
-    const config = {};
-    if (body) {
-        config.method = 'POST';
-        config.body = JSON.stringify(body);
+    if (fetchOptions.searchParams) {
+        url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
+        delete fetchOptions.searchParams;
     }
 
-    if (settings) {
-        Object.assign(config, settings);
+    if (fetchOptions.body) {
+        fetchOptions.method = fetchOptions.method || 'POST';
+        fetchOptions.body = JSON.stringify(fetchOptions.body);
+    }
+
+    if (fetchOptions.headers) {
+        const headers = new Headers();
+        for (const key in fetchOptions.headers) {
+            headers.append(key, fetchOptions.headers[key]);
+        }
+        fetchOptions.headers = headers;
     }
 
     let response;
     try {
-        response = await fetch(url, config);
+        response = await fetch(url, fetchOptions);
     } catch (e) {
         if (tolerateFail) {
             return null;

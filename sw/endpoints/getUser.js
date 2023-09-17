@@ -49,10 +49,10 @@ const getUser = async () => {
  * https://stackoverflow.com/a/72387301/844393
  */
 const getUserProfileData = async (accessToken) => {
-    const headers = new Headers();
-    headers.append('Authorization', `Bearer ${accessToken}`);
-    const user = await requestJson('https://www.googleapis.com/oauth2/v3/userinfo', null, {
-        headers,
+    const user = await requestJson('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
         tolerateFail: true,
     });
     if (!user) {

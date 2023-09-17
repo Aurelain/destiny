@@ -1,4 +1,5 @@
-// import localforage from 'localforage';
+import requestJson from '../utils/requestJson.js';
+import readTokens from '../system/readTokens.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -7,15 +8,27 @@
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
+
 /**
  *
  */
 async function getList() {
-    // const access_token = await localforage.getItem('access_token');
-    // if (!access_token) {
-    //     return;
-    // }
-    return ['a', 'b', 'c'];
+    const tokens = await readTokens();
+    const result = await requestJson('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
+        searchParams: {
+            calendarId: 'primary',
+            timeMin: new Date().toISOString(),
+            showDeleted: false,
+            singleEvents: true,
+            maxResults: 9,
+            orderBy: 'startTime',
+        },
+        headers: {
+            Authorization: `Bearer ${tokens.access_token}`,
+        },
+    });
+    console.log('result:', result);
+    return result.items;
 }
 
 // =====================================================================================================================
