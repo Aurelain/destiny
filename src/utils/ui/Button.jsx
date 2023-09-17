@@ -12,6 +12,8 @@ const SX = {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
+        textAlign: 'center',
+        lineHeight: 1.5,
         touchAction: 'none', // so dragging/scrolling doesn't mess with us
         cursor: 'pointer',
         padding: 2,
@@ -46,9 +48,12 @@ const SX = {
 
     // Variant `contained`:
     contained_normal: {
-        borderRadius: 6,
+        borderRadius: 4,
         color: '#fff',
         backgroundColor: '#1976d2',
+        padding: '6px 16px',
+        boxShadow:
+            '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
     },
     contained_hover: {
         backgroundColor: '#1565c0',

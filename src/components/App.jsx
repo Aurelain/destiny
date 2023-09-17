@@ -1,16 +1,17 @@
 import React from 'react';
-import connectGoogle from '../system/connectGoogle.js';
-import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
-import requestEndpoint from '../system/requestEndpoint.js';
+import {VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
+import Connect from './Connect.jsx';
+import Calendar from './Calendar.jsx';
+import New from './New.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const LIVE = false;
 const SX = {
     root: {
         display: 'flex',
+        height: '100%',
         flexDirection: 'column',
     },
 };
@@ -25,17 +26,13 @@ class App extends React.PureComponent {
     };
 
     render() {
-        const {user} = this.state;
+        const {user, database} = this.state;
         return (
             <div css={SX.root}>
                 <Bar />
-                <br />
-                <br />
-                {user ? (
-                    <div>Hello, {user.email}</div>
-                ) : (
-                    <button onClick={this.onConnectClick}>Connect your Google Calendar</button>
-                )}
+                {!user && <Connect onUser={this.onConnectUser} />}
+                {user && <Calendar database={database} onChange={this.onCalendarChange} />}
+                {user && <New />}
             </div>
         );
     }
@@ -43,21 +40,7 @@ class App extends React.PureComponent {
     async componentDidMount() {
         console.log(`Version ${VERSION}`);
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
-        let user;
-        try {
-            if (LIVE) {
-                user = await requestEndpoint(ENDPOINT_GET_USER);
-            }
-        } catch (e) {
-            console.log(`Could not get user! ${e.message}`);
-            user = null;
-        }
-
         document.body.removeChild(document.getElementById('spinner'));
-        this.setState({
-            isInitialized: true,
-            user,
-        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -66,10 +49,19 @@ class App extends React.PureComponent {
     /**
      *
      */
-    onConnectClick = async () => {
-        console.log('Connecting to Google...');
-        const result = await connectGoogle();
-        console.log('Finished connecting:', result);
+    onConnectUser = (user) => {
+        this.setState({
+            user,
+        });
+    };
+
+    /**
+     *
+     */
+    onCalendarChange = (database) => {
+        this.setState({
+            database,
+        });
     };
 
     /**

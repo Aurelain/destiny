@@ -1,51 +1,36 @@
 import React from 'react';
-import {Global, ThemeProvider} from '@emotion/react';
 import PropTypes from 'prop-types';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const THEME = {};
-const GLOBAL = {
-    '*': {
-        userSelect: 'none',
-        boxSizing: 'border-box',
-        fontFamily: 'system-ui',
-    },
-    html: {
-        lineHeight: 1,
-        textSizeAdjust: '100%',
-        height: '100%',
-    },
-    body: {
-        height: '100%',
-        margin: 0,
-        overscrollBehaviorY: 'contain', // https://stackoverflow.com/a/58614274/844393
-    },
-    '#root': {
-        height: '100%',
+const SX = {
+    root: {
+        flexGrow: 1,
+        display: 'flex',
+        padding: 16,
     },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class GlobalStyles extends React.PureComponent {
+class Calendar extends React.PureComponent {
     render() {
-        const {children} = this.props;
-        return (
-            <ThemeProvider theme={THEME}>
-                <Global styles={GLOBAL} />
-                {children}
-            </ThemeProvider>
-        );
+        return <div css={SX.root} />;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // P R I V A T E
+    // -----------------------------------------------------------------------------------------------------------------
+    componentDidMount() {}
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-GlobalStyles.propTypes = {
-    children: PropTypes.node,
+Calendar.propTypes = {
+    database: PropTypes.array.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
-export default GlobalStyles;
+export default Calendar;

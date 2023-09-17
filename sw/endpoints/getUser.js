@@ -4,7 +4,14 @@ import requestJson from '../utils/requestJson.js';
 import readTokens from '../system/readTokens.js';
 import readUser from '../system/readUser.js';
 import localforage from 'localforage';
-import {LOCAL_USER_KEY} from '../system/SW.js';
+import {LOCAL_USER_KEY, USE_MOCK} from '../system/SW.js';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const MOCK = {
+    email: 'foo@bar.com',
+};
 
 // =====================================================================================================================
 //  P U B L I C
@@ -13,6 +20,10 @@ import {LOCAL_USER_KEY} from '../system/SW.js';
  *
  */
 const getUser = async () => {
+    if (USE_MOCK) {
+        return MOCK;
+    }
+
     let tokens = await readTokens();
     let user = await getUserProfileData(tokens.access_token);
     if (user.error) {
