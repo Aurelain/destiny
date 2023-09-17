@@ -28,6 +28,7 @@ const VIRTUAL_ENDPOINTS = {
 const IGNORED_ENDPOINTS = {
     client: true, // https://accounts.google.com/gsi/client
     token: true, // https://oauth2.googleapis.com/token
+    'dot.png': true, // ./meta/dot.png
 };
 
 // =====================================================================================================================

@@ -1,4 +1,5 @@
 import announceClients from './announceClients.js';
+import getSwHome from './getSwHome.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -37,10 +38,10 @@ const onWorkerInstall = (event) => {
     event.waitUntil(
         (async () => {
             const cache = await caches.open(currentVersion);
-            const prefix = self.location.href.replace(/\/[^/]*$/, '');
+            const home = getSwHome();
             const absolutePaths = [];
             for (const relativePath of currentCachedPaths) {
-                absolutePaths.push(prefix + relativePath);
+                absolutePaths.push(home + relativePath);
             }
             await cache.addAll(absolutePaths);
         })(),

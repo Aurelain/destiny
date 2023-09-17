@@ -5,6 +5,7 @@ import {LOCAL_USER_KEY, USE_MOCK} from '../system/SW.js';
 import getUser_MOCK from './getUser_MOCK.js';
 import ensureTokens from '../system/ensureTokens.js';
 import checkPojo from '../utils/checkPojo.js';
+import checkOffline from '../utils/checkOffline.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -17,9 +18,9 @@ const getUser = async () => {
         return getUser_MOCK;
     }
 
-    // if (checkOffline()) {
-    //     return await readUserFromStorage();
-    // }
+    if (await checkOffline()) {
+        return await readUserFromStorage();
+    }
 
     const user = await getOnlineUserProfileData();
 

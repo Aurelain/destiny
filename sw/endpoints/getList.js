@@ -1,7 +1,10 @@
 import requestJson from '../utils/requestJson.js';
-import {USE_MOCK} from '../system/SW.js';
+import {LOCAL_LIST_KEY, USE_MOCK} from '../system/SW.js';
 import getList_MOCK from './getList_MOCK.js';
 import ensureTokens from '../system/ensureTokens.js';
+import checkOffline from '../utils/checkOffline.js';
+import assume from '../utils/assume.js';
+import localforage from 'localforage';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -14,6 +17,25 @@ async function getList() {
         return getList_MOCK.items;
     }
 
+    if (await checkOffline()) {
+        return await readListFromStorage();
+    }
+
+    const list = await getOnlineEvents();
+
+    // Cache the list for later use (e.g. when offline)
+    await localforage.setItem(LOCAL_LIST_KEY, list);
+
+    return list;
+}
+
+// =====================================================================================================================
+//  P R I V A T E
+// =====================================================================================================================
+/**
+ *
+ */
+const getOnlineEvents = async () => {
     const tokens = await ensureTokens();
     const result = await requestJson('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
         searchParams: {
@@ -28,13 +50,21 @@ async function getList() {
             Authorization: `Bearer ${tokens.access_token}`,
         },
     });
-    console.log('result:', result);
+    const list = result.items;
+    assume(list, 'List is missing from online reply!');
+    assume(Array.isArray(list), 'Unexpected list type in online reply!');
     return result.items;
-}
+};
 
-// =====================================================================================================================
-//  P R I V A T E
-// =====================================================================================================================
+/**
+ *
+ */
+const readListFromStorage = async () => {
+    const list = await localforage.getItem(LOCAL_LIST_KEY);
+    assume(list, 'List is missing from storage!');
+    assume(Array.isArray(list), 'Unexpected list type in storage!');
+    return list;
+};
 
 // =====================================================================================================================
 //  E X P O R T
