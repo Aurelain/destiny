@@ -1,4 +1,13 @@
 // =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const DESTROY_TIMEOUT = 1000;
+let queue;
+let destroyTimeout;
+let containerElement;
+let isExpanded = false;
+
+// =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
 /**
@@ -41,13 +50,77 @@ const onServiceWorkerMessage = (event) => {
  *
  */
 const panic = (type, stack) => {
-    window.removeEventListener('error', onError, true);
-    window.removeEventListener('unhandledrejection', onUnhandledRejection, true);
-    document.body.style.cssText = 'background:red;color:white;padding:8px;font-family:monospace;white-space:pre-wrap';
-    document.body.innerHTML = `
-Unexpected ${type}!
-${stack}
-`.trim();
+    clearTimeout(destroyTimeout);
+    if (!queue) {
+        queue = [];
+        containerElement = document.createElement('div');
+        containerElement.style.cssText = `
+            position:fixed;
+            z-index:999999;
+            inset:16px 16px auto 16px;
+            padding: 8px;
+            background:red;
+            color:white;
+            border-radius:4px;
+            font-family:monospace;
+            font-size:16px;
+            white-space:pre-wrap;
+            cursor:pointer;
+        `;
+        containerElement.addEventListener('click', onContainerClick);
+        document.body.appendChild(containerElement);
+    }
+    if (!isExpanded) {
+        destroyTimeout = setTimeout(onDestroyTimeout, DESTROY_TIMEOUT);
+    }
+    queue.push({type, stack});
+    renderQueue();
+};
+
+/**
+ *
+ */
+const renderQueue = () => {
+    let items = [];
+    for (const {type, stack} of queue) {
+        if (isExpanded) {
+            items.push(type + '<br/>' + stack);
+        } else {
+            items.push(stack.match(/.*/)[0]);
+        }
+    }
+    containerElement.innerHTML = `<ul><li>${items.join('</li><li>')}</li></ul>`;
+};
+
+/**
+ *
+ */
+const onDestroyTimeout = () => {
+    destroyContainerElement();
+};
+
+/**
+ *
+ */
+const onContainerClick = () => {
+    if (!isExpanded) {
+        isExpanded = true;
+        clearTimeout(destroyTimeout);
+        renderQueue();
+    } else {
+        destroyContainerElement();
+    }
+};
+
+/**
+ *
+ */
+const destroyContainerElement = () => {
+    queue = null;
+    document.body.removeChild(containerElement);
+    containerElement = null;
+    isExpanded = false;
+    clearTimeout(destroyTimeout);
 };
 
 // =====================================================================================================================

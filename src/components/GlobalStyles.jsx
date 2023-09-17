@@ -10,11 +10,11 @@ const GLOBAL = {
     '*': {
         userSelect: 'none',
         boxSizing: 'border-box',
-        fontFamily: 'system-ui',
     },
     html: {
         lineHeight: 1,
         textSizeAdjust: '100%',
+        fontFamily: 'system-ui',
     },
     body: {
         margin: 0,
