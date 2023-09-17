@@ -1,11 +1,12 @@
 import React from 'react';
-import {VERSION} from '../COMMON.js';
+import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import New from './New.jsx';
 import assume from '../utils/assume.js';
 import {CLIENT_EVENTS_KEY, CLIENT_USER_KEY} from '../system/CLIENT.js';
+import requestEndpoint from '../system/requestEndpoint.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -25,17 +26,22 @@ class App extends React.PureComponent {
         return (
             <>
                 <Bar />
-                {!user && <Connect onUser={this.onConnectUser} />}
+                {!user && <Connect user={user} onChange={this.onConnectChange} />}
                 {user && <Calendar events={events} onChange={this.onCalendarChange} />}
                 {user && <New />}
             </>
         );
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         console.log(`Version ${VERSION}`);
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
+
+        if (this.state.user) {
+            // We were logged-in sometimes in the past. We should ensure the login is still valid:
+            this.requestUser();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -44,10 +50,8 @@ class App extends React.PureComponent {
     /**
      *
      */
-    onConnectUser = (user) => {
-        this.setState({
-            user,
-        });
+    onConnectChange = () => {
+        this.requestUser();
     };
 
     /**
@@ -64,6 +68,20 @@ class App extends React.PureComponent {
      */
     onDocumentVisibilityChange = async () => {
         console.log('document.hidden', document.hidden);
+    };
+
+    /**
+     *
+     */
+    requestUser = async () => {
+        try {
+            const user = await requestEndpoint(ENDPOINT_GET_USER);
+            this.setState({user});
+            localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(user));
+        } catch (e) {
+            this.setState({user: null});
+            throw new Error(e);
+        }
     };
 }
 
@@ -92,7 +110,6 @@ const readEventsFromStorage = () => {
         assume(Array.isArray(events));
         return events;
     } catch (e) {
-        console.log(e);
         return undefined;
     }
 };

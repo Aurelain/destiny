@@ -31,7 +31,8 @@ const ensureTokens = async () => {
  */
 const readTokensFromStorage = async () => {
     const tokens = await localforage.getItem(LOCAL_TOKENS_KEY);
-    assume(checkPojo(tokens), 'Unexpected tokens type!');
+    assume(tokens, 'Tokens not found in database!');
+    assume(checkPojo(tokens), `Unexpected tokens type! ${typeof tokens}`);
     assume(tokens.access_token && tokens.refresh_token, 'Unexpected tokens shape!');
     return tokens;
 };

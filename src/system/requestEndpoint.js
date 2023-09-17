@@ -7,8 +7,8 @@ import assume from '../utils/assume.js';
 /**
  *
  */
-const requestEndpoint = async (endpoint, body = null) => {
-    const json = await requestJson(endpoint, body);
+const requestEndpoint = async (endpoint, options = null) => {
+    const json = await requestJson(endpoint, options);
     assume(!json.error, json.error);
     return json.data;
 };

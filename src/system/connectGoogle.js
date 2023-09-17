@@ -59,7 +59,9 @@ const onCodeReceived = async (response) => {
     const tokens = await tokenResponse.json();
     console.log('tokens from google:', tokens);
 
-    const backEndReply = await requestEndpoint(ENDPOINT_SET_TOKENS, tokens);
+    const backEndReply = await requestEndpoint(ENDPOINT_SET_TOKENS, {
+        body: tokens,
+    });
     console.log('backEndReply:', backEndReply);
     currentResolve(backEndReply);
 
