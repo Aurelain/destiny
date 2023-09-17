@@ -2294,7 +2294,7 @@
   var setupSw_default = setupSw;
 
   // src/COMMON.js
-  var VERSION = "xYeSdjUZ";
+  var VERSION = "8ahSSi6H";
   var ENDPOINT_GET_LIST = "getList";
   var ENDPOINT_GET_VERSION = "getVersion";
   var ENDPOINT_GET_USER = "getUser";
@@ -2937,7 +2937,7 @@
   var setTokens_default = setTokens;
 
   // sw/sw.js
-  var CACHED_PATHS = ["/","/index.html","/js/main-xYeSdjUZ.js","/js/main-xYeSdjUZ.js.map","/manifest.json","/meta/192.png","/meta/512.png","/meta/apple-splash-1080-2340.png","/meta/destiny-1024.png","/meta/destiny.png","/meta/destiny.svg","/meta/dot.png"];
+  var CACHED_PATHS = ["/","/index.html","/js/main-8ahSSi6H.js","/js/main-8ahSSi6H.js.map","/manifest.json","/meta/192.png","/meta/512.png","/meta/apple-splash-1080-2340.png","/meta/destiny-1024.png","/meta/destiny.png","/meta/destiny.svg","/meta/dot.png"];
   var VIRTUAL_ENDPOINTS = {
     [ENDPOINT_GET_LIST]: getList_default,
     [ENDPOINT_GET_VERSION]: getVersion_default,

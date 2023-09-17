@@ -279,7 +279,15 @@ const onWindowPointerUp = () => {
  *
  */
 function log(...args) {
-    addLine(args.toString());
+    const parts = [];
+    for (const item of args) {
+        if (item && typeof item === 'object') {
+            parts.push(JSON.stringify(item, null, 4));
+        } else {
+            parts.push(item.toString());
+        }
+    }
+    addLine(parts.join(' '));
 }
 
 // =====================================================================================================================
