@@ -2,16 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import requestEndpoint from '../system/requestEndpoint.js';
 import {ENDPOINT_GET_LIST} from '../COMMON.js';
+import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
-        flexGrow: 1,
-        display: 'flex',
-        flexDirection: 'column',
         padding: 16,
+        paddingTop: BAR_HEIGHT,
+        paddingBottom: NEW_HEIGHT,
+    },
+    event: {
+        borderBottom: 'solid 1px silver',
     },
 };
 
@@ -24,7 +27,9 @@ class Calendar extends React.PureComponent {
         return (
             <div css={SX.root}>
                 {database.map((item, index) => (
-                    <div key={index}>{JSON.stringify(item)}</div>
+                    <div css={SX.event} key={index}>
+                        {item.summary}
+                    </div>
                 ))}
             </div>
         );

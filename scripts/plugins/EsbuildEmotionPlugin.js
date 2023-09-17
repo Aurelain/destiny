@@ -19,9 +19,14 @@ const EsbuildEmotionPlugin = {
         if (isDev) {
             build.onLoad({filter: /\.jsx$/}, async (args) => {
                 const code = await fs.promises.readFile(args.path, 'utf8');
+                const fileName = args.path.match(/[^\\/]*$/)[0];
+                const stem = fileName.replace(/\.jsx$/, '');
                 const sxMatch = code.match(SX_PATTERN);
                 if (sxMatch) {
-                    const sxWithLabels = sxMatch[0].replace(RULE_PATTERN, addLabel);
+                    const sxWithLabels = sxMatch[0].replace(RULE_PATTERN, (found, ruleName) => {
+                        const label = stem + '_' + ruleName.replace(/[^a-zA-Z0-9]/g, '');
+                        return `${ruleName}:{label:'${label}',`;
+                    });
                     return {
                         contents: code.replace(SX_PATTERN, sxWithLabels),
                         loader: 'jsx',
@@ -30,17 +35,6 @@ const EsbuildEmotionPlugin = {
             });
         }
     },
-};
-
-// =====================================================================================================================
-//  P R I V A T E
-// =====================================================================================================================
-/**
- *
- */
-const addLabel = (found, ruleName) => {
-    const label = ruleName.replace(/[^a-zA-Z0-9]/g, '');
-    return `${ruleName}:{label:'${label}',`;
 };
 
 // =====================================================================================================================

@@ -17,7 +17,7 @@ const SX = {
     },
     overlayIsOpen: {
         visibility: 'visible',
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     menu: {
         position: 'absolute',

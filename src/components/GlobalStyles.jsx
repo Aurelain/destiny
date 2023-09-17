@@ -15,15 +15,10 @@ const GLOBAL = {
     html: {
         lineHeight: 1,
         textSizeAdjust: '100%',
-        height: '100%',
     },
     body: {
-        height: '100%',
         margin: 0,
         overscrollBehaviorY: 'contain', // https://stackoverflow.com/a/58614274/844393
-    },
-    '#root': {
-        height: '100%',
     },
 };
 

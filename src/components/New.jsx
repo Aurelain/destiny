@@ -1,10 +1,16 @@
 import React from 'react';
+import {NEW_HEIGHT} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: NEW_HEIGHT,
         background: 'orange',
         display: 'flex',
         flexDirection: 'row',

@@ -8,13 +8,6 @@ import New from './New.jsx';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const SX = {
-    root: {
-        display: 'flex',
-        height: '100%',
-        flexDirection: 'column',
-    },
-};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -28,12 +21,12 @@ class App extends React.PureComponent {
     render() {
         const {user, database} = this.state;
         return (
-            <div css={SX.root}>
+            <>
                 <Bar />
                 {!user && <Connect onUser={this.onConnectUser} />}
                 {user && <Calendar database={database} onChange={this.onCalendarChange} />}
                 {user && <New />}
-            </div>
+            </>
         );
     }
 

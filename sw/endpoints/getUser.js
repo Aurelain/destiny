@@ -5,13 +5,7 @@ import readTokens from '../system/readTokens.js';
 import readUser from '../system/readUser.js';
 import localforage from 'localforage';
 import {LOCAL_USER_KEY, USE_MOCK} from '../system/SW.js';
-
-// =====================================================================================================================
-//  D E C L A R A T I O N S
-// =====================================================================================================================
-const MOCK = {
-    email: 'foo@bar.com',
-};
+import getUser_MOCK from './getUser_MOCK.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -21,7 +15,7 @@ const MOCK = {
  */
 const getUser = async () => {
     if (USE_MOCK) {
-        return MOCK;
+        return getUser_MOCK;
     }
 
     let tokens = await readTokens();

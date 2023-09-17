@@ -5,6 +5,7 @@ import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
 import {VERSION} from '../COMMON.js';
+import {BAR_HEIGHT} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
 
 // =====================================================================================================================
@@ -12,10 +13,15 @@ import assume from '../utils/assume.js';
 // =====================================================================================================================
 const SX = {
     root: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: BAR_HEIGHT,
+        zIndex: 100,
         display: 'flex',
-        color: '#fff',
         background: '#528c1e',
-        height: 60,
+        color: '#fff',
     },
     grow: {
         flexGrow: 1,
