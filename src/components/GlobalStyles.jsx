@@ -8,8 +8,10 @@ import PropTypes from 'prop-types';
 const THEME = {};
 const GLOBAL = {
     '*': {
-        userSelect: 'none',
         boxSizing: 'border-box',
+        userSelect: 'none',
+        WebkitTapHighlightColor: 'transparent', // tested on Chrome Android 2023-09-17
+        WebkitTouchCallout: 'none',
     },
     html: {
         lineHeight: 1,

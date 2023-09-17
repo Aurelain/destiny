@@ -5,7 +5,7 @@ import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
 import {VERSION} from '../COMMON.js';
-import {BAR_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
 import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
@@ -22,7 +22,7 @@ const SX = {
         height: BAR_HEIGHT,
         zIndex: 100,
         display: 'flex',
-        background: '#528c1e',
+        background: PRIMARY_COLOR,
         color: '#fff',
     },
     grow: {

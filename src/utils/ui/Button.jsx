@@ -17,9 +17,6 @@ const SX = {
         touchAction: 'none', // so dragging/scrolling doesn't mess with us
         cursor: 'pointer',
         padding: 2,
-        WebkitTapHighlightColor: 'transparent', // tested on Chrome Android 2023-09-17
-        WebkitTouchCallout: 'none',
-        userSelect: 'none',
         transitionProperty: 'background-color,color',
         transitionDuration: '250ms',
         transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
