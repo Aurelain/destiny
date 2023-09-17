@@ -1,6 +1,7 @@
 import assume from '../utils/assume.js';
 import localforage from 'localforage';
-import {LOCAL_USER_KEY, USE_MOCK} from '../system/SW.js';
+import {LOCAL_USER_KEY} from '../system/SW.js';
+import {USE_MOCK} from '../../src/COMMON.js';
 import getUser_MOCK from './getUser_MOCK.js';
 import checkPojo from '../utils/checkPojo.js';
 import checkOffline from '../utils/checkOffline.js';

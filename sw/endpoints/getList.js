@@ -1,5 +1,6 @@
-import {LOCAL_LIST_KEY, USE_MOCK} from '../system/SW.js';
+import {LOCAL_LIST_KEY} from '../system/SW.js';
 import getList_MOCK from './getList_MOCK.js';
+import {USE_MOCK} from '../../src/COMMON.js';
 import checkOffline from '../utils/checkOffline.js';
 import assume from '../utils/assume.js';
 import localforage from 'localforage';

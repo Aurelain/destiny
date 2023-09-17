@@ -1,5 +1,5 @@
 import React from 'react';
-import {ENDPOINT_GET_USER, VERSION} from '../COMMON.js';
+import {ENDPOINT_GET_USER, USE_MOCK, VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
@@ -92,6 +92,11 @@ class App extends React.PureComponent {
  *
  */
 const readUserFromStorage = () => {
+    if (USE_MOCK) {
+        return {
+            email: 'foo@gmail.com',
+        };
+    }
     try {
         const user = JSON.parse(localStorage.getItem(CLIENT_USER_KEY));
         assume(user.email);
