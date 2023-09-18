@@ -1,5 +1,6 @@
 import requestJson from '../utils/requestJson.js';
 import ensureTokens from './ensureTokens.js';
+import validateJson from '../../src/utils/validateJson.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -7,7 +8,7 @@ import ensureTokens from './ensureTokens.js';
 /**
  *
  */
-const requestApiEndpoint = async (url, options = null) => {
+const requestApiEndpoint = async (url, schema, options = null) => {
     const tokens = await ensureTokens();
     const result = await requestJson(url, {
         ...options,
@@ -15,6 +16,9 @@ const requestApiEndpoint = async (url, options = null) => {
             Authorization: `Bearer ${tokens.access_token}`,
         },
     });
+
+    validateJson(result, schema);
+
     return result;
 };
 

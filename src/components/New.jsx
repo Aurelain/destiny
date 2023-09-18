@@ -24,6 +24,9 @@ const SX = {
         borderRadius: 20,
         padding: '0 16px',
         margin: '0 8px',
+        // TODO: remove this once we know it's not needed
+        // WebkitAppearance: 'none', // https://stackoverflow.com/a/73466347/844393
+        // appearance: 'none',
     },
     create: {
         background: PRIMARY_COLOR,
@@ -37,11 +40,16 @@ class New extends React.PureComponent {
     state = {
         value: '',
     };
+    // TODO: remove this once we know it's not needed
+    // uniqueInputName = Math.random().toString(); // https://github.com/terrylinooo/jquery.disableAutoFill
+
     render() {
         const {value} = this.state;
         return (
             <div css={SX.root}>
                 <input
+                    type={'search'}
+                    autoComplete={'off'}
                     css={SX.input}
                     spellCheck={false}
                     value={value}

@@ -6,6 +6,7 @@ import getUser_MOCK from './getUser_MOCK.js';
 import checkPojo from '../utils/checkPojo.js';
 import checkOffline from '../utils/checkOffline.js';
 import requestApiEndpoint from '../system/requestApiEndpoint.js';
+import UserSchema from '../../src/schemas/UserSchema.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -37,7 +38,7 @@ const getUser = async () => {
  * https://stackoverflow.com/a/72387301/844393
  */
 const getOnlineUserProfileData = async () => {
-    const user = await requestApiEndpoint('https://www.googleapis.com/oauth2/v3/userinfo');
+    const user = await requestApiEndpoint('https://www.googleapis.com/oauth2/v3/userinfo', UserSchema);
     assume(!user.error, user.error + ': ' + user.error_description);
     assume(user.email, 'Missing email from online user info!');
     return user;
