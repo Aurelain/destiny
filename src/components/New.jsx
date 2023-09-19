@@ -1,6 +1,7 @@
 import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import Button from '../utils/ui/Button.jsx';
+import PropTypes from 'prop-types';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -73,5 +74,7 @@ class New extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-New.propTypes = {};
+New.propTypes = {
+    store: PropTypes.object,
+};
 export default New;

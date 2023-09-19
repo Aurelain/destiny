@@ -13,13 +13,12 @@ import writeTokens from './writeTokens.js';
  *
  */
 const ensureTokens = async () => {
-    const storedTokens = await readTokensFromStorage();
+    const storedTokens = await readTokensFromIdb();
     if (Date.now() < storedTokens.expiration) {
         return storedTokens;
     } else {
         // Tokens expired
-        await refreshTokens();
-        return await readTokensFromStorage();
+        return await refreshTokens();
     }
 };
 
@@ -29,7 +28,7 @@ const ensureTokens = async () => {
 /**
  *
  */
-const readTokensFromStorage = async () => {
+const readTokensFromIdb = async () => {
     const tokens = await localforage.getItem(LOCAL_TOKENS_KEY);
     assume(tokens, 'Tokens not found in database!');
     assume(checkPojo(tokens), `Unexpected tokens type! ${typeof tokens}`);

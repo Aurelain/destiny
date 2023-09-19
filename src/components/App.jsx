@@ -1,12 +1,16 @@
 import React from 'react';
-import {ENDPOINT_GET_USER, USE_MOCK, VERSION} from '../COMMON.js';
+import {ENDPOINT_GET_STORE, VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import New from './New.jsx';
 import assume from '../utils/assume.js';
-import {CLIENT_EVENTS_KEY, CLIENT_USER_KEY} from '../system/CLIENT.js';
+import {LS_STORE_KEY} from '../system/CLIENT.js';
 import requestEndpoint from '../system/requestEndpoint.js';
+import validateJson from '../utils/validateJson.js';
+import UserSchema from '../schemas/UserSchema.js';
+import CalendarsSchema from '../schemas/CalendarsSchema.js';
+import EventsSchema from '../schemas/EventsSchema.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -17,18 +21,17 @@ import requestEndpoint from '../system/requestEndpoint.js';
 // =====================================================================================================================
 class App extends React.PureComponent {
     state = {
-        user: readUserFromStorage(), // user info
-        events: readEventsFromStorage(), // ALL known events
+        store: readStoreFromLocalStorage(), // just for fast caching, will be replaced by the store from SW
     };
 
     render() {
-        const {user, events} = this.state;
+        const {store} = this.state;
         return (
             <>
                 <Bar />
-                {!user && <Connect user={user} onChange={this.onConnectChange} />}
-                {user && <Calendar events={events} onChange={this.onCalendarChange} />}
-                {user && <New />}
+                {!store && <Connect onChange={this.onConnectChange} />}
+                {store && <Calendar store={store} onChange={this.onCalendarChange} />}
+                {store && <New store={store} />}
             </>
         );
     }
@@ -38,9 +41,9 @@ class App extends React.PureComponent {
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 
-        if (this.state.user) {
-            // We were logged-in sometimes in the past. We should ensure the login is still valid:
-            this.requestUser();
+        if (this.state.store) {
+            // We were logged-in sometimes in the past. We should update the store:
+            this.requestStore();
         }
     }
 
@@ -51,15 +54,15 @@ class App extends React.PureComponent {
      *
      */
     onConnectChange = () => {
-        this.requestUser();
+        this.requestStore();
     };
 
     /**
      *
      */
-    onCalendarChange = (events) => {
+    onCalendarChange = (store) => {
         this.setState({
-            events,
+            store,
         });
     };
 
@@ -73,11 +76,11 @@ class App extends React.PureComponent {
     /**
      *
      */
-    requestUser = async () => {
+    requestStore = async () => {
         try {
-            const user = await requestEndpoint(ENDPOINT_GET_USER);
-            this.setState({user});
-            localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(user));
+            const store = await requestEndpoint(ENDPOINT_GET_STORE);
+            this.setState({store});
+            localStorage.setItem(LS_STORE_KEY, JSON.stringify(store)); // cache for fast future boot
         } catch (e) {
             this.setState({user: null});
             throw new Error(e);
@@ -91,31 +94,25 @@ class App extends React.PureComponent {
 /**
  *
  */
-const readUserFromStorage = () => {
-    if (USE_MOCK) {
+const readStoreFromLocalStorage = () => {
+    try {
+        const store = JSON.parse(localStorage.getItem(LS_STORE_KEY));
+        assume(store, 'Store is missing from LocalStorage!');
+        validateJson(store.user, UserSchema);
+        validateJson(store.calendars, CalendarsSchema);
+        validateJson(store.events, EventsSchema);
+        return store;
+    } catch (e) {
+        console.log('Invalid store in LocalStorage!');
         return {
-            email: 'foo@gmail.com',
+            user: {
+                email: '',
+            },
+            calendars: {
+                items: [],
+            },
+            events: [],
         };
-    }
-    try {
-        const user = JSON.parse(localStorage.getItem(CLIENT_USER_KEY));
-        assume(user.email);
-        return user;
-    } catch (e) {
-        return undefined;
-    }
-};
-
-/**
- *
- */
-const readEventsFromStorage = () => {
-    try {
-        const events = JSON.parse(localStorage.getItem(CLIENT_EVENTS_KEY));
-        assume(Array.isArray(events));
-        return events;
-    } catch (e) {
-        return undefined;
     }
 };
 

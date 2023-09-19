@@ -2,9 +2,8 @@
 export const USE_MOCK = false;
 
 export const VERSION = '@BUILD_VERSION'; // DO NOT EDIT MANUALLY! This is handled  by the build script.
-export const ENDPOINT_GET_LIST = 'getList';
 export const ENDPOINT_GET_VERSION = 'getVersion';
-export const ENDPOINT_GET_USER = 'getUser';
+export const ENDPOINT_GET_STORE = 'getStore';
 export const ENDPOINT_SET_TOKENS = 'setTokens';
 
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?

@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import requestEndpoint from '../system/requestEndpoint.js';
-import {ENDPOINT_GET_LIST} from '../COMMON.js';
-import {BAR_HEIGHT, CLIENT_EVENTS_KEY, NEW_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -23,11 +21,10 @@ const SX = {
 // =====================================================================================================================
 class Calendar extends React.PureComponent {
     render() {
-        const {events} = this.props;
-        const list = events || [];
+        const {store} = this.props;
         return (
             <div css={SX.root}>
-                {list.map((item, index) => (
+                {store.events.map((item, index) => (
                     <div css={SX.event} key={index}>
                         {item.summary}
                     </div>
@@ -39,25 +36,14 @@ class Calendar extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    componentDidMount() {
-        this.requestEvents();
-    }
-
-    /**
-     *
-     */
-    requestEvents = async () => {
-        const events = await requestEndpoint(ENDPOINT_GET_LIST);
-        localStorage.setItem(CLIENT_EVENTS_KEY, JSON.stringify(events));
-        this.props.onChange(events);
-    };
+    componentDidMount() {}
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
 Calendar.propTypes = {
-    events: PropTypes.array,
+    store: PropTypes.object,
     onChange: PropTypes.func.isRequired,
 };
 export default Calendar;
