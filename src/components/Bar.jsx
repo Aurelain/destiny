@@ -64,7 +64,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    subtitle={'v' + VERSION}
+                    subtitle={VERSION}
                     list={MENU}
                 />
             </div>

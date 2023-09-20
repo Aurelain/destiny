@@ -1,48 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
-import Event from './Event.jsx';
-import objectify from '../utils/objectify.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
-        padding: 16,
-        paddingTop: BAR_HEIGHT,
-        paddingBottom: NEW_HEIGHT,
-    },
-    event: {
-        borderBottom: 'solid 1px silver',
+        marginLeft: 64,
+        borderRadius: 4,
+        overflow: 'hidden',
+        height: 24,
     },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class Calendar extends React.PureComponent {
-    state = {
-        collapsedIds: {},
-    };
-
+class Event extends React.PureComponent {
     render() {
-        const {store} = this.props;
-        const {calendars, events} = store;
-        const calendarsById = objectify(calendars, 'id');
+        const {title, backgroundColor, foregroundColor} = this.props;
         return (
             <div css={SX.root}>
-                {events.map((item, index) => {
-                    const {backgroundColor, foregroundColor} = calendarsById[item.calendarId];
-                    return (
-                        <Event
-                            key={index}
-                            backgroundColor={backgroundColor}
-                            foregroundColor={foregroundColor}
-                            title={item.summary}
-                        />
-                    );
-                })}
+                <div
+                    css={SX.title}
+                    style={{
+                        backgroundColor,
+                        color: foregroundColor,
+                    }}
+                >
+                    {title}
+                </div>
             </div>
         );
     }
@@ -56,8 +43,10 @@ class Calendar extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-Calendar.propTypes = {
-    store: PropTypes.object,
-    onChange: PropTypes.func.isRequired,
+Event.propTypes = {
+    hasDay: PropTypes.bool,
+    title: PropTypes.string.isRequired,
+    backgroundColor: PropTypes.string.isRequired,
+    foregroundColor: PropTypes.string.isRequired,
 };
-export default Calendar;
+export default Event;

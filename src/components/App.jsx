@@ -8,9 +8,7 @@ import assume from '../utils/assume.js';
 import {LS_STORE_KEY} from '../system/CLIENT.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 import validateJson from '../utils/validateJson.js';
-import UserSchema from '../schemas/UserSchema.js';
-import CalendarsSchema from '../schemas/CalendarsSchema.js';
-import EventsSchema from '../schemas/EventsSchema.js';
+import StoreSchema from '../schemas/StoreSchema.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -79,6 +77,7 @@ class App extends React.PureComponent {
     requestStore = async () => {
         try {
             const store = await requestEndpoint(ENDPOINT_GET_STORE);
+            console.log('store:', store);
             this.setState({store});
             localStorage.setItem(LS_STORE_KEY, JSON.stringify(store)); // cache for fast future boot
         } catch (e) {
@@ -98,11 +97,10 @@ const readStoreFromLocalStorage = () => {
     try {
         const store = JSON.parse(localStorage.getItem(LS_STORE_KEY));
         assume(store, 'Store is missing from LocalStorage!');
-        validateJson(store.user, UserSchema);
-        validateJson(store.calendars, CalendarsSchema);
-        validateJson(store.events, EventsSchema);
+        validateJson(store, StoreSchema);
         return store;
     } catch (e) {
+        console.log('e:', e);
         console.log('Invalid store in LocalStorage!');
         return {
             user: {

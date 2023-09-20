@@ -1,0 +1,22 @@
+{
+    "user": {
+        "email": "foo@gmail.com"
+    },
+    "calendars":[
+        {
+            "id": "foo@gmail.com",
+            "summary": "Foo Bar",
+            "backgroundColor": "#16a765",
+            "foregroundColor": "#000000"
+        }
+    ],
+    "events": [
+        {
+            "id": "52uj3nelsca3bgar5ii0ua2vgn",
+            "calendarId": "foo@gmail.com",
+            "summary": "Cabluri ethernet 6",
+            "start": "2023-09-23",
+            "end": "2023-09-24"
+        }
+    ]
+}
