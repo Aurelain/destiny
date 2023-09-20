@@ -10,6 +10,7 @@ import CalendarsSchema from '../../src/schemas/CalendarsSchema.js';
 import UserSchema from '../../src/schemas/UserSchema.js';
 import validateJson from '../../src/utils/validateJson.js';
 import StoreSchema from '../../src/schemas/StoreSchema.js';
+import convertColor from '../system/convertColor.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -80,8 +81,12 @@ const getCalendars = async () => {
         CalendarsSchema,
     );
     const output = [];
-    for (const {id, summary, backgroundColor, foregroundColor} of result.items) {
-        output.push({id, summary, backgroundColor, foregroundColor});
+    for (const {id, summary, backgroundColor} of result.items) {
+        output.push({
+            id,
+            summary,
+            backgroundColor: convertColor(backgroundColor),
+        });
     }
     return output;
 };

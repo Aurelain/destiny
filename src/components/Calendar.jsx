@@ -9,9 +9,10 @@ import objectify from '../utils/objectify.js';
 // =====================================================================================================================
 const SX = {
     root: {
-        padding: 16,
-        paddingTop: BAR_HEIGHT,
-        paddingBottom: NEW_HEIGHT,
+        paddingTop: BAR_HEIGHT + 8,
+        paddingRight: 8,
+        paddingBottom: NEW_HEIGHT + 8,
+        paddingLeft: 8,
     },
     event: {
         borderBottom: 'solid 1px silver',
@@ -33,15 +34,8 @@ class Calendar extends React.PureComponent {
         return (
             <div css={SX.root}>
                 {events.map((item, index) => {
-                    const {backgroundColor, foregroundColor} = calendarsById[item.calendarId];
-                    return (
-                        <Event
-                            key={index}
-                            backgroundColor={backgroundColor}
-                            foregroundColor={foregroundColor}
-                            title={item.summary}
-                        />
-                    );
+                    const {backgroundColor} = calendarsById[item.calendarId];
+                    return <Event key={index} backgroundColor={backgroundColor} title={item.summary} />;
                 })}
             </div>
         );

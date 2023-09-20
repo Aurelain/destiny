@@ -33,12 +33,8 @@ export default {
                         type: 'string',
                         pattern: '#[0-9a-f]{6}',
                     },
-                    foregroundColor: {
-                        type: 'string',
-                        pattern: '#[0-9a-f]{6}',
-                    },
                 },
-                required: ['id', 'summary', 'backgroundColor', 'foregroundColor'],
+                required: ['id', 'summary', 'backgroundColor'],
             },
         },
         events: {

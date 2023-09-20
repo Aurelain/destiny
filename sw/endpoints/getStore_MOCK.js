@@ -8,25 +8,21 @@ export default {
             id: 'foo@gmail.com',
             summary: 'Foo Bar',
             backgroundColor: '#16a765',
-            foregroundColor: '#000000',
         },
         {
             id: 'bac0391cf04fa8b857b66687a7d0025cd00000000e2efa2ed6789ba489c8284f@group.calendar.google.com',
             summary: 'Engleza Foo1 si Foo2 Bar',
             backgroundColor: '#4986e7',
-            foregroundColor: '#000000',
         },
         {
             id: 'foo.bar@gmail.com',
             summary: 'foo.bar@gmail.com',
             backgroundColor: '#a47ae2',
-            foregroundColor: '#000000',
         },
         {
             id: '94409cee99db50b9671fe4c869e00000000c6183046ea18c21f5ea1df92af799@group.calendar.google.com',
             summary: 'Familia',
             backgroundColor: '#7bd148',
-            foregroundColor: '#000000',
         },
     ],
     events: [

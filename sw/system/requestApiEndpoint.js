@@ -8,7 +8,7 @@ import validateJson from '../../src/utils/validateJson.js';
 /**
  *
  */
-const requestApiEndpoint = async (url, schema, options = null) => {
+const requestApiEndpoint = async (url, schema = null, options = null) => {
     const tokens = await ensureTokens();
     const result = await requestJson(url, {
         ...options,
@@ -17,7 +17,9 @@ const requestApiEndpoint = async (url, schema, options = null) => {
         },
     });
 
-    validateJson(result, schema);
+    if (schema) {
+        validateJson(result, schema);
+    }
 
     return result;
 };

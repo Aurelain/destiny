@@ -7,9 +7,16 @@ import PropTypes from 'prop-types';
 const SX = {
     root: {
         marginLeft: 64,
+        marginTop: 4,
+    },
+    title: {
+        height: 24,
+        lineHeight: '24px',
         borderRadius: 4,
         overflow: 'hidden',
-        height: 24,
+        whiteSpace: 'nowrap',
+        paddingLeft: 6,
+        color: '#fff',
     },
 };
 
@@ -18,14 +25,13 @@ const SX = {
 // =====================================================================================================================
 class Event extends React.PureComponent {
     render() {
-        const {title, backgroundColor, foregroundColor} = this.props;
+        const {title, backgroundColor} = this.props;
         return (
             <div css={SX.root}>
                 <div
                     css={SX.title}
                     style={{
                         backgroundColor,
-                        color: foregroundColor,
                     }}
                 >
                     {title}
@@ -47,6 +53,5 @@ Event.propTypes = {
     hasDay: PropTypes.bool,
     title: PropTypes.string.isRequired,
     backgroundColor: PropTypes.string.isRequired,
-    foregroundColor: PropTypes.string.isRequired,
 };
 export default Event;

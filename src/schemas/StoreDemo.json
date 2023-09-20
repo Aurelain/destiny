@@ -6,8 +6,7 @@
         {
             "id": "foo@gmail.com",
             "summary": "Foo Bar",
-            "backgroundColor": "#16a765",
-            "foregroundColor": "#000000"
+            "backgroundColor": "#16a765"
         }
     ],
     "events": [
