@@ -1,49 +1,46 @@
 import React from 'react';
-import {Global, ThemeProvider} from '@emotion/react';
 import PropTypes from 'prop-types';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const THEME = {};
-const GLOBAL = {
-    '*': {
-        boxSizing: 'border-box',
-        userSelect: 'none',
-        WebkitTapHighlightColor: 'transparent', // tested on Chrome Android 2023-09-17
-        WebkitTouchCallout: 'none',
+const SX = {
+    root: {
+        marginTop: 16,
+        textAlign: 'center',
     },
-    html: {
-        lineHeight: 1,
-        textSizeAdjust: '100%',
-        fontFamily: 'system-ui',
-        fontSize: '14px',
-    },
-    body: {
-        margin: 0,
-        overscrollBehaviorY: 'contain', // https://stackoverflow.com/a/58614274/844393
+    isPast: {
+        display: 'inline-block',
+        padding: 2,
+        background: '#f00',
+        color: '#fff',
+        borderRadius: 4,
     },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class GlobalStyles extends React.PureComponent {
+class Day extends React.PureComponent {
     render() {
-        const {children} = this.props;
+        const {date, isPast} = this.props;
         return (
-            <ThemeProvider theme={THEME}>
-                <Global styles={GLOBAL} />
-                {children}
-            </ThemeProvider>
+            <div css={SX.root}>
+                <div css={[isPast && SX.isPast]}>{date.toISOString().substring(0, 10)}</div>
+            </div>
         );
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // P R I V A T E
+    // -----------------------------------------------------------------------------------------------------------------
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-GlobalStyles.propTypes = {
-    children: PropTypes.node,
+Day.propTypes = {
+    isPast: PropTypes.bool.isRequired,
+    date: PropTypes.object.isRequired,
 };
-export default GlobalStyles;
+export default Day;

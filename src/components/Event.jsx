@@ -6,17 +6,18 @@ import PropTypes from 'prop-types';
 // =====================================================================================================================
 const SX = {
     root: {
-        marginLeft: 64,
         marginTop: 4,
     },
     title: {
-        height: 24,
-        lineHeight: '24px',
+        height: 32,
+        lineHeight: '32px',
         borderRadius: 4,
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         paddingLeft: 6,
         color: '#fff',
+        textOverflow: 'ellipsis',
+        cursor: 'pointer',
     },
 };
 
@@ -50,7 +51,6 @@ class Event extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Event.propTypes = {
-    hasDay: PropTypes.bool,
     title: PropTypes.string.isRequired,
     backgroundColor: PropTypes.string.isRequired,
 };
