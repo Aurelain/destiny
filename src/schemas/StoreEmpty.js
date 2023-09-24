@@ -2,9 +2,7 @@ export default {
     user: {
         email: '',
     },
-    calendars: {
-        items: [],
-    },
+    calendars: [],
     events: [],
     options: {
         hiddenCalendars: {},
