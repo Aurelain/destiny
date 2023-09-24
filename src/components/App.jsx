@@ -9,6 +9,7 @@ import {LS_STORE_KEY} from '../system/CLIENT.js';
 import requestEndpoint from '../system/requestEndpoint.js';
 import validateJson from '../utils/validateJson.js';
 import StoreSchema from '../schemas/StoreSchema.js';
+import StoreEmpty from '../schemas/StoreEmpty.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -28,7 +29,7 @@ class App extends React.PureComponent {
         const {store} = this.state;
         return (
             <>
-                <Bar />
+                <Bar store={store} onStoreChange={this.onBarStoreChange} />
                 {!store && <Connect onChange={this.onConnectChange} />}
                 {store && <Calendar store={store} onChange={this.onCalendarChange} />}
                 {store && <New store={store} />}
@@ -61,6 +62,13 @@ class App extends React.PureComponent {
      *
      */
     onCalendarChange = (store) => {
+        this.updateStore(store);
+    };
+
+    /**
+     *
+     */
+    onBarStoreChange = (store) => {
         this.updateStore(store);
     };
 
@@ -119,17 +127,8 @@ const readStoreFromLocalStorage = () => {
         validateJson(store, StoreSchema);
         return store;
     } catch (e) {
-        console.log('e:', e);
-        console.log('Invalid store in LocalStorage!');
-        return {
-            user: {
-                email: '',
-            },
-            calendars: {
-                items: [],
-            },
-            events: [],
-        };
+        console.log(`Invalid store in LocalStorage! ${e.message}`);
+        return StoreEmpty;
     }
 };
 

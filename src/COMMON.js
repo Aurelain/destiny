@@ -5,6 +5,7 @@ export const VERSION = '@BUILD_VERSION'; // DO NOT EDIT MANUALLY! This is handle
 export const ENDPOINT_GET_VERSION = 'getVersion';
 export const ENDPOINT_GET_STORE = 'getStore';
 export const ENDPOINT_SET_TOKENS = 'setTokens';
+export const ENDPOINT_TOGGLE_CALENDAR = 'toggleCalendar';
 
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 export const GOOGLE_CLIENT_ID = atob(

@@ -4,11 +4,16 @@ import Reload from '../icons/Reload.jsx';
 import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
-import {VERSION} from '../COMMON.js';
+import {ENDPOINT_TOGGLE_CALENDAR, VERSION} from '../COMMON.js';
 import {BAR_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
 import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
+import memoize from 'memoize-one';
+import PropTypes from 'prop-types';
+import CheckboxMarked from '../icons/CheckboxMarked.jsx';
+import requestEndpoint from '../system/requestEndpoint.js';
+import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -52,6 +57,7 @@ class Bar extends React.PureComponent {
     };
 
     render() {
+        const {store} = this.props;
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? Spin : Reload;
         return (
@@ -65,14 +71,12 @@ class Bar extends React.PureComponent {
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
                     subtitle={VERSION}
-                    list={MENU}
+                    list={this.memoMenuList(store)}
                 />
             </div>
         );
     }
-    // -----------------------------------------------------------------------------------------------------------------
-    // P R I V A T E
-    // -----------------------------------------------------------------------------------------------------------------
+
     componentDidMount() {
         addFetchListener(this.onFetchChange);
         this.setState({
@@ -84,6 +88,9 @@ class Bar extends React.PureComponent {
         removeFetchListener(this.onFetchChange);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // P R I V A T E
+    // -----------------------------------------------------------------------------------------------------------------
     /**
      *
      */
@@ -111,8 +118,16 @@ class Bar extends React.PureComponent {
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
                 break;
-            default:
+            default: {
+                const {store} = this.props;
+                for (const {id} of store.calendars) {
+                    if (id === name) {
+                        this.changeCalendarVisibility(id);
+                        return;
+                    }
+                }
                 assume(false, `Unexpected menu choice "${name}"!`);
+            }
         }
     };
 
@@ -129,9 +144,60 @@ class Bar extends React.PureComponent {
     onFetchChange = (isLoading) => {
         this.setState({isLoading});
     };
+
+    /**
+     *
+     */
+    memoMenuList = memoize((store) => {
+        const list = [];
+        for (const calendarItem of store.calendars) {
+            const {id, summary, backgroundColor} = calendarItem;
+            const CheckboxIcon = id in store.options.hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
+            list.push({
+                name: id,
+                icon: <CheckboxIcon style={{color: backgroundColor}} />,
+                label: summary,
+            });
+        }
+        list.push(...MENU);
+        return list;
+    });
+
+    /**
+     *
+     */
+    changeCalendarVisibility = async (id) => {
+        await requestEndpoint(ENDPOINT_TOGGLE_CALENDAR, {
+            body: {
+                calendarId: id,
+            },
+        });
+
+        // TODO: simplify
+        const {store} = this.props;
+        const {hiddenCalendars} = store.options;
+        const freshHiddenCalendars = {...hiddenCalendars};
+        if (freshHiddenCalendars[id]) {
+            delete freshHiddenCalendars[id];
+        } else {
+            freshHiddenCalendars[id] = true;
+        }
+        const freshStore = {
+            ...store,
+            options: {
+                ...store.options,
+                hiddenCalendars: freshHiddenCalendars,
+            },
+        };
+        this.props.onStoreChange(freshStore);
+    };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
+Bar.propTypes = {
+    store: PropTypes.object.isRequired,
+    onStoreChange: PropTypes.func.isRequired,
+};
 export default Bar;

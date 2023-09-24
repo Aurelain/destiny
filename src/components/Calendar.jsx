@@ -39,6 +39,9 @@ class Calendar extends React.PureComponent {
         const knownDays = [];
         for (const event of events) {
             const {id, calendarId, summary, start} = event;
+            if (calendarId in store.options.hiddenCalendars) {
+                continue;
+            }
             const {backgroundColor} = calendarsById[calendarId];
             list.push(...this.buildPrecedingDays(start, knownDays));
             list.push(<Event key={id} backgroundColor={backgroundColor} title={summary} />);

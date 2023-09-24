@@ -6,16 +6,8 @@ import writeTokens from '../system/writeTokens.js';
 /**
  *
  */
-const setTokens = async (request) => {
-    let tokens;
-    try {
-        tokens = await request.json();
-    } catch (e) {
-        throw new Error('Expecting json payload in request body!');
-    }
-
+const setTokens = async (tokens) => {
     await writeTokens(tokens);
-
     return true;
 };
 

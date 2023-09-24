@@ -48,4 +48,7 @@ export default {
             end: '2023-09-27T20:30:00+03:00',
         },
     ],
+    options: {
+        hiddenCalendars: {},
+    },
 };

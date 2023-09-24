@@ -1,7 +1,6 @@
 import {IDB_STORE_KEY, MILLISECONDS_IN_A_DAY} from '../system/SW.js';
 import {USE_MOCK} from '../../src/COMMON.js';
 import checkOffline from '../utils/checkOffline.js';
-import assume from '../utils/assume.js';
 import localforage from 'localforage';
 import requestApiEndpoint from '../system/requestApiEndpoint.js';
 import getStore_MOCK from './getStore_MOCK.js';
@@ -11,6 +10,7 @@ import UserSchema from '../../src/schemas/UserSchema.js';
 import validateJson from '../../src/utils/validateJson.js';
 import StoreSchema from '../../src/schemas/StoreSchema.js';
 import convertColor from '../system/convertColor.js';
+import StoreEmpty from '../../src/schemas/StoreEmpty.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -23,8 +23,10 @@ async function getStore() {
         return getStore_MOCK;
     }
 
+    const idbStore = await readStoreFromIdb();
     if (await checkOffline()) {
-        return await readStoreFromIdb();
+        // TODO: handle offline better
+        return idbStore;
     }
 
     const user = await getUser();
@@ -41,6 +43,7 @@ async function getStore() {
         user,
         calendars,
         events,
+        options: idbStore.options,
     };
 
     // Cache the store for later use (e.g. when offline)
@@ -56,10 +59,13 @@ async function getStore() {
  *
  */
 const readStoreFromIdb = async () => {
-    const store = await localforage.getItem(IDB_STORE_KEY);
-    assume(store, 'Store is missing from IDB!');
-    validateJson(store, StoreSchema);
-    return store;
+    let store = await localforage.getItem(IDB_STORE_KEY);
+    try {
+        validateJson(store, StoreSchema);
+        return store;
+    } catch (e) {
+        return StoreEmpty;
+    }
 };
 
 /**

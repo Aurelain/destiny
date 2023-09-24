@@ -1,5 +1,6 @@
 import announceClients from './announceClients.js';
 import getSwHome from './getSwHome.js';
+import assume from './assume.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -97,7 +98,15 @@ const onWorkerFetch = (event) => {
 const respondToEndpoint = async (endpoint, request) => {
     const body = {};
     try {
-        body.data = await currentVirtualEndpoints[endpoint](request);
+        let json;
+        if (request.method === 'POST') {
+            try {
+                json = await request.json();
+            } catch (e) {
+                assume(false, 'Expecting json payload in request body!');
+            }
+        }
+        body.data = await currentVirtualEndpoints[endpoint](json);
     } catch (e) {
         body.error = e.message;
     }

@@ -67,6 +67,21 @@ export default {
                 required: ['id', 'calendarId', 'summary', 'start', 'end'],
             },
         },
+        options: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                hiddenCalendars: {
+                    type: 'object',
+                    patternProperties: {
+                        '.': {
+                            const: true,
+                        },
+                    },
+                },
+            },
+            required: ['hiddenCalendars'],
+        },
     },
-    required: ['user', 'calendars', 'events'],
+    required: ['user', 'calendars', 'events', 'options'],
 };
