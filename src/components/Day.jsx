@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -9,12 +10,18 @@ const SX = {
         marginTop: 16,
         textAlign: 'center',
     },
-    isPast: {
+    title: {
         display: 'inline-block',
-        padding: 2,
-        background: '#f00',
-        color: '#fff',
+        padding: '2px 4px',
         borderRadius: 4,
+        color: '#fff',
+        background: '#333',
+    },
+    isPast: {
+        background: '#f00',
+    },
+    isToday: {
+        background: '#1a73e8',
     },
 };
 
@@ -23,10 +30,14 @@ const SX = {
 // =====================================================================================================================
 class Day extends React.PureComponent {
     render() {
-        const {date, isPast} = this.props;
+        const {date} = this.props;
+        const dayYYYYMMDD = getYYYYMMDD(date);
+        const todayYYYYMMDD = getYYYYMMDD(new Date());
+        const isPast = dayYYYYMMDD < todayYYYYMMDD; // string comparison, but works
+        const isToday = !isPast && dayYYYYMMDD === todayYYYYMMDD;
         return (
             <div css={SX.root}>
-                <div css={[isPast && SX.isPast]}>{date.toISOString().substring(0, 10)}</div>
+                <div css={[SX.title, isPast && SX.isPast, isToday && SX.isToday]}>{dayYYYYMMDD}</div>
             </div>
         );
     }
@@ -40,7 +51,6 @@ class Day extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Day.propTypes = {
-    isPast: PropTypes.bool.isRequired,
     date: PropTypes.object.isRequired,
 };
 export default Day;

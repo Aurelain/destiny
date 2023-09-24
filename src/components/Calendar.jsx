@@ -5,6 +5,7 @@ import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import {MILLISECONDS_IN_A_DAY} from '../../sw/system/SW.js';
+import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -34,15 +35,12 @@ class Calendar extends React.PureComponent {
         const {calendars, events} = store;
 
         const calendarsById = objectify(calendars, 'id');
-        const nowDate = new Date();
         const list = [];
         const knownDays = [];
         for (const event of events) {
             const {id, calendarId, summary, start} = event;
-            const startDate = new Date(start);
-            const isPast = startDate < nowDate;
             const {backgroundColor} = calendarsById[calendarId];
-            list.push(...this.buildPrecedingDays(start, knownDays, isPast));
+            list.push(...this.buildPrecedingDays(start, knownDays));
             list.push(<Event key={id} backgroundColor={backgroundColor} title={summary} />);
         }
 
@@ -55,9 +53,9 @@ class Calendar extends React.PureComponent {
     /**
      *
      */
-    buildPrecedingDays = (eventStart, knownDays, isPast) => {
+    buildPrecedingDays = (eventStart, knownDays) => {
         const recentKnownDay = knownDays.at(-1);
-        const label = eventStart.substring(0, 10);
+        const label = getYYYYMMDD(eventStart);
         if (recentKnownDay?.label === label) {
             return [];
         }
@@ -67,9 +65,9 @@ class Calendar extends React.PureComponent {
         const days = [];
         for (let i = beginMillisecond; i <= endMillisecond; i += MILLISECONDS_IN_A_DAY) {
             const dayDate = new Date(i);
-            days.push(<Day key={i} date={dayDate} isPast={isPast} />);
+            days.push(<Day key={i} date={dayDate} />);
             knownDays.push({
-                label: dayDate.toISOString().substring(0, 10),
+                label: getYYYYMMDD(dayDate),
                 millisecond: i,
             });
         }

@@ -13,6 +13,7 @@ import StoreSchema from '../schemas/StoreSchema.js';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+const STORE_EXPIRATION = 3600 * 1000; // milliseconds
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -21,6 +22,7 @@ class App extends React.PureComponent {
     state = {
         store: readStoreFromLocalStorage(), // just for fast caching, will be replaced by the store from SW
     };
+    storeTimestamp;
 
     render() {
         const {store} = this.state;
@@ -59,31 +61,48 @@ class App extends React.PureComponent {
      *
      */
     onCalendarChange = (store) => {
-        this.setState({
-            store,
-        });
+        this.updateStore(store);
     };
 
     /**
      *
      */
     onDocumentVisibilityChange = async () => {
-        console.log('document.hidden', document.hidden);
+        const hasBecomeVisible = !document.hidden;
+        const isExpired = Date.now() > this.storeTimestamp + STORE_EXPIRATION;
+        if (hasBecomeVisible && isExpired) {
+            this.requestStore();
+        }
     };
 
     /**
      *
      */
     requestStore = async () => {
+        let store;
+        let error;
         try {
-            const store = await requestEndpoint(ENDPOINT_GET_STORE);
-            console.log('store:', store);
-            this.setState({store});
-            localStorage.setItem(LS_STORE_KEY, JSON.stringify(store)); // cache for fast future boot
+            store = await requestEndpoint(ENDPOINT_GET_STORE);
         } catch (e) {
-            this.setState({user: null});
-            throw new Error(e);
+            error = e;
         }
+        if (store) {
+            this.updateStore(store);
+        } else {
+            this.setState({user: null});
+            // Now that we've changed the state, we can announce the error.
+            throw new Error(error);
+        }
+    };
+
+    /**
+     *
+     */
+    updateStore = (store) => {
+        console.log('updateStore:', store);
+        this.setState({store});
+        this.storeTimestamp = Date.now();
+        localStorage.setItem(LS_STORE_KEY, JSON.stringify(store)); // cache for future fast-boot
     };
 }
 
