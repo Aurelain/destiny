@@ -6,7 +6,24 @@
  */
 const restoreState = async () => {
     /*
-    let store = await localforage.getItem(IDB_STORE_KEY);
+    const schema = {
+        type: 'object',
+        properties: {
+            foo: {type: 'number'},
+            bar: {type: 'string', default: 'baz'},
+        },
+        required: ['foo', 'bar'],
+    };
+
+    const data = {foo: 1, bar: 5};
+
+    const result = healJson(data, schema);
+    console.log('result:', result);
+    console.log('data: ' + JSON.stringify(data, null, 4));
+*/
+    /*
+    let stored = await localforage.getItem(STORE_KEY);
+    dispatch(restore)
     try {
         validateJson(store, StoreSchema);
         return store;

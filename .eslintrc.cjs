@@ -22,6 +22,14 @@ module.exports = {
                 code: 120,
             },
         ],
+        // Allow `while (true)`:
+        'no-constant-condition': [
+            'error',
+            {
+                checkLoops: false,
+            },
+        ],
+        // Allow `<div css={}>`:
         'react/no-unknown-property': [
             'error',
             {

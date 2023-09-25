@@ -9,6 +9,10 @@ const counterSlice = createSlice({
         value: 0,
     },
     reducers: {
+        restore(state, action) {
+            const {payload} = action;
+            console.log('payload:', payload);
+        },
         incremented: (state) => {
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
             // doesn't actually mutate the state because it uses the Immer library,
@@ -28,9 +32,8 @@ const store = configureStore({
 
 // Can still subscribe to the store
 store.subscribe(() => console.log(store.getState()));
-store.dispatch(counterSlice.actions.incremented());
-console.log('counterSlice.actions.incremented():', counterSlice.actions.incremented());
-store.dispatch(counterSlice.actions.decremented());
+// store.dispatch(counterSlice.actions.incremented());
+// store.dispatch(counterSlice.actions.decremented());
 
 // =====================================================================================================================
 //  E X P O R T

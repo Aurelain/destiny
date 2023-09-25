@@ -21,7 +21,7 @@ const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 /**
  *
  */
-const run = async () => {
+const build = async () => {
     const time = Date.now();
     const isDev = process.argv.includes('--dev');
     // const isDev = false;
@@ -153,6 +153,6 @@ const refreshBrowser = async () => {
 };
 
 // =====================================================================================================================
-//  E X P O R T
+//  R U N
 // =====================================================================================================================
-run();
+build();

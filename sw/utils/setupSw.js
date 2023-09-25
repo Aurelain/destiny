@@ -5,6 +5,7 @@ import assume from './assume.js';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+let isUnregistered = false;
 let currentVersion;
 let currentCachedPaths;
 let currentVirtualEndpoints;
@@ -22,7 +23,7 @@ const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints)
     currentVirtualEndpoints = virtualEndpoints;
     currentIgnoredEndpoints = ignoredEndpoints;
 
-    self.skipWaiting();
+    self.skipWaiting(); // TODO find out if this is working
     self.addEventListener('install', onWorkerInstall);
     self.addEventListener('activate', onWorkerActivate);
     self.addEventListener('fetch', onWorkerFetch);
@@ -36,6 +37,7 @@ const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints)
  */
 const onWorkerInstall = (event) => {
     // console.log('SW: Install of', currentVersion);
+    self.skipWaiting(); // TODO find out if this is working
     event.waitUntil(
         (async () => {
             const cache = await caches.open(currentVersion);
@@ -74,6 +76,9 @@ const onWorkerActivate = (event) => {
  *
  */
 const onWorkerFetch = (event) => {
+    if (isUnregistered) {
+        return;
+    }
     // console.log('SW: Fetch', event.request.url);
     const {url, mode} = event.request;
     const endpoint = url.split('/').pop();
@@ -117,8 +122,37 @@ const respondToEndpoint = async (endpoint, request) => {
  *
  */
 const respondToRoot = async () => {
-    const parentDir = self.location.href.replace(/[^/]*$/, '');
-    return caches.match(parentDir);
+    const home = getSwHome(); // without trailing slash, e.g. https://foo.com/bar
+    const cachedResponse = await caches.match(home + '/');
+    const freshResponse = await fetchUrl(home + '/');
+    if (freshResponse) {
+        // console.log('We are online.');
+        if (cachedResponse) {
+            // console.log('We have cache.');
+            const cachedText = await cachedResponse.clone().text();
+            const freshText = await freshResponse.clone().text();
+            if (cachedText !== freshText) {
+                // console.log('Something changed!');
+                isUnregistered = true;
+                await self.registration.unregister();
+            }
+        }
+        return freshResponse;
+    } else {
+        // console.log('We are offline!');
+        return cachedResponse;
+    }
+};
+
+/**
+ *
+ */
+const fetchUrl = async (url) => {
+    try {
+        return await fetch(url);
+    } catch (e) {
+        // Nothing
+    }
 };
 
 /**

@@ -10,6 +10,7 @@ export default {
                 email: {
                     type: 'string',
                     minLength: 1,
+                    default: 'foo@bar',
                 },
             },
             required: ['email'],
