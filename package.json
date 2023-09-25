@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "start": "node scripts/build --dev",
+        "focus": "node scripts/build --dev --focus",
         "build": "node scripts/build"
     },
     "dependencies": {

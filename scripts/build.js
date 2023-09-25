@@ -3,9 +3,12 @@ import fsExtra from 'fs-extra';
 import esbuild from 'esbuild';
 import sendkeys from 'sendkeys-js';
 import process from 'node:process';
+import path from 'path';
+import url from 'url';
 import {hashElement} from 'folder-hash';
 import findFiles from './utils/findFiles.js';
 import EsbuildEmotionPlugin from './plugins/EsbuildEmotionPlugin.js';
+import assume from './utils/assume.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,13 +27,13 @@ const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 const build = async () => {
     const time = Date.now();
     const isDev = process.argv.includes('--dev');
-    // const isDev = false;
+    const isFocus = process.argv.includes('--focus');
 
     // Build fresh:
+    const entryPath = isFocus ? getFocusedPath() : 'src/main.jsx';
     fsExtra.emptyDirSync(OUTPUT_DIR);
     fsExtra.copySync('public', OUTPUT_DIR);
-    const clientBundle = await createBundle('src/main.jsx', 'js/[name]', isDev);
-    const swBundle = await createBundle('sw/sw.js', '[name]', isDev);
+    const clientBundle = await createBundle(entryPath, 'js/[name]', isDev);
 
     // Rename `main.js`:
     const {hash} = await hashElement(OUTPUT_DIR);
@@ -39,11 +42,18 @@ const build = async () => {
 
     // Inject version and cache filenames:
     // tweakClient(clientBundle);
-    updateVersion(clientBundle, swBundle, cleanHash);
-    updateCachedPaths(swBundle);
     updateIndex(clientBundle);
+
+    // Adapt service-worker:
+    if (!isFocus) {
+        const swBundle = await createBundle('sw/sw.js', '[name]', isDev);
+        updateVersion(clientBundle, swBundle, cleanHash);
+        updateCachedPaths(swBundle);
+        fs.writeFileSync(swBundle.filePath, swBundle.content);
+    }
+
+    // Write to disk the adapted main bundle:
     fs.writeFileSync(clientBundle.filePath, clientBundle.content);
-    fs.writeFileSync(swBundle.filePath, swBundle.content);
 
     console.log(`Done in ${Date.now() - time} ms.`);
     await refreshBrowser();
@@ -100,15 +110,20 @@ const tweakClient = (clientBundle) => {
  *
  */
 const renameClient = (clientBundle, hash) => {
-    const freshFilePath = clientBundle.filePath.replace('main.js', `main-${hash}.js`);
+    const oldName = clientBundle.filePath.match(/[^\\/]*$/)[0];
+    const freshName = oldName.replace('.js', `-${hash}.js`);
+
+    const freshFilePath = clientBundle.filePath.replace(oldName, freshName);
     fs.renameSync(clientBundle.filePath, freshFilePath);
+
     const mapFilePath = clientBundle.filePath + '.map';
     if (fs.existsSync(mapFilePath)) {
-        const freshMapFilePath = mapFilePath.replace('main.js', `main-${hash}.js`);
+        const freshMapFilePath = mapFilePath.replace(oldName, freshName);
         fs.renameSync(mapFilePath, freshMapFilePath);
     }
+
     clientBundle.filePath = freshFilePath;
-    clientBundle.content = clientBundle.content.replace('main.js.map', `main-${hash}.js.map`);
+    clientBundle.content = clientBundle.content.replace(oldName + '.map', freshName + '.map');
 };
 
 /**
@@ -152,6 +167,52 @@ const refreshBrowser = async () => {
     await sendkeys.activate('destiny –'); // reactivate WebStorm
 };
 
+/**
+ *
+ */
+const getFocusedPath = () => {
+    const argument = process.argv.at(-1);
+    assume(argument, 'Nothing to focus on!');
+
+    const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+    const dir = __dirname + '/../src/';
+    const found = findFileOrDirByPattern(dir, argument);
+    assume(found, 'Focus not found!');
+
+    return found;
+};
+
+/**
+ *
+ */
+const findFileOrDirByPattern = (dir, pathOrPattern) => {
+    if (fs.existsSync(pathOrPattern)) {
+        return path.resolve(pathOrPattern);
+    } else {
+        const pattern = new RegExp(pathOrPattern);
+        return scan(dir, pattern);
+    }
+};
+
+/**
+ *
+ */
+const scan = (dir, pattern) => {
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+        const fullPath = path.join(dir, item);
+        if (fullPath.match(pattern)) {
+            return fullPath;
+        }
+        if (fs.statSync(fullPath).isDirectory()) {
+            const result = scan(fullPath, pattern);
+            if (result) {
+                return result;
+            }
+        }
+    }
+    return null;
+};
 // =====================================================================================================================
 //  R U N
 // =====================================================================================================================
