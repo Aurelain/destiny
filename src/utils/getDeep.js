@@ -5,17 +5,20 @@
  *
  */
 const getDeep = (object, path) => {
-    /*
-    path = castPath(path, object);
-
-    var index = 0,
-        length = path.length;
-
-    while (object != null && index < length) {
-        object = object[toKey(path[index++])];
+    if (!path) {
+        return object;
     }
-    return (index && index === length) ? object : undefined;
-     */
+    path = path.replace(/\[(\d+)]/g, '.$1');
+    const parts = path.split('.');
+    const {length} = parts;
+    for (let i = 0; i < length; i++) {
+        object = object[parts[i]];
+        if (typeof object !== 'object' || object === null) {
+            // We cannot continue anymore.
+            return i === length - 1 ? object : undefined;
+        }
+    }
+    return object;
 };
 
 // =====================================================================================================================

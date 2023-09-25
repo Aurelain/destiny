@@ -179,7 +179,8 @@ const getFocusedPath = () => {
     const found = findFileOrDirByPattern(dir, argument);
     assume(found, 'Focus not found!');
 
-    return found;
+    const sibling = found.replace('.js', '.test.js');
+    return fs.existsSync(sibling) ? sibling : found;
 };
 
 /**

@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import assume from './assume.js';
+import getDeep from './getDeep.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -21,7 +22,7 @@ const healJson = (json, schema) => {
     while (true) {
         if (validate(json)) {
             // The json is now healed. Praise be!
-            return;
+            return json;
         }
 
         errorCount++;
@@ -32,84 +33,68 @@ const healJson = (json, schema) => {
         assume(errorFingerprint !== freshFingerprint, 'Repeated error!');
         errorFingerprint = freshFingerprint;
 
-        const {keyword, dataPath, params, schemaPath} = error;
-        console.log('error:', error);
-        console.log('schemaPath:', schemaPath);
+        // console.log('error: ' + JSON.stringify(error, null, 4));
+        const {keyword, instancePath, params, schemaPath} = error;
+        const instanceDotPath = standardizePath(instancePath);
         switch (keyword) {
             case 'enum': // fall-through
             case 'minLength': {
                 const prop = schemaPath.match(/(\w+)\/\w+$/)[1];
                 const completeAddress = id + schemaPath.replace(/\/\w+$/, '');
-                const dataParentPath = dataPath.replace(/\.\w+$/, '');
-                // const dataParent = eval('json' + dataParentPath);
+                const dataParentPath = instanceDotPath.replace(/\.\w+$/, '');
                 const dataParent = getDeep(json, dataParentPath);
-
                 const value = chooseValue(completeAddress);
                 dataParent[prop] = value;
-                console.warn(`Changed: ${dataParentPath.substr(1)}[${prop}] = ${JSON.stringify(value)}`);
-
+                console.warn(`Changed: ${dataParentPath}.${prop} = ${JSON.stringify(value)}`);
                 break;
             }
             case 'type': {
-                const match = dataPath.match(/\[(\d+)]$|\.(\w+)$/);
+                const match = instanceDotPath.match(/\[(\d+)]$|\.(\w+)$/);
                 const key = match[1] || match[2];
-                const dataParentPath = dataPath.replace(/\[\d+]$|\.\w+$/, '');
-                // const dataParent = eval('json' + dataParentPath);
+                const dataParentPath = instanceDotPath.replace(/\[\d+]$|\.\w+$/, '');
                 const dataParent = getDeep(json, dataParentPath);
-
                 const completeAddress = id + schemaPath.replace(/\/\w+$/, '');
                 const value = chooseValue(completeAddress);
                 dataParent[key] = value === null ? {} : value;
-                console.warn(`Changed: ${dataParentPath.substr(1)}[${key}] = ${JSON.stringify(dataParent[key])}`);
-
+                console.warn(`Changed: ${dataParentPath}.${key} = ${JSON.stringify(dataParent[key])}`);
                 break;
             }
             case 'required': {
                 const prop = params.missingProperty;
                 const completeAddress = id + schemaPath.replace(/\w+$/, `properties/${prop}`);
-                //  const dataParent = eval('json' + dataPath);
-                const dataParent = getDeep(json, dataPath);
-
+                const dataParent = getDeep(json, instanceDotPath);
                 const value = chooseValue(completeAddress);
                 dataParent[prop] = value;
-                console.warn(`Added: ${dataPath.substr(1)}[${prop}] = ${JSON.stringify(value)}`);
-
+                console.warn(`Added: ${instanceDotPath}.${prop} = ${JSON.stringify(value)}`);
                 break;
             }
             case 'additionalProperties': {
-                //const dataParent = eval('json' + dataPath);
-                const dataParent = getDeep(json, dataPath);
+                const dataParent = getDeep(json, instanceDotPath);
                 delete dataParent[params.additionalProperty];
-                console.warn(`Removed: ${dataPath.substr(1)}[${params.additionalProperty}]`);
+                console.warn(`Removed: ${instanceDotPath}.${params.additionalProperty}`);
                 errorCount--;
                 break;
             }
             case 'minItems': {
-                // const dataParent = eval('json' + dataPath);
-                const dataParent = getDeep(json, dataPath);
+                const dataParent = getDeep(json, instanceDotPath);
                 const completeAddress = id + schemaPath.replace(/\w+$/, 'items');
                 const itemsSchema = ajv.getSchema(completeAddress).schema;
-
                 const defaultValue = itemsSchema.default || {};
                 dataParent.push(defaultValue);
-                const prop = `${dataPath.substr(1)}[${dataParent.length - 1}]`;
+                const prop = `${instanceDotPath}.${dataParent.length - 1}`;
                 console.warn(`Pushed: ${prop} = ${JSON.stringify(defaultValue)}`);
-
                 break;
             }
             case 'const': // fall-through
             case 'minimum': // fall-through
             case 'maximum': {
-                const prop = dataPath.match(/\w+$/)[0];
-                const dataParentPath = dataPath.replace(/\.\w+$/, '');
-                //const dataParent = eval('json' + dataParentPath);
+                const prop = instanceDotPath.match(/\w+$/)[0];
+                const dataParentPath = instanceDotPath.replace(/\.\w+$/, '');
                 const dataParent = getDeep(json, dataParentPath);
-
                 const completeAddress = id + schemaPath.replace(/\w+$/, '');
                 const subSchema = ajv.getSchema(completeAddress).schema;
                 dataParent[prop] = subSchema[keyword];
                 console.warn(`Changed: ${prop} = ${subSchema[keyword]}`);
-
                 break;
             }
             default: {
@@ -148,6 +133,15 @@ const chooseValue = (completeAddress) => {
         }
     }
     return defaultValue;
+};
+
+/**
+ *
+ */
+const standardizePath = (path) => {
+    path = path.replace(/^\//, '');
+    path = path.replace(/\//g, '.');
+    return path;
 };
 
 // =====================================================================================================================
