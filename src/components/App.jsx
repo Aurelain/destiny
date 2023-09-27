@@ -1,15 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import {ENDPOINT_GET_STORE, VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import New from './New.jsx';
-import assume from '../utils/assume.js';
 import {LS_STORE_KEY} from '../system/CLIENT.js';
 import requestEndpoint from '../system/requestEndpoint.js';
-import validateJson from '../utils/validateJson.js';
-import StoreSchema from '../schemas/StoreSchema.js';
-import StoreEmpty from '../schemas/StoreEmpty.js';
+import {selectAccessToken} from '../state/selectors.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -20,19 +19,16 @@ const STORE_EXPIRATION = 3600 * 1000; // milliseconds
 //  C O M P O N E N T
 // =====================================================================================================================
 class App extends React.PureComponent {
-    state = {
-        store: readStoreFromLocalStorage(), // just for fast caching, will be replaced by the store from SW
-    };
     storeTimestamp;
 
     render() {
-        const {store} = this.state;
+        const {accessToken} = this.props;
         return (
             <>
                 <Bar />
-                {!store && <Connect onChange={this.onConnectChange} />}
-                {store && <Calendar />}
-                {store && <New />}
+                {!accessToken && <Connect />}
+                {accessToken && <Calendar />}
+                {accessToken && <New />}
             </>
         );
     }
@@ -42,7 +38,7 @@ class App extends React.PureComponent {
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 
-        if (this.state.store) {
+        if (this.props.accessToken) {
             // We were logged-in sometimes in the past. We should update the store:
             // this.requestStore();
         }
@@ -51,20 +47,6 @@ class App extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onConnectChange = () => {
-        this.requestStore();
-    };
-
-    /**
-     *
-     */
-    onCalendarChange = (store) => {
-        this.updateStore(store);
-    };
-
     /**
      *
      */
@@ -80,6 +62,7 @@ class App extends React.PureComponent {
      *
      */
     requestStore = async () => {
+        return;
         let store;
         let error;
         try {
@@ -108,24 +91,14 @@ class App extends React.PureComponent {
 }
 
 // =====================================================================================================================
-//  H E L P E R S
-// =====================================================================================================================
-/**
- *
- */
-const readStoreFromLocalStorage = () => {
-    try {
-        const store = JSON.parse(localStorage.getItem(LS_STORE_KEY));
-        assume(store, 'Store is missing from LocalStorage!');
-        validateJson(store, StoreSchema);
-        return store;
-    } catch (e) {
-        console.log(`Invalid store in LocalStorage! ${e.message}`);
-        return StoreEmpty;
-    }
-};
-
-// =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default App;
+App.propTypes = {
+    accessToken: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    accessToken: selectAccessToken(state),
+});
+
+export default connect(mapStateToProps)(App);

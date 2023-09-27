@@ -128,6 +128,12 @@ const chooseValue = (completeAddress) => {
                 return [];
             case 'object':
                 return {};
+            case 'string':
+                return '';
+            case 'number':
+                return 0;
+            case 'boolean':
+                return false;
             default:
                 assume(false, `Missing default in ${completeAddress}!`);
                 return;

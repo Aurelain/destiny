@@ -1,8 +1,8 @@
 import localforage from 'localforage';
 import {setState} from '../store.js';
 import {STORE_KEY} from '../../CONSTANTS.js';
-import StoreSchema from '../../schemas/StoreSchema.js';
 import healJson from '../../utils/healJson.js';
+import STATE_SCHEMA from '../STATE_SCHEMA.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -17,11 +17,12 @@ const resurrectState = async () => {
     }
 
     try {
-        healJson(stored, StoreSchema);
+        healJson(stored, STATE_SCHEMA);
     } catch (e) {
         console.warn(e);
         return;
     }
+    // delete stored.tokens;
 
     setState((state) => {
         for (const key in stored) {

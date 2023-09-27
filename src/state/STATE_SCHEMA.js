@@ -3,14 +3,28 @@ export default {
     type: 'object',
     additionalProperties: false,
     properties: {
+        tokens: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                accessToken: {
+                    type: 'string',
+                },
+                refreshToken: {
+                    type: 'string',
+                },
+                expirationTimestamp: {
+                    type: 'number',
+                },
+            },
+            required: ['accessToken', 'refreshToken', 'expirationTimestamp'],
+        },
         user: {
             type: 'object',
             additionalProperties: false,
             properties: {
                 email: {
                     type: 'string',
-                    minLength: 1,
-                    default: 'foo@bar',
                 },
             },
             required: ['email'],
@@ -23,11 +37,9 @@ export default {
                 properties: {
                     id: {
                         type: 'string',
-                        minLength: 1,
                     },
                     summary: {
                         type: 'string',
-                        minLength: 1,
                     },
                     backgroundColor: {
                         type: 'string',
@@ -45,15 +57,12 @@ export default {
                 properties: {
                     id: {
                         type: 'string',
-                        minLength: 1,
                     },
                     calendarId: {
                         type: 'string',
-                        minLength: 1,
                     },
                     summary: {
                         type: 'string',
-                        minLength: 1,
                     },
                     start: {
                         type: 'string',
@@ -83,5 +92,5 @@ export default {
             required: ['hiddenCalendars'],
         },
     },
-    required: ['user', 'calendars', 'events', 'options'],
+    required: ['tokens', 'user', 'calendars', 'events', 'options'],
 };

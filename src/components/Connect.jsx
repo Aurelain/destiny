@@ -1,8 +1,7 @@
 import React from 'react';
 import Button from '../utils/ui/Button.jsx';
-import connectGoogle from '../system/connectGoogle.js';
-import PropTypes from 'prop-types';
 import {BAR_HEIGHT} from '../system/CLIENT.js';
+import connectGoogle from '../state/actions/connectGoogle.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -44,14 +43,11 @@ class Connect extends React.PureComponent {
      */
     onButtonClick = async () => {
         await connectGoogle();
-        this.props.onChange();
     };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-Connect.propTypes = {
-    onChange: PropTypes.func.isRequired,
-};
+Connect.propTypes = {};
 export default Connect;

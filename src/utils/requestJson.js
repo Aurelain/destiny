@@ -1,4 +1,5 @@
 import fetchWithLoading from './fetchWithLoading.js';
+import validateJson from './validateJson.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -8,6 +9,7 @@ import fetchWithLoading from './fetchWithLoading.js';
  */
 const requestJson = async (url, options = null) => {
     const fetchOptions = {...options};
+    delete fetchOptions.schema;
 
     if (fetchOptions.searchParams) {
         url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
@@ -40,6 +42,11 @@ const requestJson = async (url, options = null) => {
     } catch (e) {
         throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
     }
+
+    if (options.schema) {
+        validateJson(json, options.schema);
+    }
+
     return json;
 };
 

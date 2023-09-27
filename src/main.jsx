@@ -5,7 +5,6 @@ import {Provider} from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App.jsx';
-import registerWorker from './system/registerWorker.js';
 import resurrectState from './state/actions/resurrectState.js';
 import GlobalStyles from './components/GlobalStyles.jsx';
 
@@ -16,10 +15,7 @@ import GlobalStyles from './components/GlobalStyles.jsx';
  *
  */
 const run = async () => {
-    // TODO: don't wait for this
-    if (!(await registerWorker())) {
-        return;
-    }
+    await navigator.serviceWorker?.register('./sw.js', {scope: './'});
 
     // Restore the state from IndexedDB into Redux. This usually only takes a few milliseconds.
     await resurrectState();
