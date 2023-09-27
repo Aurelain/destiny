@@ -7,7 +7,7 @@ import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import {MILLISECONDS_IN_A_DAY} from '../../sw/system/SW.js';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
-import {selectHiddenCalendars} from '../state/selectors.js';
+import {selectCalendars, selectEvents, selectHiddenCalendars} from '../state/selectors.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -33,8 +33,7 @@ class Calendar extends React.PureComponent {
     };
 
     render() {
-        const {store, hiddenCalendars} = this.props;
-        const {calendars, events} = store;
+        const {hiddenCalendars, calendars, events} = this.props;
 
         const calendarsById = objectify(calendars, 'id');
         const list = [];
@@ -84,14 +83,27 @@ class Calendar extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Calendar.propTypes = {
-    // -------------------------------- direct:
-    store: PropTypes.object,
-    onChange: PropTypes.func.isRequired,
     // -------------------------------- redux:
-    hiddenCalendars: PropTypes.object.isRequired,
+    calendars: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            backgroundColor: PropTypes.string.isRequired,
+        }),
+    ).isRequired,
+    events: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            calendarId: PropTypes.string.isRequired,
+            summary: PropTypes.string.isRequired,
+            start: PropTypes.string.isRequired,
+        }),
+    ).isRequired,
+    hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
 
 const mapStateToProps = (state) => ({
+    calendars: selectCalendars(state),
+    events: selectEvents(state),
     hiddenCalendars: selectHiddenCalendars(state),
 });
 

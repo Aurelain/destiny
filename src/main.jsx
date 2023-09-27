@@ -24,7 +24,7 @@ const run = async () => {
     // Restore the state from IndexedDB into Redux. This usually only takes a few milliseconds.
     await resurrectState();
 
-    // We're not using <React.StrictMode> to avoid 2 renders:
+    // We're not using <React.StrictMode> in order to avoid 2 renders:
     // https://upmostly.com/tutorials/why-is-my-useeffect-hook-running-twice-in-react
     ReactDOM.createRoot(document.getElementById('root')).render(
         <Provider store={store}>

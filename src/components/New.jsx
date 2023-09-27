@@ -1,7 +1,6 @@
 import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import Button from '../utils/ui/Button.jsx';
-import PropTypes from 'prop-types';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -25,9 +24,6 @@ const SX = {
         borderRadius: 20,
         padding: '0 16px',
         margin: '0 8px',
-        // TODO: remove this once we know it's not needed
-        // WebkitAppearance: 'none', // https://stackoverflow.com/a/73466347/844393
-        // appearance: 'none',
     },
     create: {
         background: PRIMARY_COLOR,
@@ -41,15 +37,13 @@ class New extends React.PureComponent {
     state = {
         value: '',
     };
-    // TODO: remove this once we know it's not needed
-    // uniqueInputName = Math.random().toString(); // https://github.com/terrylinooo/jquery.disableAutoFill
 
     render() {
         const {value} = this.state;
         return (
             <div css={SX.root}>
                 <input
-                    type={'search'}
+                    type={'search'} // https://stackoverflow.com/a/73466347/844393
                     autoComplete={'off'}
                     css={SX.input}
                     spellCheck={false}
@@ -74,7 +68,5 @@ class New extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-New.propTypes = {
-    store: PropTypes.object,
-};
+New.propTypes = {};
 export default New;

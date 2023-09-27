@@ -29,10 +29,10 @@ class App extends React.PureComponent {
         const {store} = this.state;
         return (
             <>
-                <Bar store={store} onStoreChange={this.onBarStoreChange} />
+                <Bar />
                 {!store && <Connect onChange={this.onConnectChange} />}
-                {store && <Calendar store={store} onChange={this.onCalendarChange} />}
-                {store && <New store={store} />}
+                {store && <Calendar />}
+                {store && <New />}
             </>
         );
     }
@@ -62,13 +62,6 @@ class App extends React.PureComponent {
      *
      */
     onCalendarChange = (store) => {
-        this.updateStore(store);
-    };
-
-    /**
-     *
-     */
-    onBarStoreChange = (store) => {
         this.updateStore(store);
     };
 

@@ -1,10 +1,10 @@
 import healJson from '../utils/healJson.js';
-import StoreSchema from '../schemas/StoreSchema.js';
+import STATE_SCHEMA from './STATE_SCHEMA.js';
 
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const INITIAL_STATE = healJson({}, StoreSchema, {verbose: false});
+const INITIAL_STATE = healJson({}, STATE_SCHEMA, {verbose: false});
 
 // =====================================================================================================================
 //  E X P O R T

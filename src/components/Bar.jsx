@@ -14,7 +14,7 @@ import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
-import {selectHiddenCalendars} from '../state/selectors.js';
+import {selectCalendars, selectHiddenCalendars} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
 
 // =====================================================================================================================
@@ -59,7 +59,7 @@ class Bar extends React.PureComponent {
     };
 
     render() {
-        const {store, hiddenCalendars} = this.props;
+        const {calendars, hiddenCalendars} = this.props;
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? Spin : Reload;
         return (
@@ -73,7 +73,7 @@ class Bar extends React.PureComponent {
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
                     subtitle={VERSION}
-                    list={this.memoMenuList(store, hiddenCalendars)}
+                    list={this.memoMenuList(calendars, hiddenCalendars)}
                 />
             </div>
         );
@@ -121,8 +121,8 @@ class Bar extends React.PureComponent {
                 window.location.reload();
                 break;
             default: {
-                const {store} = this.props;
-                for (const {id} of store.calendars) {
+                const {calendars} = this.props;
+                for (const {id} of calendars) {
                     if (id === name) {
                         toggleCalendar(id);
                         return;
@@ -150,9 +150,9 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((store, hiddenCalendars) => {
+    memoMenuList = memoize((calendars, hiddenCalendars) => {
         const list = [];
-        for (const calendarItem of store.calendars) {
+        for (const calendarItem of calendars) {
             const {id, summary, backgroundColor} = calendarItem;
             const CheckboxIcon = id in hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
             list.push({
@@ -170,14 +170,19 @@ class Bar extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Bar.propTypes = {
-    // -------------------------------- direct:
-    store: PropTypes.object.isRequired,
-    onStoreChange: PropTypes.func.isRequired,
     // -------------------------------- redux:
-    hiddenCalendars: PropTypes.object.isRequired,
+    calendars: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            summary: PropTypes.string.isRequired,
+            backgroundColor: PropTypes.string.isRequired,
+        }),
+    ).isRequired,
+    hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
 
 const mapStateToProps = (state) => ({
+    calendars: selectCalendars(state),
     hiddenCalendars: selectHiddenCalendars(state),
 });
 
