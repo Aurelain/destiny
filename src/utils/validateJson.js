@@ -17,6 +17,7 @@ const validateJson = (json, schema) => {
         const [error] = validate.errors; // get the first error
         throw new Error(JSON.stringify(error.instancePath + ' ' + error.message));
     }
+    return json;
 };
 
 // =================================================================================================================

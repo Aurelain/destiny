@@ -1,19 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import memoize from 'memoize-one';
 import Button from '../utils/ui/Button.jsx';
 import Reload from '../icons/Reload.jsx';
 import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
-import {ENDPOINT_TOGGLE_CALENDAR, VERSION} from '../COMMON.js';
+import {VERSION} from '../COMMON.js';
 import {BAR_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
 import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
-import memoize from 'memoize-one';
-import PropTypes from 'prop-types';
 import CheckboxMarked from '../icons/CheckboxMarked.jsx';
-import requestEndpoint from '../system/requestEndpoint.js';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
+import {selectHiddenCalendars} from '../state/selectors.js';
+import toggleCalendar from '../state/actions/toggleCalendar.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -57,7 +59,7 @@ class Bar extends React.PureComponent {
     };
 
     render() {
-        const {store} = this.props;
+        const {store, hiddenCalendars} = this.props;
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? Spin : Reload;
         return (
@@ -71,7 +73,7 @@ class Bar extends React.PureComponent {
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
                     subtitle={VERSION}
-                    list={this.memoMenuList(store)}
+                    list={this.memoMenuList(store, hiddenCalendars)}
                 />
             </div>
         );
@@ -122,7 +124,7 @@ class Bar extends React.PureComponent {
                 const {store} = this.props;
                 for (const {id} of store.calendars) {
                     if (id === name) {
-                        this.changeCalendarVisibility(id);
+                        toggleCalendar(id);
                         return;
                     }
                 }
@@ -148,11 +150,11 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((store) => {
+    memoMenuList = memoize((store, hiddenCalendars) => {
         const list = [];
         for (const calendarItem of store.calendars) {
             const {id, summary, backgroundColor} = calendarItem;
-            const CheckboxIcon = id in store.options.hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
+            const CheckboxIcon = id in hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
             list.push({
                 name: id,
                 icon: <CheckboxIcon style={{color: backgroundColor}} />,
@@ -162,42 +164,21 @@ class Bar extends React.PureComponent {
         list.push(...MENU);
         return list;
     });
-
-    /**
-     *
-     */
-    changeCalendarVisibility = async (id) => {
-        await requestEndpoint(ENDPOINT_TOGGLE_CALENDAR, {
-            body: {
-                calendarId: id,
-            },
-        });
-
-        // TODO: simplify
-        const {store} = this.props;
-        const {hiddenCalendars} = store.options;
-        const freshHiddenCalendars = {...hiddenCalendars};
-        if (freshHiddenCalendars[id]) {
-            delete freshHiddenCalendars[id];
-        } else {
-            freshHiddenCalendars[id] = true;
-        }
-        const freshStore = {
-            ...store,
-            options: {
-                ...store.options,
-                hiddenCalendars: freshHiddenCalendars,
-            },
-        };
-        this.props.onStoreChange(freshStore);
-    };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
 Bar.propTypes = {
+    // -------------------------------- direct:
     store: PropTypes.object.isRequired,
     onStoreChange: PropTypes.func.isRequired,
+    // -------------------------------- redux:
+    hiddenCalendars: PropTypes.object.isRequired,
 };
-export default Bar;
+
+const mapStateToProps = (state) => ({
+    hiddenCalendars: selectHiddenCalendars(state),
+});
+
+export default connect(mapStateToProps)(Bar);

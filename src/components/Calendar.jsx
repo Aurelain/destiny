@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
 import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import {MILLISECONDS_IN_A_DAY} from '../../sw/system/SW.js';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
+import {selectHiddenCalendars} from '../state/selectors.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -31,7 +33,7 @@ class Calendar extends React.PureComponent {
     };
 
     render() {
-        const {store} = this.props;
+        const {store, hiddenCalendars} = this.props;
         const {calendars, events} = store;
 
         const calendarsById = objectify(calendars, 'id');
@@ -39,7 +41,7 @@ class Calendar extends React.PureComponent {
         const knownDays = [];
         for (const event of events) {
             const {id, calendarId, summary, start} = event;
-            if (calendarId in store.options.hiddenCalendars) {
+            if (calendarId in hiddenCalendars) {
                 continue;
             }
             const {backgroundColor} = calendarsById[calendarId];
@@ -82,7 +84,15 @@ class Calendar extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Calendar.propTypes = {
+    // -------------------------------- direct:
     store: PropTypes.object,
     onChange: PropTypes.func.isRequired,
+    // -------------------------------- redux:
+    hiddenCalendars: PropTypes.object.isRequired,
 };
-export default Calendar;
+
+const mapStateToProps = (state) => ({
+    hiddenCalendars: selectHiddenCalendars(state),
+});
+
+export default connect(mapStateToProps)(Calendar);

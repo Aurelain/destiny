@@ -1,44 +1,36 @@
-import {createSlice, configureStore} from '@reduxjs/toolkit';
+import {configureStore, createSlice} from '@reduxjs/toolkit';
+import INITIAL_STATE from './INITIAL_STATE.js';
 
 // =====================================================================================================================
 //  S E T U P
 // =====================================================================================================================
-const counterSlice = createSlice({
-    name: 'counter',
-    initialState: {
-        value: 0,
-    },
+const slice = createSlice({
+    name: 'app',
+    initialState: INITIAL_STATE,
     reducers: {
-        restore(state, action) {
-            const {payload} = action;
-            console.log('payload:', payload);
-        },
-        incremented: (state) => {
-            // Redux Toolkit allows us to write "mutating" logic in reducers. It
-            // doesn't actually mutate the state because it uses the Immer library,
-            // which detects changes to a "draft state" and produces a brand new
-            // immutable state based off those changes
-            state.value += 1;
-        },
-        decremented: (state) => {
-            state.value -= 1;
-        },
+        setState: (state, action) => action.payload(state),
     },
 });
 
 const store = configureStore({
-    reducer: counterSlice.reducer,
+    reducer: slice.reducer,
+    // https://redux-toolkit.js.org/usage/usage-guide#working-with-non-serializable-data
+    middleware: (getDefaultMiddleware) => {
+        return getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActionPaths: ['payload'],
+            },
+        });
+    },
 });
 
-// Can still subscribe to the store
-store.subscribe(() => console.log(store.getState()));
-// store.dispatch(counterSlice.actions.incremented());
-// store.dispatch(counterSlice.actions.decremented());
+const setState = (manipulator) => {
+    dispatch(slice.actions.setState(manipulator));
+};
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-const dispatch = store.dispatch;
-const getState = store.getState;
-export {dispatch, getState};
+export const {dispatch, getState} = store;
+export {setState};
 export default store;

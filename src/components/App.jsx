@@ -44,7 +44,7 @@ class App extends React.PureComponent {
 
         if (this.state.store) {
             // We were logged-in sometimes in the past. We should update the store:
-            this.requestStore();
+            // this.requestStore();
         }
     }
 

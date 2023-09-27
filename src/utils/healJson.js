@@ -13,7 +13,8 @@ const ajv = new Ajv();
 /**
  *
  */
-const healJson = (json, schema) => {
+const healJson = (json, schema, options = {}) => {
+    const {verbose = true} = options;
     const validate = ajv.compile(schema);
     const id = schema['$id'];
     let errorFingerprint = '';
@@ -45,7 +46,7 @@ const healJson = (json, schema) => {
                 const dataParent = getDeep(json, dataParentPath);
                 const value = chooseValue(completeAddress);
                 dataParent[prop] = value;
-                console.warn(`Changed: ${dataParentPath}.${prop} = ${JSON.stringify(value)}`);
+                verbose && console.warn(`Changed: ${dataParentPath}.${prop} = ${JSON.stringify(value)}`);
                 break;
             }
             case 'type': {
@@ -56,7 +57,7 @@ const healJson = (json, schema) => {
                 const completeAddress = id + schemaPath.replace(/\/\w+$/, '');
                 const value = chooseValue(completeAddress);
                 dataParent[key] = value === null ? {} : value;
-                console.warn(`Changed: ${dataParentPath}.${key} = ${JSON.stringify(dataParent[key])}`);
+                verbose && console.warn(`Changed: ${dataParentPath}.${key} = ${JSON.stringify(dataParent[key])}`);
                 break;
             }
             case 'required': {
@@ -65,13 +66,13 @@ const healJson = (json, schema) => {
                 const dataParent = getDeep(json, instanceDotPath);
                 const value = chooseValue(completeAddress);
                 dataParent[prop] = value;
-                console.warn(`Added: ${instanceDotPath}.${prop} = ${JSON.stringify(value)}`);
+                verbose && console.warn(`Added: ${instanceDotPath}.${prop} = ${JSON.stringify(value)}`);
                 break;
             }
             case 'additionalProperties': {
                 const dataParent = getDeep(json, instanceDotPath);
                 delete dataParent[params.additionalProperty];
-                console.warn(`Removed: ${instanceDotPath}.${params.additionalProperty}`);
+                verbose && console.warn(`Removed: ${instanceDotPath}.${params.additionalProperty}`);
                 errorCount--;
                 break;
             }
@@ -82,7 +83,7 @@ const healJson = (json, schema) => {
                 const defaultValue = itemsSchema.default || {};
                 dataParent.push(defaultValue);
                 const prop = `${instanceDotPath}.${dataParent.length - 1}`;
-                console.warn(`Pushed: ${prop} = ${JSON.stringify(defaultValue)}`);
+                verbose && console.warn(`Pushed: ${prop} = ${JSON.stringify(defaultValue)}`);
                 break;
             }
             case 'const': // fall-through
@@ -94,7 +95,7 @@ const healJson = (json, schema) => {
                 const completeAddress = id + schemaPath.replace(/\w+$/, '');
                 const subSchema = ajv.getSchema(completeAddress).schema;
                 dataParent[prop] = subSchema[keyword];
-                console.warn(`Changed: ${prop} = ${subSchema[keyword]}`);
+                verbose && console.warn(`Changed: ${prop} = ${subSchema[keyword]}`);
                 break;
             }
             default: {
