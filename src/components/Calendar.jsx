@@ -38,13 +38,23 @@ class Calendar extends React.PureComponent {
         const list = [];
         const knownDays = [];
         for (const event of events) {
-            const {id, calendarId, summary, start} = event;
-            if (calendarId in hiddenCalendars) {
+            if (event.calendarId in hiddenCalendars) {
                 continue;
             }
+            const {id, calendarId, summary, start, end} = event;
             const {backgroundColor} = calendarsById[calendarId];
             list.push(...this.buildPrecedingDays(start, knownDays));
-            list.push(<Event key={id} backgroundColor={backgroundColor} title={summary} />);
+            list.push(
+                <Event
+                    key={id}
+                    calendarId={calendarId}
+                    eventId={id}
+                    backgroundColor={backgroundColor}
+                    title={summary}
+                    start={start}
+                    end={end}
+                />,
+            );
         }
 
         return <div css={SX.root}>{list}</div>;

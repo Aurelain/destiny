@@ -10,12 +10,13 @@ import OauthRefreshSchema from '../schemas/OauthRefreshSchema.js';
 /**
  * A wrapper around `requestJson()` whose sole purpose is to embellish the request with authorization.
  */
-const requestApi = async (url, options = null) => {
+const requestApi = async (url, options = {}) => {
     const accessToken = await getAccessToken();
 
     const result = await requestJson(url, {
         ...options,
         headers: {
+            ...options.headers,
             Authorization: `Bearer ${accessToken}`,
         },
     });

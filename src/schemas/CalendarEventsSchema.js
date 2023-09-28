@@ -13,7 +13,6 @@ export default {
                     },
                     summary: {
                         type: 'string',
-                        minLength: 1,
                     },
                     start: {
                         type: 'object',
@@ -64,6 +63,7 @@ export default {
     },
     required: ['items'],
 };
+
 /*
 {
     "kind": "calendar#events",

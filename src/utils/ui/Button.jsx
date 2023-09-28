@@ -73,11 +73,12 @@ class Button extends React.PureComponent {
     };
 
     render() {
-        const {label, icon, cssNormal, cssHover, cssActive, variant} = this.props;
+        const {label, icon, cssNormal, cssHover, cssActive, variant, ...otherProps} = this.props;
         const {isHovering, isPressing} = this.state;
 
         return (
             <div
+                {...otherProps}
                 css={[
                     SX.root,
 

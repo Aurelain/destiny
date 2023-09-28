@@ -7,7 +7,7 @@ import validateJson from './validateJson.js';
 /**
  *
  */
-const requestJson = async (url, options = null) => {
+const requestJson = async (url, options = {}) => {
     const fetchOptions = {...options};
     delete fetchOptions.schema;
 
@@ -19,6 +19,8 @@ const requestJson = async (url, options = null) => {
     if (fetchOptions.body) {
         fetchOptions.method = fetchOptions.method || 'POST';
         fetchOptions.body = JSON.stringify(fetchOptions.body);
+        fetchOptions.headers = {...fetchOptions.headers};
+        fetchOptions.headers['Content-Type'] = 'application/json';
     }
 
     if (fetchOptions.headers) {
