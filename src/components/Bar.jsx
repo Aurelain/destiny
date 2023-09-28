@@ -7,6 +7,7 @@ import Reload from '../icons/Reload.jsx';
 import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
+import LocationExit from '../icons/LocationExit.jsx';
 import {VERSION} from '../COMMON.js';
 import {BAR_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
 import assume from '../utils/assume.js';
@@ -16,6 +17,8 @@ import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
 import {selectCalendars, selectHiddenCalendars} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
+import localforage from 'localforage';
+import {STORE_KEY} from '../CONSTANTS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -41,11 +44,17 @@ const SX = {
 };
 
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
+const MENU_LOG_OUT = 'MENU_LOG_OUT';
 const MENU = [
     {
         name: MENU_SHOW_CONSOLE,
         icon: Console,
         label: 'Show Console',
+    },
+    {
+        name: MENU_LOG_OUT,
+        icon: LocationExit,
+        label: 'Log out',
     },
 ];
 
@@ -114,10 +123,14 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    onMenuChoice = (event, name) => {
+    onMenuChoice = async (event, name) => {
         switch (name) {
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
+                window.location.reload();
+                break;
+            case MENU_LOG_OUT:
+                await localforage.removeItem(STORE_KEY);
                 window.location.reload();
                 break;
             default: {

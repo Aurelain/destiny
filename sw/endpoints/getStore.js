@@ -6,7 +6,7 @@ import requestApiEndpoint from '../system/requestApiEndpoint.js';
 import getStore_MOCK from './getStore_MOCK.js';
 import CalendarEventsSchema from '../../src/schemas/CalendarEventsSchema.js';
 import CalendarsSchema from '../../src/schemas/CalendarsSchema.js';
-import UserSchema from '../../src/schemas/UserSchema.js';
+import UserSchema from '../../misc/UnusedSchemas/UserSchema.js';
 import validateJson from '../../src/utils/validateJson.js';
 import StoreSchema from '../../src/schemas/StoreSchema.js';
 import convertColor from '../system/convertColor.js';

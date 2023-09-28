@@ -1,15 +1,11 @@
 import announceClients from './announceClients.js';
-import getSwHome from './getSwHome.js';
-import assume from './assume.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 let isUnregistered = false;
 let currentVersion;
-let currentCachedPaths;
-let currentVirtualEndpoints;
-let currentIgnoredEndpoints;
+let currentOptions;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -17,11 +13,9 @@ let currentIgnoredEndpoints;
 /**
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/CycleTracker/Service_workers
  */
-const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints) => {
+const setupSw = async (version, options = {}) => {
     currentVersion = version;
-    currentCachedPaths = cachedPaths;
-    currentVirtualEndpoints = virtualEndpoints;
-    currentIgnoredEndpoints = ignoredEndpoints;
+    currentOptions = options;
 
     self.skipWaiting(); // TODO find out if this is working
     self.addEventListener('install', onWorkerInstall);
@@ -33,6 +27,13 @@ const setupSw = async (version, cachedPaths, virtualEndpoints, ignoredEndpoints)
 //  P R I V A T E
 // =====================================================================================================================
 /**
+ * Returns the current directory, without a trailing slash.
+ */
+const getSwHome = () => {
+    return self.location.href.replace(/\/[^/]*$/, '');
+};
+
+/**
  *
  */
 const onWorkerInstall = (event) => {
@@ -43,7 +44,8 @@ const onWorkerInstall = (event) => {
             const cache = await caches.open(currentVersion);
             const home = getSwHome();
             const absolutePaths = [];
-            for (const relativePath of currentCachedPaths) {
+            const {cachedPaths = []} = currentOptions;
+            for (const relativePath of cachedPaths) {
                 absolutePaths.push(home + relativePath);
             }
             await cache.addAll(absolutePaths);
@@ -79,43 +81,24 @@ const onWorkerFetch = (event) => {
     if (isUnregistered) {
         return;
     }
+
     // console.log('SW: Fetch', event.request.url);
     const {url, mode} = event.request;
-    const endpoint = url.split('/').pop();
-    if (endpoint in currentIgnoredEndpoints) {
-        return;
+
+    const {ignoredFetches = []} = currentOptions;
+    for (const key of ignoredFetches) {
+        if (url.includes(key)) {
+            return;
+        }
     }
 
     let responsePromise;
-    if (endpoint in currentVirtualEndpoints) {
-        responsePromise = respondToEndpoint(endpoint, event.request);
-    } else if (mode === 'navigate') {
+    if (mode === 'navigate') {
         responsePromise = respondToRoot();
     } else {
         responsePromise = respondToFile(url);
     }
     event.respondWith(responsePromise);
-};
-
-/**
- *
- */
-const respondToEndpoint = async (endpoint, request) => {
-    const body = {};
-    try {
-        let json;
-        if (request.method === 'POST') {
-            try {
-                json = await request.json();
-            } catch (e) {
-                assume(false, 'Expecting json payload in request body!');
-            }
-        }
-        body.data = await currentVirtualEndpoints[endpoint](json);
-    } catch (e) {
-        body.error = e.message;
-    }
-    return new Response(JSON.stringify(body));
 };
 
 /**

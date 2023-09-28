@@ -6,6 +6,8 @@ import validateJson from '../../utils/validateJson.js';
 import requestJson from '../../utils/requestJson.js';
 import OauthCodeSchema from '../../schemas/OauthCodeSchema.js';
 import OauthTokenSchema from '../../schemas/OauthTokenSchema.js';
+import requestCalendars from './requestCalendars.js';
+import requestEvents from './requestEvents.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -72,6 +74,9 @@ const onCodeReceived = async (codeClientResponse) => {
             expirationTimestamp: Date.now() + tokensFromGoogle.expires_in * 1000,
         };
     });
+
+    await requestCalendars();
+    await requestEvents();
 
     currentResolve();
 };
