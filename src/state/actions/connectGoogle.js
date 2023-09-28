@@ -1,4 +1,4 @@
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../../CONSTANTS.js';
+import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../../SETTINGS.js';
 import embedScriptFile from '../../utils/embedScriptFile.js';
 import assume from '../../utils/assume.js';
 import {setState} from '../store.js';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {NEW_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
+import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../utils/ui/Button.jsx';
 
 // =====================================================================================================================

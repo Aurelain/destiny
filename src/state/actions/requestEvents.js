@@ -1,6 +1,6 @@
 import {selectCalendars} from '../selectors.js';
 import {getState, setState} from '../store.js';
-import {MILLISECONDS_IN_A_DAY} from '../../CONSTANTS.js';
+import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
 import CalendarEventsSchema from '../../schemas/CalendarEventsSchema.js';
 

@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
+import localforage from 'localforage';
 import Button from '../utils/ui/Button.jsx';
 import Reload from '../icons/Reload.jsx';
 import Menu from '../icons/Menu.jsx';
 import SideMenu from '../utils/ui/SideMenu.jsx';
 import Console from '../icons/Console.jsx';
 import LocationExit from '../icons/LocationExit.jsx';
-import {VERSION} from '../COMMON.js';
-import {BAR_HEIGHT, PRIMARY_COLOR} from '../system/CLIENT.js';
+import {BAR_HEIGHT, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
@@ -17,8 +17,6 @@ import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
 import {selectCalendars, selectHiddenCalendars} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
-import localforage from 'localforage';
-import {STORE_KEY} from '../CONSTANTS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -81,7 +79,6 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    subtitle={VERSION}
                     list={this.memoMenuList(calendars, hiddenCalendars)}
                 />
             </div>

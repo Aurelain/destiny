@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 import {setState} from '../store.js';
-import {STORE_KEY} from '../../CONSTANTS.js';
+import {STORE_KEY} from '../../SETTINGS.js';
 import healJson from '../../utils/healJson.js';
 import STATE_SCHEMA from '../STATE_SCHEMA.js';
 

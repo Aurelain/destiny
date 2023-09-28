@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {VERSION} from '../COMMON.js';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
@@ -34,7 +33,6 @@ class App extends React.PureComponent {
     }
 
     componentDidMount() {
-        console.log(`Version ${VERSION}`);
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 

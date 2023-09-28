@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {BAR_HEIGHT, NEW_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT, MILLISECONDS_IN_A_DAY, NEW_HEIGHT} from '../SETTINGS.js';
 import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
-import {MILLISECONDS_IN_A_DAY} from '../../sw/system/SW.js';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 import {selectCalendars, selectEvents, selectHiddenCalendars} from '../state/selectors.js';
 

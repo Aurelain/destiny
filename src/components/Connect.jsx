@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '../utils/ui/Button.jsx';
-import {BAR_HEIGHT} from '../system/CLIENT.js';
+import {BAR_HEIGHT} from '../SETTINGS.js';
 import connectGoogle from '../state/actions/connectGoogle.js';
 
 // =====================================================================================================================

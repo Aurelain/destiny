@@ -1,5 +1,5 @@
 import requestJson from '../utils/requestJson.js';
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../COMMON.js';
+import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../SETTINGS.js';
 import {getState, setState} from '../state/store.js';
 import {selectAccessToken, selectExpirationTimestamp, selectRefreshToken} from '../state/selectors.js';
 import OauthRefreshSchema from '../schemas/OauthRefreshSchema.js';

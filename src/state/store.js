@@ -1,7 +1,7 @@
 import {configureStore, createSlice} from '@reduxjs/toolkit';
 import INITIAL_STATE from './INITIAL_STATE.js';
 import localforage from 'localforage';
-import {STORE_KEY} from '../CONSTANTS.js';
+import {STORE_KEY} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  S E T U P

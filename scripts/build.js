@@ -14,7 +14,6 @@ import assume from './utils/assume.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const OUTPUT_DIR = 'docs';
-const BUILD_VERSION_MARKER = '@BUILD_VERSION';
 const CLIENT_PATH_MARKER = '@CLIENT_PATH';
 const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 
@@ -39,15 +38,11 @@ const build = async () => {
     const {hash} = await hashElement(OUTPUT_DIR);
     const cleanHash = hash.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
     renameClient(clientBundle, cleanHash);
-
-    // Inject version and cache filenames:
-    // tweakClient(clientBundle);
     updateIndex(clientBundle);
 
     // Adapt service-worker:
     if (!isFocus) {
         const swBundle = await createBundle('sw/sw.js', '[name]', isDev);
-        updateVersion(clientBundle, swBundle, cleanHash);
         updateCachedPaths(swBundle);
         fs.writeFileSync(swBundle.filePath, swBundle.content);
     }
@@ -124,14 +119,6 @@ const renameClient = (clientBundle, hash) => {
 
     clientBundle.filePath = freshFilePath;
     clientBundle.content = clientBundle.content.replace(oldName + '.map', freshName + '.map');
-};
-
-/**
- *
- */
-const updateVersion = (clientBundle, swBundle, hash) => {
-    clientBundle.content = clientBundle.content.replace(BUILD_VERSION_MARKER, hash);
-    swBundle.content = swBundle.content.replace(BUILD_VERSION_MARKER, hash);
 };
 
 /**
