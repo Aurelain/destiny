@@ -39,6 +39,11 @@ const SX = {
     btn: {
         padding: 8,
     },
+    listItem: {
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+    },
 };
 
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
@@ -47,7 +52,7 @@ const MENU = [
     {
         name: MENU_SHOW_CONSOLE,
         icon: Console,
-        label: 'Show Console',
+        label: 'Show console',
     },
     {
         name: MENU_LOG_OUT,
@@ -80,6 +85,7 @@ class Bar extends React.PureComponent {
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
                     list={this.memoMenuList(calendars, hiddenCalendars)}
+                    listItemCss={SX.listItem}
                 />
             </div>
         );

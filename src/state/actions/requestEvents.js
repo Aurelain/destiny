@@ -3,6 +3,7 @@ import {getState, setState} from '../store.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
 import CalendarEventsSchema from '../../schemas/CalendarEventsSchema.js';
+import sortEvents from '../../system/sortEvents.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -18,7 +19,8 @@ const requestEvents = async () => {
         const calendarEvents = await getCalendarEvents(calendarId);
         events.push(...calendarEvents);
     }
-    events.sort(compareEvents);
+
+    sortEvents(events);
 
     setState((state) => {
         state.events = events;
@@ -66,25 +68,6 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         start: unifiedStart,
         end: unifiedEnd,
     };
-};
-
-/**
- *
- */
-const compareEvents = (a, b) => {
-    if (a.start < b.start) {
-        return -1;
-    } else if (a.start > b.start) {
-        return 1;
-    } else {
-        if (a.summary < b.summary) {
-            return -1;
-        } else if (a.summary > b.summary) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 };
 
 // =====================================================================================================================

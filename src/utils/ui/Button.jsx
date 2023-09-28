@@ -20,6 +20,9 @@ const SX = {
         transitionProperty: 'background-color,color',
         transitionDuration: '250ms',
         transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        '& > *': {
+            flexShrink: 0, // so the icons don't resize when the label is nowrap
+        },
     },
 
     // Variant `simple`:

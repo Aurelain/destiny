@@ -57,7 +57,9 @@ class Event extends React.PureComponent {
         const {isExpanded} = this.state;
         return (
             <div css={SX.root}>
-                <Button label={title} cssNormal={this.memoTitleCss(backgroundColor)} onClick={this.onTitleClick} />
+                <div css={this.memoTitleCss(backgroundColor)} onClick={this.onTitleClick}>
+                    {title}
+                </div>
                 {isExpanded && (
                     <div css={SX.content}>
                         {title}

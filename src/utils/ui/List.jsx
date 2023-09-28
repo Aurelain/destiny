@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button.jsx';
+import memoize from 'memoize-one';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -21,7 +22,8 @@ const SX = {
 // =====================================================================================================================
 class List extends React.PureComponent {
     render() {
-        const {items, onClick} = this.props;
+        const {items, itemCss, onClick} = this.props;
+        const cssNormal = this.memoCssNormal(itemCss);
         return (
             <div css={SX.root}>
                 {items.map(({name, label, icon}) => (
@@ -32,12 +34,16 @@ class List extends React.PureComponent {
                         label={label}
                         icon={icon}
                         onClick={onClick}
-                        cssNormal={SX.item}
+                        cssNormal={cssNormal}
                     />
                 ))}
             </div>
         );
     }
+
+    memoCssNormal = memoize((itemCss) => {
+        return {...SX.item, ...itemCss};
+    });
 }
 
 // =====================================================================================================================
@@ -51,6 +57,7 @@ List.propTypes = {
             icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
         }),
     ),
+    itemCss: PropTypes.object,
     onClick: PropTypes.func,
 };
 export default List;

@@ -4,6 +4,7 @@ import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import EventSchema from '../../schemas/EventSchema.js';
 import {selectEvents} from '../selectors.js';
 import {setState} from '../store.js';
+import sortEvents from '../../system/sortEvents.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -21,6 +22,7 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
         const event = events.find((event) => event.id === eventId && event.calendarId === calendarId);
         event.start = freshStart;
         event.end = freshEnd;
+        sortEvents(events);
     });
 
     await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {

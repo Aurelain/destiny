@@ -53,7 +53,7 @@ const SX = {
 // =====================================================================================================================
 class SideMenu extends React.PureComponent {
     render() {
-        const {isOpen, title, subtitle, list, onClick} = this.props;
+        const {isOpen, title, subtitle, list, listItemCss, onClick} = this.props;
         return (
             <div css={[SX.overlay, isOpen && SX.overlayIsOpen]} onClick={this.onOverlayClick}>
                 <div css={[SX.menu, isOpen && SX.menuIsOpen]} onClick={this.onMenuClick}>
@@ -61,7 +61,7 @@ class SideMenu extends React.PureComponent {
                         {title}
                         {subtitle && <div css={SX.subtitle}>{subtitle}</div>}
                     </div>
-                    {list && <List items={list} onClick={onClick} />}
+                    {list && <List items={list} itemCss={listItemCss} onClick={onClick} />}
                 </div>
             </div>
         );
@@ -98,6 +98,7 @@ SideMenu.propTypes = {
             icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
         }),
     ),
+    listItemCss: PropTypes.object,
     children: PropTypes.node,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
