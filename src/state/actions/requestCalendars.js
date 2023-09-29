@@ -1,6 +1,7 @@
 import {setState} from '../store.js';
 import CalendarsSchema from '../../schemas/CalendarsSchema.js';
 import requestApi from '../../system/requestApi.js';
+import checkOffline from '../../system/checkOffline.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -43,6 +44,10 @@ const GOOGLE_DARKER_REPLACEMENTS = {
  *
  */
 const requestCalendars = async () => {
+    if (checkOffline()) {
+        return;
+    }
+
     const result = await requestApi('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
         schema: CalendarsSchema,
     });

@@ -1,7 +1,7 @@
 import {configureStore, createSlice} from '@reduxjs/toolkit';
 import INITIAL_STATE from './INITIAL_STATE.js';
 import localforage from 'localforage';
-import {STORE_KEY} from '../SETTINGS.js';
+import {STORE_KEY, USE_MOCK} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  S E T U P
@@ -33,7 +33,9 @@ const setState = (manipulator) => {
 store.subscribe(() => {
     const state = getState();
     console.log('Persisting', state);
-    localforage.setItem(STORE_KEY, state);
+    if (!USE_MOCK) {
+        localforage.setItem(STORE_KEY, state);
+    }
 });
 
 // =====================================================================================================================

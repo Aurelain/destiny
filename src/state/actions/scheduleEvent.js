@@ -5,6 +5,7 @@ import EventSchema from '../../schemas/EventSchema.js';
 import {selectEvents} from '../selectors.js';
 import {setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
+import checkOffline from '../../system/checkOffline.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -25,6 +26,9 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
         sortEvents(events);
     });
 
+    if (checkOffline()) {
+        return;
+    }
     await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
         method: 'PATCH',
         body: {

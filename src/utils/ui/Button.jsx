@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
+import checkParents from './checkParents.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -29,6 +30,9 @@ const SX = {
         cursor: 'pointer',
         boxShadow: 'none',
         background: '#aaa',
+    },
+    allowTouch: {
+        touchAction: 'unset',
     },
 
     // Variant `simple`:
@@ -65,12 +69,19 @@ const SX = {
             '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
     },
     contained_hover: {
-        backgroundColor: '#1565c0',
+        filter: 'brightness(1.20)',
     },
     contained_active: {
-        backgroundColor: '#6093D0',
+        filter: 'brightness(0.8)',
+        boxShadow: 'none',
+    },
+
+    isHolding: {
+        background: '#f00',
     },
 };
+const HOLD_TIMEOUT = 500;
+const HOLD_TOLERANCE = 10;
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -79,15 +90,23 @@ class Button extends React.PureComponent {
     state = {
         isHovering: false,
         isPressing: false,
+        isHolding: false,
     };
+    rootRef = React.createRef();
+    holdTimeout;
+    initialX;
+    initialY;
 
     render() {
-        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, ...otherProps} = this.props;
-        const {isHovering, isPressing} = this.state;
+        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, allowTouch, ...otherProps} = this.props;
+        delete otherProps.onHold;
+        delete otherProps.onClick;
+        const {isHovering, isPressing, isHolding} = this.state;
 
         return (
             <div
                 {...otherProps}
+                ref={this.rootRef}
                 css={[
                     SX.root,
 
@@ -101,17 +120,26 @@ class Button extends React.PureComponent {
                     isHovering && isPressing && cssActive,
 
                     disabled && SX.disabled,
+
+                    allowTouch && SX.allowTouch,
+
+                    isHolding && SX.isHolding,
                 ]}
-                onPointerEnter={this.onPointerEnter}
-                onPointerLeave={this.onPointerLeave}
-                onPointerDown={this.onPointerDown}
-                onClick={this.onRootClick}
+                onPointerEnter={this.onRootPointerEnter}
+                onPointerLeave={this.onRootPointerLeave}
+                onPointerDown={this.onRootPointerDown}
+                onContextMenu={this.onRootContextMenu}
             >
                 {this.memoIcon(icon)}
                 {icon && label && ' '}
                 {this.memoContent(label)}
             </div>
         );
+    }
+
+    componentWillUnmount() {
+        this.cancelHolding();
+        this.cancelPressing();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -144,39 +172,106 @@ class Button extends React.PureComponent {
     /**
      *
      */
-    onPointerEnter = () => {
+    onRootPointerEnter = () => {
         this.setState({isHovering: true});
     };
 
     /**
      *
      */
-    onPointerLeave = () => {
+    onRootPointerLeave = () => {
         this.setState({isHovering: false});
     };
 
     /**
      *
      */
-    onPointerDown = () => {
+    onRootPointerDown = (event) => {
         this.setState({isPressing: true});
         window.addEventListener('pointerup', this.onWindowPointerUp);
+        window.addEventListener('scroll', this.onWindowScrollWhilePressing);
+        if (this.props.onHold) {
+            this.initialX = event.clientX;
+            this.initialY = event.clientY;
+            this.holdTimeout = setTimeout(this.onHoldTimeout, HOLD_TIMEOUT);
+            window.addEventListener('pointermove', this.onWindowPointerMove);
+        }
     };
 
     /**
      *
      */
-    onWindowPointerUp = () => {
+    onWindowPointerMove = (event) => {
+        const deltaX = Math.abs(event.clientX - this.initialX);
+        const deltaY = Math.abs(event.clientY - this.initialY);
+        if (deltaX > HOLD_TOLERANCE || deltaY > HOLD_TOLERANCE) {
+            this.cancelHolding();
+        }
+    };
+
+    /**
+     * Note: We're using this event, instead of click, to avoid some confusing behavior on mobile (context menu firing,
+     * scroll stealing the click etc.).
+     */
+    onWindowPointerUp = (event) => {
+        const {isHolding} = this.state;
+        this.cancelHolding();
+        this.cancelPressing();
+
+        if (!checkParents(event.target, this.rootRef.current)) {
+            // The user released the pointer somewhere outside the button, so no click
+            return;
+        }
+
+        const {onClick, onHold, name} = this.props;
+        if (isHolding) {
+            onHold(event, name);
+        } else {
+            onClick?.(event, name);
+        }
+    };
+
+    /**
+     *
+     */
+    onHoldTimeout = () => {
+        this.setState({
+            isHolding: true,
+        });
+    };
+
+    /**
+     *
+     */
+    onWindowScrollWhilePressing = () => {
+        this.setState({isHovering: false});
+        this.cancelHolding();
+        this.cancelPressing();
+    };
+
+    /**
+     *
+     */
+    cancelHolding = () => {
+        this.setState({isHolding: false});
+        clearTimeout(this.holdTimeout);
+        window.removeEventListener('pointermove', this.onWindowPointerMove);
+    };
+
+    /**
+     *
+     */
+    cancelPressing = () => {
         this.setState({isPressing: false});
         window.removeEventListener('pointerup', this.onWindowPointerUp);
+        window.removeEventListener('scroll', this.onWindowScrollWhilePressing);
     };
 
     /**
      *
      */
-    onRootClick = (event) => {
-        const {onClick, name} = this.props;
-        onClick?.(event, name);
+    onRootContextMenu = (event) => {
+        event.preventDefault();
     };
 }
 
@@ -192,9 +287,11 @@ Button.propTypes = {
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
     disabled: PropTypes.bool,
     name: PropTypes.string,
-    onClick: PropTypes.func,
     cssNormal: PropTypes.any,
     cssHover: PropTypes.any,
     cssActive: PropTypes.any,
+    allowTouch: PropTypes.bool,
+    onClick: PropTypes.func,
+    onHold: PropTypes.func,
 };
 export default Button;

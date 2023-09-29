@@ -43,6 +43,8 @@ const SX = {
         borderBottomRightRadius: 6,
         borderBottomLeftRadius: 6,
         border: 'solid 1px #0b8043',
+        borderTop: 0,
+        transition: 'height 300ms ease',
     },
     toolbar: {
         marginTop: 4,
@@ -64,18 +66,23 @@ const TODAY = getYYYYMMDD();
 class Event extends React.PureComponent {
     state = {
         isExpanded: false,
+        contentHeight: null,
     };
     render() {
         const {title, backgroundColor, start} = this.props;
-        const {isExpanded} = this.state;
+        const {isExpanded, contentHeight} = this.state;
 
         return (
             <div css={SX.root}>
-                <div css={this.memoTitleCss(backgroundColor, isExpanded)} onClick={this.onTitleClick}>
-                    {title}
-                </div>
-                {isExpanded && (
-                    <div css={this.memoContentCss(backgroundColor)}>
+                <Button
+                    label={title}
+                    cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
+                    allowTouch={true}
+                    onClick={this.onTitleClick}
+                    onHold={this.onTitleHold}
+                />
+                {(isExpanded || contentHeight !== null) && (
+                    <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         {title}
                         <div css={SX.toolbar}>
                             <Button // Bell
@@ -118,6 +125,12 @@ class Event extends React.PureComponent {
         );
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.isExpanded !== this.state.isExpanded) {
+            // TODO
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
@@ -125,6 +138,11 @@ class Event extends React.PureComponent {
         this.setState({
             isExpanded: !this.state.isExpanded,
         });
+    };
+
+    onTitleHold = () => {
+        console.log('Hold', this.props.title);
+        // TODO
     };
 
     onBellClick = () => {};

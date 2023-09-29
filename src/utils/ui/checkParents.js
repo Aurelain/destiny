@@ -1,16 +1,21 @@
-import healJson from '../utils/healJson.js';
-import STATE_SCHEMA from './STATE_SCHEMA.js';
-
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const INITIAL_STATE = healJson(
-    {}, // target
-    STATE_SCHEMA, // schema
-    {verbose: false}, // options
-);
+/**
+ *
+ */
+const checkParents = (child, candidateParent) => {
+    let target = child;
+    while (target) {
+        if (target === candidateParent) {
+            return true;
+        }
+        target = target.parentNode;
+    }
+    return false;
+};
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default INITIAL_STATE;
+export default checkParents;

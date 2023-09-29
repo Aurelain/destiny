@@ -284,7 +284,7 @@ function log(...args) {
         if (item && typeof item === 'object') {
             parts.push(JSON.stringify(item, null, 4));
         } else {
-            parts.push(item.toString());
+            parts.push(String(item));
         }
     }
     addLine(parts.join(' '));

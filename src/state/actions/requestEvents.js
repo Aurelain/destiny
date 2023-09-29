@@ -4,6 +4,7 @@ import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
 import CalendarEventsSchema from '../../schemas/CalendarEventsSchema.js';
 import sortEvents from '../../system/sortEvents.js';
+import checkOffline from '../../system/checkOffline.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -12,6 +13,10 @@ import sortEvents from '../../system/sortEvents.js';
  *
  */
 const requestEvents = async () => {
+    if (checkOffline()) {
+        return;
+    }
+
     const calendars = selectCalendars(getState());
 
     const events = [];
