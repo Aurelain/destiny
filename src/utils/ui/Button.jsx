@@ -188,37 +188,42 @@ class Button extends React.PureComponent {
      */
     onRootPointerDown = (event) => {
         this.setState({isPressing: true});
-        window.addEventListener('pointerup', this.onWindowPointerUp);
+        window.addEventListener('pointerup', this.onWindowRelease);
+        window.addEventListener('touchend', this.onWindowRelease);
         window.addEventListener('scroll', this.onWindowScrollWhilePressing);
         if (this.props.onHold) {
             this.initialX = event.clientX;
             this.initialY = event.clientY;
             this.holdTimeout = setTimeout(this.onHoldTimeout, HOLD_TIMEOUT);
-            window.addEventListener('pointermove', this.onWindowPointerMove);
+            window.addEventListener('pointermove', this.onWindowMotion);
+            window.addEventListener('touchmove', this.onWindowMotion);
         }
     };
 
     /**
-     *
+     * Note: This handles both `pointermove` and `touchmove` because of the anomalies of `touch-action`.
      */
-    onWindowPointerMove = (event) => {
-        const deltaX = Math.abs(event.clientX - this.initialX);
-        const deltaY = Math.abs(event.clientY - this.initialY);
+    onWindowMotion = (event) => {
+        const {clientX, clientY} = getCoordinatesFromEvent(event);
+        const deltaX = Math.abs(clientX - this.initialX);
+        const deltaY = Math.abs(clientY - this.initialY);
         if (deltaX > HOLD_TOLERANCE || deltaY > HOLD_TOLERANCE) {
             this.cancelHolding();
         }
     };
 
     /**
+     * Note: This handles both `pointerup` and `touchend` because of the anomalies of `touch-action`.
      * Note: We're using this event, instead of click, to avoid some confusing behavior on mobile (context menu firing,
      * scroll stealing the click etc.).
      */
-    onWindowPointerUp = (event) => {
+    onWindowRelease = (event) => {
         const {isHolding} = this.state;
         this.cancelHolding();
         this.cancelPressing();
 
-        if (!checkParents(event.target, this.rootRef.current)) {
+        const target = getTargetFromEvent(event);
+        if (!checkParents(target, this.rootRef.current)) {
             // The user released the pointer somewhere outside the button, so no click
             return;
         }
@@ -255,7 +260,8 @@ class Button extends React.PureComponent {
     cancelHolding = () => {
         this.setState({isHolding: false});
         clearTimeout(this.holdTimeout);
-        window.removeEventListener('pointermove', this.onWindowPointerMove);
+        window.removeEventListener('pointermove', this.onWindowMotion);
+        window.removeEventListener('touchmove', this.onWindowMotion);
     };
 
     /**
@@ -263,7 +269,8 @@ class Button extends React.PureComponent {
      */
     cancelPressing = () => {
         this.setState({isPressing: false});
-        window.removeEventListener('pointerup', this.onWindowPointerUp);
+        window.removeEventListener('pointerup', this.onWindowRelease);
+        window.removeEventListener('touchend', this.onWindowRelease);
         window.removeEventListener('scroll', this.onWindowScrollWhilePressing);
     };
 
@@ -274,6 +281,26 @@ class Button extends React.PureComponent {
         event.preventDefault();
     };
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const getCoordinatesFromEvent = (event) => {
+    event = event.changedTouches?.[0] || event;
+    const {clientX, clientY} = event;
+    return {clientX, clientY};
+};
+
+/**
+ *
+ */
+const getTargetFromEvent = (event) => {
+    const {clientX, clientY} = getCoordinatesFromEvent(event);
+    return document.elementFromPoint(clientX, clientY);
+};
 
 // =====================================================================================================================
 //  E X P O R T
