@@ -63,7 +63,7 @@ const getCalendarEvents = async (calendarId) => {
  *
  */
 const sanitizeAndEnhanceEvent = (event, calendarId) => {
-    const {id, summary, start, end} = event;
+    const {id, summary, start, end, status} = event;
     const unifiedStart = start.date || start.dateTime;
     const unifiedEnd = end.date || end.dateTime;
     return {
@@ -72,6 +72,7 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         summary,
         start: unifiedStart,
         end: unifiedEnd,
+        status,
     };
 };
 

@@ -19,16 +19,6 @@ export default {
             },
             required: ['accessToken', 'refreshToken', 'expirationTimestamp'],
         },
-        user: {
-            type: 'object',
-            additionalProperties: false,
-            properties: {
-                email: {
-                    type: 'string',
-                },
-            },
-            required: ['email'],
-        },
         calendars: {
             type: 'array',
             items: {
@@ -72,8 +62,12 @@ export default {
                         type: 'string',
                         pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}',
                     },
+                    status: {
+                        enum: ['confirmed', 'tentative', 'cancelled'],
+                        default: 'confirmed',
+                    },
                 },
-                required: ['id', 'calendarId', 'summary', 'start', 'end'],
+                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status'],
             },
         },
         options: {
@@ -88,9 +82,13 @@ export default {
                         },
                     },
                 },
+                showDone: {
+                    type: 'boolean',
+                    default: false,
+                },
             },
-            required: ['hiddenCalendars'],
+            required: ['hiddenCalendars', 'showDone'],
         },
     },
-    required: ['tokens', 'user', 'calendars', 'events', 'options'],
+    required: ['tokens', 'calendars', 'events', 'options'],
 };

@@ -26,17 +26,27 @@ class List extends React.PureComponent {
         const cssNormal = this.memoCssNormal(itemCss);
         return (
             <div css={SX.root}>
-                {items.map(({name, label, icon}) => (
-                    <Button
-                        key={name}
-                        name={name}
-                        variant={'simple'}
-                        label={label}
-                        icon={icon}
-                        onClick={onClick}
-                        cssNormal={cssNormal}
-                    />
-                ))}
+                {items.map((item, index) => {
+                    if (typeof item === 'function') {
+                        const Component = item;
+                        return <Component key={index} />;
+                    } else if ('ref' in item) {
+                        return item;
+                    }
+
+                    const {name, label, icon} = item;
+                    return (
+                        <Button
+                            key={name}
+                            name={name}
+                            variant={'simple'}
+                            label={label}
+                            icon={icon}
+                            onClick={onClick}
+                            cssNormal={cssNormal}
+                        />
+                    );
+                })}
             </div>
         );
     }
@@ -51,11 +61,15 @@ class List extends React.PureComponent {
 // =====================================================================================================================
 List.propTypes = {
     items: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string,
-            label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
-            icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-        }),
+        PropTypes.oneOfType([
+            PropTypes.shape({
+                name: PropTypes.string,
+                label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
+                icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+            }),
+            PropTypes.func,
+            PropTypes.node,
+        ]),
     ),
     itemCss: PropTypes.object,
     onClick: PropTypes.func,

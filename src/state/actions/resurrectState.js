@@ -13,9 +13,6 @@ const MOCK = {
         refreshToken: 'foo',
         expirationTimestamp: 0,
     },
-    user: {
-        email: '',
-    },
     calendars: [
         {
             id: 'foo@gmail.com',
@@ -27,13 +24,15 @@ const MOCK = {
         {
             id: 'urm29vfme6ebe49npr1hrn5kdg',
             calendarId: 'foo@gmail.com',
-            summary: 'MyEvent',
+            summary: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus aliquet est ut quam ',
             start: '2023-09-28',
             end: '2023-09-29',
+            status: 'cancelled',
         },
     ],
     options: {
         hiddenCalendars: {},
+        showDone: true,
     },
 };
 

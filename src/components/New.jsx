@@ -23,7 +23,7 @@ const SX = {
         border: 'none',
         borderRadius: 20,
         padding: '0 16px',
-        margin: '8px 2px',
+        margin: '8px 2px 8px 8px',
     },
     plus: {
         height: '100%',

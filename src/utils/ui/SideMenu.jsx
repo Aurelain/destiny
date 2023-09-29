@@ -92,11 +92,15 @@ SideMenu.propTypes = {
     title: PropTypes.string.isRequired,
     subtitle: PropTypes.string,
     list: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string,
-            label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
-            icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-        }),
+        PropTypes.oneOfType([
+            PropTypes.shape({
+                name: PropTypes.string,
+                label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
+                icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+            }),
+            PropTypes.func,
+            PropTypes.node,
+        ]),
     ),
     listItemCss: PropTypes.object,
     children: PropTypes.node,

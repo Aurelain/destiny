@@ -56,8 +56,11 @@ export default {
                             },
                         ],
                     },
+                    status: {
+                        enum: ['confirmed', 'tentative', 'cancelled'],
+                    },
                 },
-                required: ['id', 'summary', 'start', 'end'],
+                required: ['id', 'summary', 'start', 'end', 'status'],
             },
         },
     },

@@ -27,7 +27,7 @@ const healJson = (json, schema, options = {}) => {
         }
 
         errorCount++;
-        assume(errorCount < 100, 'Too many errors!');
+        assume(errorCount < 1000, 'Too many errors!');
 
         const [error] = validate.errors; // we're only interested in the first error
         const freshFingerprint = JSON.stringify(error, null, 4);

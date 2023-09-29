@@ -15,9 +15,12 @@ import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
-import {selectCalendars, selectHiddenCalendars} from '../state/selectors.js';
+import {selectCalendars, selectHiddenCalendars, selectShowDone} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
 import Magnify from '../icons/Magnify.jsx';
+import toggleShowDone from '../state/actions/toggleShowDone.js';
+import TimelineCheckOutline from '../icons/TimelineCheckOutline.jsx';
+import Separator from '../utils/ui/Separator.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -55,18 +58,7 @@ const SX = {
 
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
-const MENU = [
-    {
-        name: MENU_SHOW_CONSOLE,
-        icon: Console,
-        label: 'Show console',
-    },
-    {
-        name: MENU_LOG_OUT,
-        icon: LocationExit,
-        label: 'Log out',
-    },
-];
+const MENU_SHOW_DONE = 'MENU_SHOW_DONE';
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -78,7 +70,7 @@ class Bar extends React.PureComponent {
     };
 
     render() {
-        const {calendars, hiddenCalendars} = this.props;
+        const {calendars, hiddenCalendars, showDone} = this.props;
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? Spin : Reload;
         return (
@@ -93,7 +85,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    list={this.memoMenuList(calendars, hiddenCalendars)}
+                    list={this.memoMenuList(calendars, hiddenCalendars, showDone)}
                     listItemCss={SX.listItem}
                 />
             </div>
@@ -137,6 +129,9 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async (event, name) => {
         switch (name) {
+            case MENU_SHOW_DONE:
+                toggleShowDone();
+                break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
@@ -182,7 +177,7 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((calendars, hiddenCalendars) => {
+    memoMenuList = memoize((calendars, hiddenCalendars, showDone) => {
         const list = [];
         for (const calendarItem of calendars) {
             const {id, summary, backgroundColor} = calendarItem;
@@ -193,7 +188,26 @@ class Bar extends React.PureComponent {
                 label: summary,
             });
         }
-        list.push(...MENU);
+        list.push(
+            ...[
+                Separator,
+                {
+                    name: MENU_SHOW_DONE,
+                    icon: TimelineCheckOutline,
+                    label: `${showDone ? 'Hide' : 'Show'} done`,
+                },
+                {
+                    name: MENU_SHOW_CONSOLE,
+                    icon: Console,
+                    label: 'Show console',
+                },
+                {
+                    name: MENU_LOG_OUT,
+                    icon: LocationExit,
+                    label: 'Log out',
+                },
+            ],
+        );
         return list;
     });
 }
@@ -211,11 +225,13 @@ Bar.propTypes = {
         }),
     ).isRequired,
     hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
+    showDone: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     hiddenCalendars: selectHiddenCalendars(state),
+    showDone: selectShowDone(state),
 });
 
 export default connect(mapStateToProps)(Bar);

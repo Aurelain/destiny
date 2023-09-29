@@ -11,6 +11,7 @@ import scheduleEvent from '../state/actions/scheduleEvent.js';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 import Bell from '../icons/Bell.jsx';
 import ContentDuplicate from '../icons/ContentDuplicate.jsx';
+import CheckCircle from '../icons/CheckCircle.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -23,11 +24,8 @@ const SX = {
         height: 32,
         lineHeight: '32px',
         borderRadius: 6,
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        padding: '0 0 0 6px',
+        padding: 0,
         color: '#fff',
-        textOverflow: 'ellipsis',
         cursor: 'pointer',
         display: 'block',
         boxShadow: 'none',
@@ -36,6 +34,20 @@ const SX = {
     titleExpanded: {
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
+    },
+    titleLabel: {
+        padding: '0 6px',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    titleLabelText: {
+        flexGrow: 1,
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+    },
+    titleLabelDone: {
+        flexShrink: 0,
     },
     content: {
         padding: 8,
@@ -69,13 +81,13 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start} = this.props;
+        const {title, backgroundColor, start, isDone} = this.props;
         const {isExpanded, contentHeight} = this.state;
 
         return (
             <div css={SX.root}>
                 <Button
-                    label={title}
+                    label={this.memoLabel(title, isDone)}
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
                     allowTouch={true}
                     onClick={this.onTitleClick}
@@ -194,6 +206,15 @@ class Event extends React.PureComponent {
     memoContentCss = memoize((backgroundColor) => {
         return {...SX.content, borderColor: backgroundColor};
     });
+
+    memoLabel = memoize((title, isDone) => {
+        return (
+            <div css={SX.titleLabel}>
+                <div css={SX.titleLabelText}>{title}</div>
+                {isDone && <CheckCircle styling={SX.titleLabelDone} />}
+            </div>
+        );
+    });
 }
 
 // =====================================================================================================================
@@ -204,6 +225,7 @@ Event.propTypes = {
     eventId: PropTypes.string.isRequired,
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
+    isDone: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
     backgroundColor: PropTypes.string.isRequired,
 };

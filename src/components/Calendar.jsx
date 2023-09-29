@@ -6,7 +6,8 @@ import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
-import {selectCalendars, selectEvents, selectHiddenCalendars} from '../state/selectors.js';
+import {selectCalendars, selectEvents, selectHiddenCalendars, selectShowDone} from '../state/selectors.js';
+import checkEventIsDone from '../system/checkEventIsDone.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -17,6 +18,9 @@ const SX = {
         paddingRight: 8,
         paddingBottom: NEW_HEIGHT + 8,
         paddingLeft: 8,
+        '& > *:first-of-type': {
+            marginTop: 8,
+        },
     },
     event: {
         borderBottom: 'solid 1px silver',
@@ -32,16 +36,20 @@ class Calendar extends React.PureComponent {
     };
 
     render() {
-        const {hiddenCalendars, calendars, events} = this.props;
+        const {hiddenCalendars, calendars, events, showDone} = this.props;
 
         const calendarsById = objectify(calendars, 'id');
         const list = [];
         const knownDays = [];
         for (const event of events) {
-            if (event.calendarId in hiddenCalendars) {
+            const {id, calendarId, summary, start, end, status} = event;
+            if (calendarId in hiddenCalendars) {
                 continue;
             }
-            const {id, calendarId, summary, start, end} = event;
+            const isDone = checkEventIsDone(summary, status);
+            if (!showDone && isDone) {
+                continue;
+            }
             const {backgroundColor} = calendarsById[calendarId];
             list.push(...this.buildPrecedingDays(start, knownDays));
             list.push(
@@ -52,7 +60,9 @@ class Calendar extends React.PureComponent {
                     backgroundColor={backgroundColor}
                     title={summary}
                     start={start}
+                    status={status}
                     end={end}
+                    isDone={isDone}
                 />,
             );
         }
@@ -108,12 +118,14 @@ Calendar.propTypes = {
         }),
     ).isRequired,
     hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
+    showDone: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     events: selectEvents(state),
     hiddenCalendars: selectHiddenCalendars(state),
+    showDone: selectShowDone(state),
 });
 
 export default connect(mapStateToProps)(Calendar);

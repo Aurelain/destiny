@@ -7,7 +7,7 @@ import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 // =====================================================================================================================
 const SX = {
     root: {
-        marginTop: 16,
+        marginTop: 32,
         textAlign: 'center',
     },
     title: {
