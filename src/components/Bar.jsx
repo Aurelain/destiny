@@ -17,6 +17,7 @@ import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
 import {selectCalendars, selectHiddenCalendars} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
+import Magnify from '../icons/Magnify.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -43,6 +44,12 @@ const SX = {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
+    },
+    sliver: {
+        position: 'absolute',
+        inset: 'auto 0 0 0',
+        height: 1,
+        background: 'rgba(0,0,0,0.1)',
     },
 };
 
@@ -76,9 +83,11 @@ class Bar extends React.PureComponent {
         const reloadIcon = isLoading ? Spin : Reload;
         return (
             <div css={SX.root}>
-                <Button label={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
+                <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
                 <div css={SX.grow} />
-                <Button label={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
+                <Button icon={Magnify} cssNormal={SX.btn} onClick={this.onMagnifyClick} variant={'inverted'} />
+                <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
+                <div css={SX.sliver} />
                 <SideMenu
                     isOpen={isMenuOpen}
                     onClose={this.onMenuClose}
@@ -147,6 +156,13 @@ class Bar extends React.PureComponent {
                 assume(false, `Unexpected menu choice "${name}"!`);
             }
         }
+    };
+
+    /**
+     *
+     */
+    onMagnifyClick = () => {
+        // TODO
     };
 
     /**

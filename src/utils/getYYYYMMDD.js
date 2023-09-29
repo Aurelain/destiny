@@ -5,6 +5,7 @@
  *
  */
 const getYYYYMMDD = (date) => {
+    date = date || new Date();
     const dateString = typeof date === 'string' ? date : date.toISOString();
     return dateString.substring(0, 10);
 };

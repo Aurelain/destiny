@@ -8,6 +8,9 @@ import ChevronTripleDown from '../icons/ChevronTripleDown.jsx';
 import CalendarMonth from '../icons/CalendarMonth.jsx';
 import ArrowCollapseUp from '../icons/ArrowCollapseUp.jsx';
 import scheduleEvent from '../state/actions/scheduleEvent.js';
+import getYYYYMMDD from '../utils/getYYYYMMDD.js';
+import Bell from '../icons/Bell.jsx';
+import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -19,7 +22,7 @@ const SX = {
     title: {
         height: 32,
         lineHeight: '32px',
-        borderRadius: 4,
+        borderRadius: 6,
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         padding: '0 0 0 6px',
@@ -30,20 +33,30 @@ const SX = {
         boxShadow: 'none',
         textAlign: 'left',
     },
+    titleExpanded: {
+        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: 0,
+    },
     content: {
-        padding: '4px 8px 8px 32px',
+        padding: 8,
+        background: '#fff',
+        borderBottomRightRadius: 6,
+        borderBottomLeftRadius: 6,
+        border: 'solid 1px #0b8043',
     },
     toolbar: {
         marginTop: 4,
-        // display: 'flex',
-        // justifyContent: 'right',
-        textAlign: 'right',
+        display: 'flex',
     },
     btn: {
         margin: 2,
         padding: 4,
     },
+    grow: {
+        flexGrow: 1,
+    },
 };
+const TODAY = getYYYYMMDD();
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -53,32 +66,47 @@ class Event extends React.PureComponent {
         isExpanded: false,
     };
     render() {
-        const {title, backgroundColor} = this.props;
+        const {title, backgroundColor, start} = this.props;
         const {isExpanded} = this.state;
+
         return (
             <div css={SX.root}>
-                <div css={this.memoTitleCss(backgroundColor)} onClick={this.onTitleClick}>
+                <div css={this.memoTitleCss(backgroundColor, isExpanded)} onClick={this.onTitleClick}>
                     {title}
                 </div>
                 {isExpanded && (
-                    <div css={SX.content}>
+                    <div css={this.memoContentCss(backgroundColor)}>
                         {title}
                         <div css={SX.toolbar}>
-                            <Button cssNormal={SX.btn} icon={ArrowCollapseUp} onClick={this.onTodayClick} />
+                            <Button // Bell
+                                cssNormal={SX.btn}
+                                icon={Bell}
+                                onClick={this.onBellClick}
+                            />
+                            <Button // Duplicate
+                                cssNormal={SX.btn}
+                                icon={ContentDuplicate}
+                                onClick={this.onDuplicateClick}
+                            />
+                            <div css={SX.grow} />
                             <Button
-                                cssNormal={SX.btn} //label={'1'}
+                                disabled={start.startsWith(TODAY)}
+                                cssNormal={SX.btn}
+                                icon={ArrowCollapseUp}
+                                onClick={this.onTodayClick}
+                            />
+                            <Button // 1
+                                cssNormal={SX.btn}
                                 icon={ChevronDown}
                                 onClick={this.onOneClick}
                             />
-                            <Button
+                            <Button // 7
                                 cssNormal={SX.btn}
-                                // label={'7'}
                                 icon={ChevronDoubleDown}
                                 onClick={this.onSevenClick}
                             />
-                            <Button
+                            <Button // 30
                                 cssNormal={SX.btn}
-                                // label={'30'}
                                 icon={ChevronTripleDown}
                                 onClick={this.onThirtyClick}
                             />
@@ -99,30 +127,54 @@ class Event extends React.PureComponent {
         });
     };
 
+    onBellClick = () => {};
+
+    onDuplicateClick = () => {};
+
     onTodayClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, null, start, end);
+        this.collapse();
     };
 
     onOneClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 1, start, end);
+        this.collapse();
     };
 
     onSevenClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 7, start, end);
+        this.collapse();
     };
 
     onThirtyClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 30, start, end);
+        this.collapse();
     };
 
-    onCalendarClick = () => {};
+    onCalendarClick = () => {
+        this.collapse();
+    };
 
-    memoTitleCss = memoize((backgroundColor) => {
-        return {...SX.title, backgroundColor};
+    collapse = () => {
+        this.setState({
+            isExpanded: false,
+        });
+    };
+
+    memoTitleCss = memoize((backgroundColor, isExpanded) => {
+        const output = {...SX.title, backgroundColor};
+        if (isExpanded) {
+            Object.assign(output, SX.titleExpanded);
+        }
+        return output;
+    });
+
+    memoContentCss = memoize((backgroundColor) => {
+        return {...SX.content, borderColor: backgroundColor};
     });
 }
 

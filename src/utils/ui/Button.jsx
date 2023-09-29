@@ -24,6 +24,12 @@ const SX = {
             flexShrink: 0, // so the icons don't resize when the label is nowrap
         },
     },
+    disabled: {
+        pointerEvents: 'none',
+        cursor: 'pointer',
+        boxShadow: 'none',
+        background: '#aaa',
+    },
 
     // Variant `simple`:
     simple_normal: {
@@ -76,7 +82,7 @@ class Button extends React.PureComponent {
     };
 
     render() {
-        const {label, icon, cssNormal, cssHover, cssActive, variant, ...otherProps} = this.props;
+        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, ...otherProps} = this.props;
         const {isHovering, isPressing} = this.state;
 
         return (
@@ -93,6 +99,8 @@ class Button extends React.PureComponent {
 
                     isHovering && isPressing && SX[variant + '_active'],
                     isHovering && isPressing && cssActive,
+
+                    disabled && SX.disabled,
                 ]}
                 onPointerEnter={this.onPointerEnter}
                 onPointerLeave={this.onPointerLeave}
@@ -182,6 +190,7 @@ Button.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
     icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
+    disabled: PropTypes.bool,
     name: PropTypes.string,
     onClick: PropTypes.func,
     cssNormal: PropTypes.any,

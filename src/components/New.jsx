@@ -1,6 +1,7 @@
 import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../utils/ui/Button.jsx';
+import Plus from '../icons/Plus.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -12,10 +13,9 @@ const SX = {
         left: 0,
         right: 0,
         height: NEW_HEIGHT,
-        background: '#e1e0de',
+        background: PRIMARY_COLOR,
         display: 'flex',
         flexDirection: 'row',
-        padding: 8,
     },
     input: {
         flexGrow: 1,
@@ -23,10 +23,17 @@ const SX = {
         border: 'none',
         borderRadius: 20,
         padding: '0 16px',
-        margin: '0 8px',
+        margin: '8px 2px',
     },
-    create: {
-        background: PRIMARY_COLOR,
+    plus: {
+        height: '100%',
+        padding: 8,
+    },
+    sliver: {
+        position: 'absolute',
+        inset: '0 0 auto 0',
+        height: 1,
+        background: 'rgba(0,0,0,0.1)',
     },
 };
 
@@ -51,7 +58,8 @@ class New extends React.PureComponent {
                     placeholder={'Event'}
                     onChange={this.onInputChange}
                 />
-                <Button label={'Create'} cssNormal={SX.create} />
+                <Button icon={Plus} cssNormal={SX.plus} variant={'inverted'} />
+                <div css={SX.sliver} />
             </div>
         );
     }

@@ -34,7 +34,7 @@ class Day extends React.PureComponent {
         const dayYYYYMMDD = getYYYYMMDD(date);
         const todayYYYYMMDD = getYYYYMMDD(new Date());
         const isPast = dayYYYYMMDD < todayYYYYMMDD; // string comparison, but works
-        const isToday = !isPast && dayYYYYMMDD === todayYYYYMMDD;
+        const isToday = dayYYYYMMDD === todayYYYYMMDD;
         return (
             <div css={SX.root}>
                 <div css={[SX.title, isPast && SX.isPast, isToday && SX.isToday]}>{dayYYYYMMDD}</div>
