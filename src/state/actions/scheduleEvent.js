@@ -27,6 +27,7 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
     });
 
     if (checkOffline()) {
+        // TODO: add to pending operations
         return;
     }
     await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {

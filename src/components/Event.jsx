@@ -12,6 +12,8 @@ import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 import Bell from '../icons/Bell.jsx';
 import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
+import classifyEvent from '../state/actions/classifyEvent.js';
+import {DONE_MATCH} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -153,8 +155,8 @@ class Event extends React.PureComponent {
     };
 
     onTitleHold = () => {
-        console.log('Hold', this.props.title);
-        // TODO
+        const {calendarId, eventId} = this.props;
+        classifyEvent(calendarId, eventId);
     };
 
     onBellClick = () => {};
@@ -210,7 +212,7 @@ class Event extends React.PureComponent {
     memoLabel = memoize((title, isDone) => {
         return (
             <div css={SX.titleLabel}>
-                <div css={SX.titleLabelText}>{title}</div>
+                <div css={SX.titleLabelText}>{title.replace(DONE_MATCH, '')}</div>
                 {isDone && <CheckCircle styling={SX.titleLabelDone} />}
             </div>
         );

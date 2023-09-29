@@ -1,4 +1,4 @@
-import {DONE_MATCH} from '../SETTINGS.js';
+import {selectEvents} from '../state/selectors.js';
 
 // =================================================================================================================
 //  P U B L I C
@@ -6,11 +6,12 @@ import {DONE_MATCH} from '../SETTINGS.js';
 /**
  *
  */
-const checkEventIsDone = (summary, status) => {
-    return Boolean(summary.match(DONE_MATCH)) || status === 'cancelled';
+const findEvent = (state, calendarId, eventId) => {
+    const events = selectEvents(state);
+    return events.find((event) => event.calendarId === calendarId && event.id === eventId);
 };
 
 // =================================================================================================================
 //  E X P O R T
 // =================================================================================================================
-export default checkEventIsDone;
+export default findEvent;
