@@ -14,6 +14,7 @@ import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
 import {DONE_MATCH} from '../SETTINGS.js';
+import toggleEvent from '../state/actions/toggleEvent.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -79,12 +80,11 @@ const TODAY = getYYYYMMDD();
 // =====================================================================================================================
 class Event extends React.PureComponent {
     state = {
-        isExpanded: false,
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, isDone} = this.props;
-        const {isExpanded, contentHeight} = this.state;
+        const {title, backgroundColor, start, isDone, isExpanded} = this.props;
+        const {contentHeight} = this.state;
 
         return (
             <div css={SX.root}>
@@ -139,8 +139,8 @@ class Event extends React.PureComponent {
         );
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.isExpanded !== this.state.isExpanded) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.isExpanded !== this.props.isExpanded) {
             // TODO
         }
     }
@@ -149,9 +149,8 @@ class Event extends React.PureComponent {
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
     onTitleClick = () => {
-        this.setState({
-            isExpanded: !this.state.isExpanded,
-        });
+        const {eventId} = this.props;
+        toggleEvent(eventId);
     };
 
     onTitleHold = () => {
@@ -159,42 +158,36 @@ class Event extends React.PureComponent {
         classifyEvent(calendarId, eventId);
     };
 
-    onBellClick = () => {};
+    onBellClick = () => {
+        // TODO
+    };
 
-    onDuplicateClick = () => {};
+    onDuplicateClick = () => {
+        // TODO
+    };
 
     onTodayClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, null, start, end);
-        // this.collapse();
     };
 
     onOneClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 1, start, end);
-        // this.collapse();
     };
 
     onSevenClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 7, start, end);
-        // this.collapse();
     };
 
     onThirtyClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 30, start, end);
-        // this.collapse();
     };
 
     onCalendarClick = () => {
-        this.collapse();
-    };
-
-    collapse = () => {
-        this.setState({
-            isExpanded: false,
-        });
+        // TODO
     };
 
     memoTitleCss = memoize((backgroundColor, isExpanded) => {
@@ -228,6 +221,7 @@ Event.propTypes = {
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
+    isExpanded: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
     backgroundColor: PropTypes.string.isRequired,
 };

@@ -6,7 +6,13 @@ import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
-import {selectCalendars, selectEvents, selectHiddenCalendars, selectShowDone} from '../state/selectors.js';
+import {
+    selectCalendars,
+    selectEvents,
+    selectExpandedEvents,
+    selectHiddenCalendars,
+    selectShowDone,
+} from '../state/selectors.js';
 import checkEventIsDone from '../system/checkEventIsDone.js';
 
 // =====================================================================================================================
@@ -36,7 +42,7 @@ class Calendar extends React.PureComponent {
     };
 
     render() {
-        const {hiddenCalendars, calendars, events, showDone} = this.props;
+        const {hiddenCalendars, calendars, events, showDone, expandedEvents} = this.props;
 
         const calendarsById = objectify(calendars, 'id');
         const list = [];
@@ -50,6 +56,7 @@ class Calendar extends React.PureComponent {
             if (!showDone && isDone) {
                 continue;
             }
+            const isExpanded = id in expandedEvents;
             const {backgroundColor} = calendarsById[calendarId];
             list.push(...this.buildPrecedingDays(start, knownDays));
             list.push(
@@ -63,6 +70,7 @@ class Calendar extends React.PureComponent {
                     status={status}
                     end={end}
                     isDone={isDone}
+                    isExpanded={isExpanded}
                 />,
             );
         }
@@ -118,6 +126,7 @@ Calendar.propTypes = {
         }),
     ).isRequired,
     hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
+    expandedEvents: PropTypes.objectOf(PropTypes.bool).isRequired,
     showDone: PropTypes.bool.isRequired,
 };
 
@@ -125,6 +134,7 @@ const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     events: selectEvents(state),
     hiddenCalendars: selectHiddenCalendars(state),
+    expandedEvents: selectExpandedEvents(state),
     showDone: selectShowDone(state),
 });
 

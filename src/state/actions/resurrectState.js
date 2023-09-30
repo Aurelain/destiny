@@ -32,6 +32,7 @@ const MOCK = {
     ],
     options: {
         hiddenCalendars: {},
+        expandedEvents: {},
         showDone: true,
     },
 };

@@ -82,12 +82,20 @@ export default {
                         },
                     },
                 },
+                expandedEvents: {
+                    type: 'object',
+                    patternProperties: {
+                        '.': {
+                            const: true,
+                        },
+                    },
+                },
                 showDone: {
                     type: 'boolean',
                     default: false,
                 },
             },
-            required: ['hiddenCalendars', 'showDone'],
+            required: ['hiddenCalendars', 'expandedEvents', 'showDone'],
         },
     },
     required: ['tokens', 'calendars', 'events', 'options'],
