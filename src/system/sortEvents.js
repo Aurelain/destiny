@@ -15,19 +15,18 @@ const sortEvents = (events) => {
  *
  */
 const compareEvents = (a, b) => {
-    if (a.start < b.start) {
-        return -1;
-    } else if (a.start > b.start) {
-        return 1;
-    } else {
-        if (a.summary < b.summary) {
-            return -1;
-        } else if (a.summary > b.summary) {
-            return 1;
-        } else {
-            return 0;
-        }
+    const startComparison = a.start.localeCompare(b.start);
+    if (startComparison) {
+        return startComparison;
     }
+
+    const calendarComparison = a.calendarId.localeCompare(b.calendarId);
+    if (calendarComparison) {
+        return calendarComparison;
+    }
+
+    const summaryComparison = a.summary.localeCompare(b.summary);
+    return summaryComparison;
 };
 
 // =====================================================================================================================

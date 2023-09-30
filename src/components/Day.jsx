@@ -15,7 +15,7 @@ const SX = {
         borderRadius: 4,
         color: '#fff',
         background: '#333',
-        width: 200,
+        width: 156,
         lineHeight: '24px',
         textAlign: 'left',
         padding: '0 4px',
