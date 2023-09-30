@@ -80,8 +80,9 @@ const SX = {
         background: '#f00',
     },
 };
-const HOLD_TIMEOUT = 500;
-const HOLD_TOLERANCE = 10;
+const HOLD_TIMEOUT = 500; // milliseconds
+const HOLD_TOLERANCE = 10; // pixels
+const CLICK_DELAY = 50; // milliseconds
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -94,6 +95,8 @@ class Button extends React.PureComponent {
     };
     rootRef = React.createRef();
     holdTimeout;
+    releaseTimeout;
+    releaseParams;
     initialX;
     initialY;
 
@@ -129,6 +132,7 @@ class Button extends React.PureComponent {
                 onPointerLeave={this.onRootPointerLeave}
                 onPointerDown={this.onRootPointerDown}
                 onContextMenu={this.onRootContextMenu}
+                onClick={this.onRootClick}
             >
                 {this.memoIcon(icon)}
                 {icon && label && ' '}
@@ -140,6 +144,8 @@ class Button extends React.PureComponent {
     componentWillUnmount() {
         this.cancelHolding();
         this.cancelPressing();
+        clearTimeout(this.releaseTimeout);
+        this.releaseParams = null;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -228,7 +234,20 @@ class Button extends React.PureComponent {
             return;
         }
 
+        // We have to delay the announcement of the click a bit to avoid the secondary release event triggering another
+        // click in other things (for example, maybe an overlay which appears after our click).
+        // TODO: investigate if this delay would cause problems for audio activation
+        this.releaseTimeout = setTimeout(this.onReleaseTimeout, CLICK_DELAY);
+        this.releaseParams = {event, isHolding};
+    };
+
+    /**
+     *
+     */
+    onReleaseTimeout = () => {
         const {onClick, onHold, name} = this.props;
+        const {isHolding, event} = this.releaseParams;
+        this.releaseParams = null;
         if (isHolding) {
             onHold(event, name);
         } else {
@@ -279,6 +298,14 @@ class Button extends React.PureComponent {
      */
     onRootContextMenu = (event) => {
         event.preventDefault();
+    };
+
+    /**
+     *
+     */
+    onRootClick = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
     };
 }
 

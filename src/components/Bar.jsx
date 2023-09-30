@@ -43,6 +43,9 @@ const SX = {
     btn: {
         padding: 8,
     },
+    hamburger: {
+        paddingRight: 64,
+    },
     listItem: {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -75,7 +78,12 @@ class Bar extends React.PureComponent {
         const reloadIcon = isLoading ? Spin : Reload;
         return (
             <div css={SX.root}>
-                <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
+                <Button
+                    icon={Menu}
+                    cssNormal={[SX.btn, SX.hamburger]}
+                    onClick={this.onMenuClick}
+                    variant={'inverted'}
+                />
                 <div css={SX.grow} />
                 <Button icon={Magnify} cssNormal={SX.btn} onClick={this.onMagnifyClick} variant={'inverted'} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
