@@ -6,6 +6,7 @@ import {selectEvents} from '../selectors.js';
 import {setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
+import findEvent from '../../system/findEvent.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -14,15 +15,16 @@ import checkOffline from '../../system/checkOffline.js';
  *
  */
 const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
+    const patchProp = start.length === 10 ? 'date' : 'dateTime';
     const freshStart = parseDestination(destination, start);
-    const freshEnd = parseDestination(destination, start); // TODO
+    const freshEnd = parseDestination(destination, end);
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {
-        const events = selectEvents(state);
-        const event = events.find((event) => event.id === eventId && event.calendarId === calendarId);
+        const event = findEvent(state, calendarId, eventId);
         event.start = freshStart;
         event.end = freshEnd;
+        const events = selectEvents(state);
         sortEvents(events);
     });
 
@@ -34,10 +36,10 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
         method: 'PATCH',
         body: {
             start: {
-                date: freshStart,
+                [patchProp]: freshStart,
             },
             end: {
-                date: freshEnd,
+                [patchProp]: freshEnd,
             },
         },
         schema: EventSchema,
@@ -53,12 +55,15 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
 const parseDestination = (destination, origin) => {
     if (destination === null) {
         // Move today
-        return getYYYYMMDD(new Date());
+        const today = getYYYYMMDD();
+        return today + origin.substring(10);
     } else if (typeof destination === 'number') {
         // Move by a few days
-        const originMillisecond = Number(new Date(origin));
-        const destinationMillisecond = originMillisecond + destination * MILLISECONDS_IN_A_DAY;
-        return getYYYYMMDD(new Date(destinationMillisecond));
+        const originDay = getYYYYMMDD(origin);
+        const originMorningMillisecond = Number(new Date(originDay));
+        const destinationMorningMillisecond = originMorningMillisecond + destination * MILLISECONDS_IN_A_DAY;
+        const destinationDay = getYYYYMMDD(new Date(destinationMorningMillisecond));
+        return destinationDay + origin.substring(10);
     } else {
         // Move to a precise point in time
         // TODO

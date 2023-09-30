@@ -12,10 +12,16 @@ const SX = {
     },
     title: {
         display: 'inline-block',
-        padding: '2px 4px',
         borderRadius: 4,
         color: '#fff',
         background: '#333',
+        width: 200,
+        lineHeight: '24px',
+        textAlign: 'left',
+        padding: '0 4px',
+    },
+    dayIso: {
+        float: 'right',
     },
     isPast: {
         background: '#f00',
@@ -35,9 +41,17 @@ class Day extends React.PureComponent {
         const todayYYYYMMDD = getYYYYMMDD(new Date());
         const isPast = dayYYYYMMDD < todayYYYYMMDD; // string comparison, but works
         const isToday = dayYYYYMMDD === todayYYYYMMDD;
+
+        // TODO: implement preference for locale
+        const prettyDayName = date
+            .toLocaleDateString('ro-RO', {weekday: 'long'})
+            .replace(/^./, (c) => c.toLocaleUpperCase());
+
         return (
             <div css={SX.root}>
-                <div css={[SX.title, isPast && SX.isPast, isToday && SX.isToday]}>{dayYYYYMMDD}</div>
+                <div css={[SX.title, isPast && SX.isPast, isToday && SX.isToday]}>
+                    {prettyDayName} <span css={SX.dayIso}>{dayYYYYMMDD}</span>
+                </div>
             </div>
         );
     }

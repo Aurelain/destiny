@@ -166,25 +166,25 @@ class Event extends React.PureComponent {
     onTodayClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, null, start, end);
-        this.collapse();
+        // this.collapse();
     };
 
     onOneClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 1, start, end);
-        this.collapse();
+        // this.collapse();
     };
 
     onSevenClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 7, start, end);
-        this.collapse();
+        // this.collapse();
     };
 
     onThirtyClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 30, start, end);
-        this.collapse();
+        // this.collapse();
     };
 
     onCalendarClick = () => {
