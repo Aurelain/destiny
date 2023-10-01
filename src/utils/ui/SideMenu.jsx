@@ -25,7 +25,7 @@ const SX = {
         left: 0,
         bottom: 0,
         width: '90%',
-        maxWidth: 256,
+        maxWidth: 300,
         color: '#000',
         background: '#fff',
         borderTopRightRadius: 16,

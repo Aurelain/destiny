@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
-import checkParents from './checkParents.js';
+import checkParents from '../checkParents.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S

@@ -21,6 +21,7 @@ import Magnify from '../icons/Magnify.jsx';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
 import TimelineCheckOutline from '../icons/TimelineCheckOutline.jsx';
 import Separator from '../utils/ui/Separator.jsx';
+import Avatar from '../utils/ui/Avatar.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -192,7 +193,12 @@ class Bar extends React.PureComponent {
             const CheckboxIcon = id in hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
             list.push({
                 name: id,
-                icon: <CheckboxIcon style={{color: backgroundColor}} />,
+                icon: (
+                    <>
+                        <CheckboxIcon style={{color: backgroundColor}} />
+                        <Avatar name={summary} color={backgroundColor} />
+                    </>
+                ),
                 label: summary,
             });
         }

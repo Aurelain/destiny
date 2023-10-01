@@ -15,6 +15,8 @@ import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
 import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
+import Avatar from '../utils/ui/Avatar.jsx';
+import ChooseCalendar from './ChooseCalendar.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -83,7 +85,7 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, isDone, isExpanded} = this.props;
+        const {title, backgroundColor, start, isDone, isExpanded, calendarId} = this.props;
         const {contentHeight} = this.state;
 
         return (
@@ -99,6 +101,7 @@ class Event extends React.PureComponent {
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         {title}
                         <div css={SX.toolbar}>
+                            <ChooseCalendar calendarId={calendarId} />
                             <Button // Bell
                                 cssNormal={SX.btn}
                                 icon={Bell}

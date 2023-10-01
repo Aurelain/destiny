@@ -94,8 +94,11 @@ export default {
                     type: 'boolean',
                     default: false,
                 },
+                preferredCalendar: {
+                    type: 'string',
+                },
             },
-            required: ['hiddenCalendars', 'expandedEvents', 'showDone'],
+            required: ['hiddenCalendars', 'expandedEvents', 'showDone', 'preferredCalendar'],
         },
     },
     required: ['tokens', 'calendars', 'events', 'options'],
