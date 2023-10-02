@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import checkParents from '../checkParents.js';
+import {BOX_SHADOW} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -65,8 +66,7 @@ const SX = {
         color: '#fff',
         backgroundColor: '#1976d2',
         padding: '6px 16px',
-        boxShadow:
-            '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
+        boxShadow: BOX_SHADOW,
     },
     contained_hover: {
         filter: 'brightness(1.20)',
@@ -101,15 +101,17 @@ class Button extends React.PureComponent {
     initialY;
 
     render() {
-        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, allowTouch, ...otherProps} = this.props;
+        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, allowTouch, innerRef, ...otherProps} =
+            this.props;
         delete otherProps.onHold;
         delete otherProps.onClick;
         const {isHovering, isPressing, isHolding} = this.state;
+        const ref = innerRef || this.rootRef;
 
         return (
             <div
                 {...otherProps}
-                ref={this.rootRef}
+                ref={ref}
                 css={[
                     SX.root,
 
@@ -229,7 +231,8 @@ class Button extends React.PureComponent {
         this.cancelPressing();
 
         const target = getTargetFromEvent(event);
-        if (!checkParents(target, this.rootRef.current)) {
+        const ref = this.props.innerRef || this.rootRef;
+        if (!checkParents(target, ref.current)) {
             // The user released the pointer somewhere outside the button, so no click
             return;
         }
@@ -347,5 +350,6 @@ Button.propTypes = {
     allowTouch: PropTypes.bool,
     onClick: PropTypes.func,
     onHold: PropTypes.func,
+    innerRef: PropTypes.object,
 };
 export default Button;

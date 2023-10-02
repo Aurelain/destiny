@@ -22,10 +22,10 @@ const SX = {
 // =====================================================================================================================
 class List extends React.PureComponent {
     render() {
-        const {items, itemCss, onClick} = this.props;
+        const {items, itemCss, onClick, styling, innerRef} = this.props;
         const cssNormal = this.memoCssNormal(itemCss);
         return (
-            <div css={SX.root}>
+            <div css={[SX.root, styling]} ref={innerRef}>
                 {items.map((item, index) => {
                     if (typeof item === 'function') {
                         const Component = item;
@@ -73,5 +73,7 @@ List.propTypes = {
     ),
     itemCss: PropTypes.object,
     onClick: PropTypes.func,
+    styling: PropTypes.object,
+    innerRef: PropTypes.object,
 };
 export default List;

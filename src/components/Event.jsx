@@ -101,7 +101,7 @@ class Event extends React.PureComponent {
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         {title}
                         <div css={SX.toolbar}>
-                            <ChooseCalendar calendarId={calendarId} />
+                            <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
                                 cssNormal={SX.btn}
                                 icon={Bell}
@@ -191,6 +191,10 @@ class Event extends React.PureComponent {
 
     onCalendarClick = () => {
         // TODO
+    };
+
+    onCalendarSelect = (name) => {
+        console.log('name:', name);
     };
 
     memoTitleCss = memoize((backgroundColor, isExpanded) => {

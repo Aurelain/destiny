@@ -59,7 +59,11 @@ class New extends React.PureComponent {
         const backgroundColor = this.memoBackgroundColor(preferredCalendar, calendars);
         return (
             <div css={SX.root} style={{backgroundColor}}>
-                <ChooseCalendar styling={SX.chooseCalendar} calendarId={preferredCalendar} />
+                <ChooseCalendar
+                    styling={SX.chooseCalendar}
+                    calendarId={preferredCalendar}
+                    onSelect={this.onCalendarSelect}
+                />
                 <input
                     type={'search'} // https://stackoverflow.com/a/73466347/844393
                     autoComplete={'off'}
@@ -82,6 +86,13 @@ class New extends React.PureComponent {
      *
      */
     onInputChange = () => {};
+
+    /**
+     *
+     */
+    onCalendarSelect = (name) => {
+        console.log('name:', name);
+    };
 
     /**
      *

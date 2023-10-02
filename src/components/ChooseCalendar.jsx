@@ -1,29 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../utils/ui/Button.jsx';
 import {selectCalendars} from '../state/selectors.js';
 import {connect} from 'react-redux';
 import Avatar from '../utils/ui/Avatar.jsx';
 import memoize from 'memoize-one';
+import Select from '../utils/ui/Select.jsx';
+import {BOX_SHADOW} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
-    root: {
+    buttonNormal: {
         padding: 2,
         background: 'none',
         boxShadow: 'none',
         '& > *': {
             border: 'solid 1px #fff',
-            boxShadow:
-                '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)',
+            boxShadow: BOX_SHADOW,
         },
     },
     buttonActive: {
         '& > *': {
             boxShadow: 'none',
         },
+    },
+    itemCss: {
+        padding: 4,
+    },
+    list: {
+        background: '#fff',
+        position: 'absolute',
+        borderRadius: 4,
+        boxShadow: BOX_SHADOW,
     },
 };
 
@@ -32,16 +41,13 @@ const SX = {
 // =====================================================================================================================
 class ChooseCalendar extends React.PureComponent {
     render() {
-        const {calendars, calendarId, styling} = this.props;
-
+        const {calendars, calendarId, styling, onSelect} = this.props;
         return (
-            <>
-                <Button
-                    cssNormal={this.memoCss(styling)}
-                    cssActive={SX.buttonActive}
-                    icon={this.memoAvatar(calendars, calendarId)}
-                />
-            </>
+            <Select
+                button={this.memoButtonProps(calendars, calendarId, styling)}
+                list={this.memoListProps(calendars)}
+                onSelect={onSelect}
+            />
         );
     }
 
@@ -51,18 +57,34 @@ class ChooseCalendar extends React.PureComponent {
     /**
      *
      */
-    memoAvatar = memoize((calendars, calendarId) => {
+    memoButtonProps = memoize((calendars, calendarId, styling) => {
         const calendar = calendarId ? calendars.find((item) => item.id === calendarId) : calendars[0];
         const {summary, backgroundColor} = calendar;
-        return <Avatar name={summary} color={backgroundColor} />;
+        return {
+            cssNormal: {...SX.buttonNormal, ...styling},
+            cssActive: SX.buttonActive,
+            icon: <Avatar name={summary} color={backgroundColor} />,
+        };
     });
 
     /**
      *
      */
-    memoCss = memoize((styling) => {
-        // TODO: improve the emotion factory
-        return {...SX.root, ...styling};
+    memoListProps = memoize((calendars) => {
+        const items = [];
+        for (const calendarItem of calendars) {
+            const {id, summary, backgroundColor} = calendarItem;
+            items.push({
+                name: id,
+                icon: <Avatar name={summary} color={backgroundColor} />,
+                label: summary,
+            });
+        }
+        return {
+            styling: SX.list,
+            items,
+            itemCss: SX.itemCss,
+        };
     });
 }
 
@@ -73,6 +95,7 @@ ChooseCalendar.propTypes = {
     // -------------------------------- direct:
     styling: PropTypes.object,
     calendarId: PropTypes.string,
+    onSelect: PropTypes.func.isRequired,
     // -------------------------------- redux:
     calendars: PropTypes.arrayOf(
         PropTypes.shape({
