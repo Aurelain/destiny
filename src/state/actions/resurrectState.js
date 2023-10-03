@@ -28,6 +28,7 @@ const MOCK = {
             start: '2023-09-28',
             end: '2023-09-29',
             status: 'cancelled',
+            reminder: false,
         },
     ],
     options: {

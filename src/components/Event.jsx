@@ -18,6 +18,8 @@ import toggleEvent from '../state/actions/toggleEvent.js';
 import ChooseCalendar from './ChooseCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
 import moveEvent from '../state/actions/moveEvent.js';
+import BellRing from '../icons/BellRing.jsx';
+import toggleReminder from '../state/actions/toggleReminder.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -72,6 +74,9 @@ const SX = {
         margin: 2,
         padding: 4,
     },
+    btnWithReminder: {
+        color: 'yellow',
+    },
     grow: {
         flexGrow: 1,
     },
@@ -86,7 +91,7 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, isDone, isExpanded, calendarId} = this.props;
+        const {title, backgroundColor, start, isDone, isExpanded, calendarId, reminder} = this.props;
         const {contentHeight} = this.state;
 
         return (
@@ -104,8 +109,8 @@ class Event extends React.PureComponent {
                         <div css={SX.toolbar}>
                             <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
-                                cssNormal={SX.btn}
-                                icon={Bell}
+                                cssNormal={[SX.btn, reminder && SX.btnWithReminder]}
+                                icon={reminder ? BellRing : Bell}
                                 onClick={this.onBellClick}
                             />
                             <Button // Duplicate
@@ -164,7 +169,8 @@ class Event extends React.PureComponent {
     };
 
     onBellClick = () => {
-        // TODO
+        const {calendarId, eventId} = this.props;
+        toggleReminder(calendarId, eventId);
     };
 
     onDuplicateClick = () => {
@@ -240,6 +246,7 @@ Event.propTypes = {
     isDone: PropTypes.bool.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
+    reminder: PropTypes.bool.isRequired,
     backgroundColor: PropTypes.string.isRequired,
 };
 export default Event;

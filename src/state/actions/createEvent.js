@@ -28,6 +28,7 @@ const createEvent = async (calendarId, summary) => {
             start: today,
             end: today,
             status: 'confirmed',
+            reminder: false,
         });
         sortEvents(events);
     });

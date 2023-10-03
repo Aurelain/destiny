@@ -66,8 +66,11 @@ export default {
                         enum: ['confirmed', 'tentative', 'cancelled'],
                         default: 'confirmed',
                     },
+                    reminder: {
+                        type: 'boolean',
+                    },
                 },
-                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status'],
+                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status', 'reminder'],
             },
         },
         options: {

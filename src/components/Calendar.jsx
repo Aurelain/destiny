@@ -48,7 +48,7 @@ class Calendar extends React.PureComponent {
         const list = [];
         const knownDays = [];
         for (const event of events) {
-            const {id, calendarId, summary, start, end, status} = event;
+            const {id, calendarId, summary, start, end, status, reminder} = event;
             if (calendarId in hiddenCalendars) {
                 continue;
             }
@@ -71,6 +71,7 @@ class Calendar extends React.PureComponent {
                     end={end}
                     isDone={isDone}
                     isExpanded={isExpanded}
+                    reminder={reminder}
                 />,
             );
         }

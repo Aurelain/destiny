@@ -63,8 +63,8 @@ const getCalendarEvents = async (calendarId) => {
  *
  */
 const sanitizeAndEnhanceEvent = (event, calendarId) => {
-    const {id, summary, start, end, status} = event;
-    // if (summary.includes('Consolidare')) {
+    const {id, summary, start, end, status, reminders} = event;
+    // if (summary.includes('nazurro')) {
     //     console.log('event: ' + JSON.stringify(event, null, 4));
     // }
     const unifiedStart = start.date || start.dateTime;
@@ -76,6 +76,7 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         start: unifiedStart,
         end: unifiedEnd,
         status,
+        reminder: Boolean(reminders.overrides?.length),
     };
 };
 

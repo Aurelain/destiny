@@ -51,11 +51,19 @@ export default {
                 },
             ],
         },
+        reminders: {
+            type: 'object',
+            properties: {
+                overrides: {
+                    type: 'array',
+                },
+            },
+        },
         status: {
             enum: ['confirmed', 'tentative', 'cancelled'],
         },
     },
-    required: ['id', 'summary', 'start', 'end', 'status'],
+    required: ['id', 'summary', 'start', 'end', 'status', 'reminders'],
 };
 
 /*
