@@ -82,7 +82,8 @@ const SX = {
 };
 const HOLD_TIMEOUT = 500; // milliseconds
 const HOLD_TOLERANCE = 10; // pixels
-const CLICK_DELAY = 50; // milliseconds
+const CLICK_TIMEOUT = 50; // milliseconds
+const RELEASE_TIMEOUT = 50; // milliseconds
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -95,8 +96,9 @@ class Button extends React.PureComponent {
     };
     rootRef = React.createRef();
     holdTimeout;
+    clickTimeout;
+    clickParams;
     releaseTimeout;
-    releaseParams;
     initialX;
     initialY;
 
@@ -105,6 +107,8 @@ class Button extends React.PureComponent {
             this.props;
         delete otherProps.onHold;
         delete otherProps.onClick;
+        delete otherProps.onPress;
+        delete otherProps.onRelease;
         const {isHovering, isPressing, isHolding} = this.state;
         const ref = innerRef || this.rootRef;
 
@@ -135,6 +139,8 @@ class Button extends React.PureComponent {
                 onPointerDown={this.onRootPointerDown}
                 onContextMenu={this.onRootContextMenu}
                 onClick={this.onRootClick}
+                onPointerUp={this.onRootRelease}
+                onTouchEnd={this.onRootRelease}
             >
                 {this.memoIcon(icon)}
                 {icon && label && ' '}
@@ -147,7 +153,8 @@ class Button extends React.PureComponent {
         this.cancelHolding();
         this.cancelPressing();
         clearTimeout(this.releaseTimeout);
-        this.releaseParams = null;
+        clearTimeout(this.clickTimeout);
+        this.clickParams = null;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -195,6 +202,9 @@ class Button extends React.PureComponent {
      *
      */
     onRootPointerDown = (event) => {
+        const {onPress, name} = this.props;
+        onPress?.(name);
+
         this.setState({isPressing: true});
         window.addEventListener('pointerup', this.onWindowRelease);
         window.addEventListener('touchend', this.onWindowRelease);
@@ -240,17 +250,17 @@ class Button extends React.PureComponent {
         // We have to delay the announcement of the click a bit to avoid the secondary release event triggering another
         // click in other things (for example, maybe an overlay which appears after our click).
         // TODO: investigate if this delay would cause problems for audio activation
-        this.releaseTimeout = setTimeout(this.onReleaseTimeout, CLICK_DELAY);
-        this.releaseParams = {event, isHolding};
+        this.clickTimeout = setTimeout(this.onClickTimeout, CLICK_TIMEOUT);
+        this.clickParams = {event, isHolding};
     };
 
     /**
      *
      */
-    onReleaseTimeout = () => {
+    onClickTimeout = () => {
         const {onClick, onHold, name} = this.props;
-        const {isHolding, event} = this.releaseParams;
-        this.releaseParams = null;
+        const {isHolding, event} = this.clickParams;
+        this.clickParams = null;
         if (isHolding) {
             onHold(event, name);
         } else {
@@ -310,6 +320,24 @@ class Button extends React.PureComponent {
         event.preventDefault();
         event.stopPropagation();
     };
+
+    /**
+     *
+     */
+    onRootRelease = () => {
+        if (this.props.onRelease) {
+            clearTimeout(this.releaseTimeout);
+            this.releaseTimeout = setTimeout(this.onReleaseTimeout, RELEASE_TIMEOUT);
+        }
+    };
+
+    /**
+     *
+     */
+    onReleaseTimeout = () => {
+        const {onRelease, name} = this.props;
+        onRelease(name);
+    };
 }
 
 // =====================================================================================================================
@@ -350,6 +378,8 @@ Button.propTypes = {
     allowTouch: PropTypes.bool,
     onClick: PropTypes.func,
     onHold: PropTypes.func,
+    onPress: PropTypes.func,
+    onRelease: PropTypes.func,
     innerRef: PropTypes.object,
 };
 export default Button;

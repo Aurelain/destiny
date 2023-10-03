@@ -35,11 +35,11 @@ class Select extends React.PureComponent {
         const {isOpen} = this.state;
         return (
             <>
-                <Button {...button} onClick={this.onButtonClick} innerRef={this.buttonRef} />
+                <Button {...button} onPress={this.onButtonPress} innerRef={this.buttonRef} />
                 {isOpen &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
-                            <List {...list} onClick={this.onListClick} innerRef={this.listRef} />
+                            <List {...list} onRelease={this.onListRelease} innerRef={this.listRef} />
                         </div>,
                         document.body,
                     )}
@@ -59,7 +59,7 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onButtonClick = () => {
+    onButtonPress = () => {
         this.setState({isOpen: true});
     };
 
@@ -73,7 +73,7 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onListClick = (event, name) => {
+    onListRelease = (name) => {
         this.setState({isOpen: false});
         this.props.onSelect(name);
     };
