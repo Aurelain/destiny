@@ -129,7 +129,7 @@ class Event extends React.PureComponent {
                     />
                     <Button
                         cssNormal={SX.titleText}
-                        label={title}
+                        label={this.memoCleanTitle(title)}
                         allowTouch={true}
                         onClick={this.onTitleClick}
                         onHold={this.onTitleHold}
@@ -254,13 +254,8 @@ class Event extends React.PureComponent {
         return {...SX.content, borderColor: backgroundColor};
     });
 
-    memoLabel = memoize((title, isDone) => {
-        return (
-            <div css={SX.titleLabel}>
-                <div css={SX.titleLabelText}>{title.replace(DONE_MATCH, '')}</div>
-                {isDone && <CheckCircle styling={SX.titleLabelDone} />}
-            </div>
-        );
+    memoCleanTitle = memoize((title) => {
+        return title.replace(DONE_MATCH, '');
     });
 }
 

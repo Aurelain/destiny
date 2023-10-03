@@ -22,18 +22,28 @@ const MOCK = {
     ],
     events: [
         {
+            id: 'urm29vfme6ebe49npr1hrn5kd1',
+            calendarId: 'foo@gmail.com',
+            summary: 'A Hello World',
+            start: '2023-09-28',
+            end: '2023-09-29',
+            status: 'cancelled',
+            reminder: false,
+        },
+        {
             id: 'urm29vfme6ebe49npr1hrn5kdg',
             calendarId: 'foo@gmail.com',
             summary: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus aliquet est ut quam ',
             start: '2023-09-28',
             end: '2023-09-29',
-            status: 'cancelled',
+            status: 'confirmed',
             reminder: false,
         },
     ],
     options: {
         hiddenCalendars: {},
         expandedEvents: {},
+        preferredCalendar: '',
         showDone: true,
     },
 };
