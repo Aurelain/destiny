@@ -2,9 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import Button from '../utils/ui/Button.jsx';
-import ChevronDown from '../icons/ChevronDown.jsx';
-import ChevronDoubleDown from '../icons/ChevronDoubleDown.jsx';
-import ChevronTripleDown from '../icons/ChevronTripleDown.jsx';
 import CalendarMonth from '../icons/CalendarMonth.jsx';
 import ArrowCollapseUp from '../icons/ArrowCollapseUp.jsx';
 import scheduleEvent from '../state/actions/scheduleEvent.js';
@@ -20,6 +17,8 @@ import deleteEvent from '../state/actions/deleteEvent.js';
 import moveEvent from '../state/actions/moveEvent.js';
 import BellRing from '../icons/BellRing.jsx';
 import toggleReminder from '../state/actions/toggleReminder.js';
+import CircleMedium from '../icons/CircleMedium.jsx';
+import CircleOutline from '../icons/CircleOutline.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -30,14 +29,38 @@ const SX = {
     },
     title: {
         height: 32,
-        lineHeight: '32px',
         borderRadius: 6,
-        padding: 0,
         color: '#fff',
-        cursor: 'pointer',
-        display: 'block',
+        display: 'flex',
+    },
+    titleHeading: {
+        height: '100%',
+        borderRadius: 6,
+        borderBottomRightRadius: 0,
+        borderTopRightRadius: 0,
+        flexShrink: 0,
+    },
+    titleText: {
+        lineHeight: '32px',
+        borderRadius: 0,
+        flexGrow: 1,
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
         boxShadow: 'none',
         textAlign: 'left',
+        display: 'block',
+        padding: 0,
+        paddingLeft: 4,
+        height: '100%',
+        backgroundColor: 'inherit',
+    },
+    titleStatus: {
+        height: '100%',
+        borderRadius: 6,
+        borderBottomLeftRadius: 0,
+        borderTopLeftRadius: 0,
+        flexShrink: 0,
     },
     titleExpanded: {
         borderBottomRightRadius: 0,
@@ -96,13 +119,30 @@ class Event extends React.PureComponent {
 
         return (
             <div css={SX.root}>
-                <Button
-                    label={this.memoLabel(title, isDone)}
-                    cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
-                    allowTouch={true}
-                    onClick={this.onTitleClick}
-                    onHold={this.onTitleHold}
-                />
+                <div css={this.memoTitleCss(backgroundColor, isExpanded)}>
+                    <Button
+                        cssNormal={SX.titleHeading}
+                        icon={CircleMedium}
+                        onClick={this.onHeadingClick}
+                        onHold={this.onHeadingHold}
+                        variant={'inverted'}
+                    />
+                    <Button
+                        cssNormal={SX.titleText}
+                        label={title}
+                        allowTouch={true}
+                        onClick={this.onTitleClick}
+                        onHold={this.onTitleHold}
+                    />
+                    <Button
+                        cssNormal={SX.titleStatus}
+                        icon={isDone ? CheckCircle : CircleOutline}
+                        onClick={this.onStatusClick}
+                        onHold={this.onStatusHold}
+                        variant={'inverted'}
+                    />
+                </div>
+
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         {title}
@@ -119,29 +159,18 @@ class Event extends React.PureComponent {
                                 onClick={this.onDuplicateClick}
                             />
                             <div css={SX.grow} />
-                            <Button
-                                disabled={start.startsWith(TODAY)}
+                            {!start.startsWith(TODAY) && (
+                                <Button // Move Today
+                                    cssNormal={SX.btn}
+                                    icon={ArrowCollapseUp}
+                                    onClick={this.onTodayClick}
+                                />
+                            )}
+                            <Button // Move Custom
                                 cssNormal={SX.btn}
-                                icon={ArrowCollapseUp}
-                                onClick={this.onTodayClick}
+                                icon={CalendarMonth}
+                                onClick={this.onCalendarClick}
                             />
-                            <Button // 1
-                                cssNormal={SX.btn}
-                                icon={ChevronDown}
-                                onClick={this.onOneClick}
-                            />
-                            <Button // 7
-                                cssNormal={SX.btn}
-                                icon={ChevronDoubleDown}
-                                onClick={this.onSevenClick}
-                            />
-                            <Button // Postpone 1 month
-                                cssNormal={SX.btn}
-                                icon={ChevronTripleDown}
-                                onClick={this.onPostponeMonthClick}
-                                onHold={this.onPostponeMonthHold}
-                            />
-                            <Button cssNormal={SX.btn} icon={CalendarMonth} onClick={this.onTodayClick} />
                         </div>
                     </div>
                 )}
@@ -158,6 +187,16 @@ class Event extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    onHeadingClick = async () => {
+        const {calendarId, eventId, start, end} = this.props;
+        await scheduleEvent(calendarId, eventId, 1, start, end);
+    };
+
+    onHeadingHold = async () => {
+        const {calendarId, eventId, start, end} = this.props;
+        await scheduleEvent(calendarId, eventId, 7, start, end);
+    };
+
     onTitleClick = () => {
         const {eventId} = this.props;
         toggleEvent(eventId);
@@ -166,6 +205,16 @@ class Event extends React.PureComponent {
     onTitleHold = () => {
         const {calendarId, eventId} = this.props;
         classifyEvent(calendarId, eventId);
+    };
+
+    onStatusClick = () => {
+        const {calendarId, eventId} = this.props;
+        classifyEvent(calendarId, eventId);
+    };
+
+    onStatusHold = () => {
+        const {calendarId, eventId} = this.props;
+        deleteEvent(calendarId, eventId);
     };
 
     onBellClick = () => {
@@ -180,26 +229,6 @@ class Event extends React.PureComponent {
     onTodayClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, null, start, end);
-    };
-
-    onOneClick = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, 1, start, end);
-    };
-
-    onSevenClick = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, 7, start, end);
-    };
-
-    onPostponeMonthClick = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, 30, start, end);
-    };
-
-    onPostponeMonthHold = async () => {
-        const {calendarId, eventId} = this.props;
-        await deleteEvent(calendarId, eventId);
     };
 
     onCalendarClick = () => {

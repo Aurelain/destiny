@@ -35,7 +35,8 @@ class Select extends React.PureComponent {
         const {isOpen} = this.state;
         return (
             <>
-                <Button {...button} onPress={this.onButtonPress} innerRef={this.buttonRef} />
+                {/*TODO use press for quick selection*/}
+                <Button {...button} onClick={this.onButtonPress} innerRef={this.buttonRef} />
                 {isOpen &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
