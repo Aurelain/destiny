@@ -64,6 +64,9 @@ const getCalendarEvents = async (calendarId) => {
  */
 const sanitizeAndEnhanceEvent = (event, calendarId) => {
     const {id, summary, start, end, status} = event;
+    // if (summary.includes('Consolidare')) {
+    //     console.log('event: ' + JSON.stringify(event, null, 4));
+    // }
     const unifiedStart = start.date || start.dateTime;
     const unifiedEnd = end.date || end.dateTime;
     return {

@@ -17,6 +17,7 @@ import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import ChooseCalendar from './ChooseCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
+import moveEvent from '../state/actions/moveEvent.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -199,8 +200,11 @@ class Event extends React.PureComponent {
         // TODO
     };
 
-    onCalendarSelect = (name) => {
-        console.log('name:', name);
+    onCalendarSelect = (destinationCalendarId) => {
+        const {calendarId, eventId} = this.props;
+        if (calendarId !== destinationCalendarId) {
+            moveEvent(calendarId, eventId, destinationCalendarId);
+        }
     };
 
     memoTitleCss = memoize((backgroundColor, isExpanded) => {
