@@ -15,8 +15,8 @@ import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
 import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
-import Avatar from '../utils/ui/Avatar.jsx';
 import ChooseCalendar from './ChooseCalendar.jsx';
+import deleteEvent from '../state/actions/deleteEvent.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -129,10 +129,11 @@ class Event extends React.PureComponent {
                                 icon={ChevronDoubleDown}
                                 onClick={this.onSevenClick}
                             />
-                            <Button // 30
+                            <Button // Postpone 1 month
                                 cssNormal={SX.btn}
                                 icon={ChevronTripleDown}
-                                onClick={this.onThirtyClick}
+                                onClick={this.onPostponeMonthClick}
+                                onHold={this.onPostponeMonthHold}
                             />
                             <Button cssNormal={SX.btn} icon={CalendarMonth} onClick={this.onTodayClick} />
                         </div>
@@ -184,9 +185,14 @@ class Event extends React.PureComponent {
         await scheduleEvent(calendarId, eventId, 7, start, end);
     };
 
-    onThirtyClick = async () => {
+    onPostponeMonthClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 30, start, end);
+    };
+
+    onPostponeMonthHold = async () => {
+        const {calendarId, eventId} = this.props;
+        await deleteEvent(calendarId, eventId);
     };
 
     onCalendarClick = () => {

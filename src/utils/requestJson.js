@@ -38,11 +38,14 @@ const requestJson = async (url, options = {}) => {
         throw new Error(`Failed to fetch "${url}"!`);
     }
 
+    const text = await response.text();
     let json;
-    try {
-        json = await response.json();
-    } catch (e) {
-        throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
+    if (text) {
+        try {
+            json = JSON.parse(text);
+        } catch (e) {
+            throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
+        }
     }
 
     if (options.schema) {

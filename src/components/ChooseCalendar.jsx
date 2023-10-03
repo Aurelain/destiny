@@ -6,6 +6,7 @@ import Avatar from '../utils/ui/Avatar.jsx';
 import memoize from 'memoize-one';
 import Select from '../utils/ui/Select.jsx';
 import {BOX_SHADOW} from '../SETTINGS.js';
+import findCalendar from '../system/findCalendar.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -58,7 +59,7 @@ class ChooseCalendar extends React.PureComponent {
      *
      */
     memoButtonProps = memoize((calendars, calendarId, styling) => {
-        const calendar = calendarId ? calendars.find((item) => item.id === calendarId) : calendars[0];
+        const calendar = findCalendar(calendarId, calendars);
         const {summary, backgroundColor} = calendar;
         return {
             cssNormal: {...SX.buttonNormal, ...styling},

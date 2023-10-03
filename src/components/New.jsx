@@ -7,6 +7,9 @@ import PropTypes from 'prop-types';
 import {selectCalendars, selectPreferredCalendar} from '../state/selectors.js';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
+import changePreferredCalendar from '../state/actions/changePreferredCalendar.js';
+import createEvent from '../state/actions/createEvent.js';
+import findCalendar from '../system/findCalendar.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -72,8 +75,9 @@ class New extends React.PureComponent {
                     value={value}
                     placeholder={'Event'}
                     onChange={this.onInputChange}
+                    onKeyDown={this.onInputKeyDown}
                 />
-                <Button icon={Plus} cssNormal={SX.plus} variant={'inverted'} />
+                <Button icon={Plus} cssNormal={SX.plus} variant={'inverted'} onClick={this.onPlusClick} />
                 <div css={SX.sliver} />
             </div>
         );
@@ -85,20 +89,49 @@ class New extends React.PureComponent {
     /**
      *
      */
-    onInputChange = () => {};
+    onInputChange = (event) => {
+        const {value} = event.target;
+        this.setState({value});
+    };
+
+    /**
+     *
+     */
+    onInputKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            this.create();
+        }
+    };
 
     /**
      *
      */
     onCalendarSelect = (name) => {
-        console.log('name:', name);
+        changePreferredCalendar(name);
+    };
+
+    /**
+     *
+     */
+    onPlusClick = () => {
+        this.create();
+    };
+
+    /**
+     *
+     */
+    create = () => {
+        const {calendars, preferredCalendar} = this.props;
+        const calendar = findCalendar(preferredCalendar, calendars);
+        createEvent(calendar.id, this.state.value);
+        this.setState({value: ''});
     };
 
     /**
      *
      */
     memoBackgroundColor = memoize((preferredCalendar, calendars) => {
-        const calendar = preferredCalendar ? calendars.find((item) => item.id === preferredCalendar) : calendars[0];
+        const calendar = findCalendar(preferredCalendar, calendars);
         return calendar.backgroundColor;
     });
 }
