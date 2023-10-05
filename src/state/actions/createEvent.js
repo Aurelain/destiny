@@ -17,6 +17,7 @@ import toggleEvent from './toggleEvent.js';
 const createEvent = async (calendarId, summary) => {
     const today = getYYYYMMDD();
     const eventId = Math.random().toString();
+    summary = summary.charAt(0).toLocaleUpperCase() + summary.substring(1);
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {

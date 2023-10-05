@@ -19,6 +19,7 @@ import BellRing from '../icons/BellRing.jsx';
 import toggleReminder from '../state/actions/toggleReminder.js';
 import CircleMedium from '../icons/CircleMedium.jsx';
 import CircleOutline from '../icons/CircleOutline.jsx';
+import Summary from './Summary.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -41,21 +42,23 @@ const SX = {
         flexShrink: 0,
     },
     titleText: {
-        lineHeight: '32px',
         borderRadius: 0,
         flexGrow: 1,
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
         boxShadow: 'none',
         textAlign: 'left',
         display: 'block',
-        padding: 0,
-        paddingLeft: 4,
+        padding: '0 4px',
         height: '100%',
         backgroundColor: 'inherit',
     },
-    titleTimeInterval: {
+    titleTextCore: {
+        lineHeight: '32px',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+    },
+    titleTextTime: {
+        float: 'right',
         whiteSpace: 'nowrap',
         flexShrink: 0,
         lineHeight: '32px',
@@ -70,17 +73,6 @@ const SX = {
     titleExpanded: {
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
-    },
-    titleLabel: {
-        padding: '0 6px',
-        display: 'flex',
-        alignItems: 'center',
-    },
-    titleLabelText: {
-        flexGrow: 1,
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
     },
     content: {
         padding: 4,
@@ -135,12 +127,11 @@ class Event extends React.PureComponent {
                     />
                     <Button
                         cssNormal={SX.titleText}
-                        label={this.memoCleanTitle(title)}
+                        label={this.memoCleanTitle(title, timeInterval)}
                         allowTouch={true}
                         onClick={this.onTitleClick}
                         onHold={this.onTitleHold}
                     />
-                    {timeInterval && <div css={SX.titleTimeInterval}>{timeInterval}</div>}
                     <Button
                         cssNormal={SX.titleStatus}
                         icon={isDone ? CheckCircle : CircleOutline}
@@ -152,15 +143,7 @@ class Event extends React.PureComponent {
 
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
-                        <div
-                            css={SX.text}
-                            contentEditable={true}
-                            suppressContentEditableWarning={true}
-                            onBlur={this.onTextBlur}
-                            spellCheck={false}
-                        >
-                            {title}
-                        </div>
+                        <Summary text={title} />
                         <div css={SX.toolbar}>
                             <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
@@ -265,11 +248,6 @@ class Event extends React.PureComponent {
         }
     };
 
-    onTextBlur = (event) => {
-        const {innerHTML} = event.target;
-        console.log('innerHTML:', innerHTML);
-    };
-
     memoTitleCss = memoize((backgroundColor, isExpanded) => {
         const output = {...SX.title, backgroundColor};
         if (isExpanded) {
@@ -282,8 +260,13 @@ class Event extends React.PureComponent {
         return {...SX.content, borderColor: backgroundColor};
     });
 
-    memoCleanTitle = memoize((title) => {
-        return title.replace(DONE_MATCH, '');
+    memoCleanTitle = memoize((title, timeInterval) => {
+        return (
+            <>
+                {timeInterval && <div css={SX.titleTextTime}>{timeInterval}</div>}
+                <div css={SX.titleTextCore}>{title.replace(DONE_MATCH, '')}</div>
+            </>
+        );
     });
 }
 
