@@ -27,6 +27,8 @@ const SX = {
         '& > *:first-of-type': {
             marginTop: 8,
         },
+        margin: 'auto',
+        maxWidth: 640,
     },
     event: {
         borderBottom: 'solid 1px silver',

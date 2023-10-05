@@ -13,6 +13,10 @@ const GLOBAL = {
         WebkitTapHighlightColor: 'transparent', // tested on Chrome Android 2023-09-17
         WebkitTouchCallout: 'none',
     },
+    svg: {
+        // This seems to fix some artifacts on mobile, where only parts of the svg would randomly be drawn:
+        transform: 'translateZ(0)',
+    },
     html: {
         lineHeight: 1,
         textSizeAdjust: '100%',

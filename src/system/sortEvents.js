@@ -8,6 +8,7 @@ import {DONE_MATCH} from '../SETTINGS.js';
  */
 const sortEvents = (events) => {
     events.sort(compareEvents);
+    return events;
 };
 
 // =====================================================================================================================

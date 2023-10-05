@@ -55,6 +55,11 @@ const SX = {
         height: '100%',
         backgroundColor: 'inherit',
     },
+    titleTimeInterval: {
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        lineHeight: '32px',
+    },
     titleStatus: {
         height: '100%',
         borderRadius: 6,
@@ -77,11 +82,8 @@ const SX = {
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
     },
-    titleLabelDone: {
-        flexShrink: 0,
-    },
     content: {
-        padding: 8,
+        padding: 4,
         background: '#fff',
         borderBottomRightRadius: 6,
         borderBottomLeftRadius: 6,
@@ -90,7 +92,7 @@ const SX = {
         transition: 'height 300ms ease',
     },
     toolbar: {
-        marginTop: 4,
+        margin: 4,
         display: 'flex',
     },
     btn: {
@@ -103,6 +105,9 @@ const SX = {
     grow: {
         flexGrow: 1,
     },
+    text: {
+        padding: 8,
+    },
 };
 const TODAY = getYYYYMMDD();
 
@@ -114,9 +119,10 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, isDone, isExpanded, calendarId, reminder} = this.props;
+        const {title, backgroundColor, start, end, isDone, isExpanded, calendarId, reminder} = this.props;
         const {contentHeight} = this.state;
 
+        const timeInterval = this.memoTimeInterval(start, end);
         return (
             <div css={SX.root}>
                 <div css={this.memoTitleCss(backgroundColor, isExpanded)}>
@@ -134,6 +140,7 @@ class Event extends React.PureComponent {
                         onClick={this.onTitleClick}
                         onHold={this.onTitleHold}
                     />
+                    {timeInterval && <div css={SX.titleTimeInterval}>{timeInterval}</div>}
                     <Button
                         cssNormal={SX.titleStatus}
                         icon={isDone ? CheckCircle : CircleOutline}
@@ -145,7 +152,15 @@ class Event extends React.PureComponent {
 
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
-                        {title}
+                        <div
+                            css={SX.text}
+                            contentEditable={true}
+                            suppressContentEditableWarning={true}
+                            onBlur={this.onTextBlur}
+                            spellCheck={false}
+                        >
+                            {title}
+                        </div>
                         <div css={SX.toolbar}>
                             <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
@@ -187,6 +202,14 @@ class Event extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    memoTimeInterval = memoize((start, end) => {
+        start = start.substring(11, 16);
+        if (start) {
+            end = end.substring(11, 16);
+            return start + '-' + end;
+        }
+    });
+
     onHeadingClick = async () => {
         const {calendarId, eventId, start, end} = this.props;
         await scheduleEvent(calendarId, eventId, 1, start, end);
@@ -240,6 +263,11 @@ class Event extends React.PureComponent {
         if (calendarId !== destinationCalendarId) {
             moveEvent(calendarId, eventId, destinationCalendarId);
         }
+    };
+
+    onTextBlur = (event) => {
+        const {innerHTML} = event.target;
+        console.log('innerHTML:', innerHTML);
     };
 
     memoTitleCss = memoize((backgroundColor, isExpanded) => {

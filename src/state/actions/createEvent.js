@@ -57,7 +57,6 @@ const createEvent = async (calendarId, summary) => {
         const event = findEvent(state, calendarId, eventId);
         event.id = cloudEvent.id;
     });
-    toggleEvent(cloudEvent.id, true);
 };
 
 // =====================================================================================================================

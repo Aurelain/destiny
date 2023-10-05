@@ -29,7 +29,7 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
         sortEvents(events);
     });
 
-    toggleEvent(eventId);
+    toggleEvent(eventId, false);
 
     if (checkOffline()) {
         // TODO: add to pending operations
