@@ -141,6 +141,7 @@ class Button extends React.PureComponent {
                 onClick={this.onRootClick}
                 onPointerUp={this.onRootRelease}
                 onTouchEnd={this.onRootRelease}
+                role={'button'}
             >
                 {this.memoIcon(icon)}
                 {icon && label && ' '}
@@ -244,6 +245,11 @@ class Button extends React.PureComponent {
         const ref = this.props.innerRef || this.rootRef;
         if (!checkParents(target, ref.current)) {
             // The user released the pointer somewhere outside the button, so no click
+            return;
+        }
+
+        if (checkButtonInButton(target, ref.current)) {
+            // The user clicked on a button that is a child of ours. That button should have priority.
             return;
         }
 
@@ -358,6 +364,20 @@ const getCoordinatesFromEvent = (event) => {
 const getTargetFromEvent = (event) => {
     const {clientX, clientY} = getCoordinatesFromEvent(event);
     return document.elementFromPoint(clientX, clientY);
+};
+
+/**
+ *
+ */
+const checkButtonInButton = (child, topButton) => {
+    let target = child;
+    while (target !== topButton) {
+        if (target.role === 'button') {
+            return true;
+        }
+        target = target.parentNode;
+    }
+    return false;
 };
 
 // =====================================================================================================================

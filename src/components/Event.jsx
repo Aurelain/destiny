@@ -32,7 +32,14 @@ const SX = {
         height: 32,
         borderRadius: 6,
         color: '#fff',
+        display: 'block',
+        boxShadow: 'none',
+        padding: 0,
+    },
+    titleContent: {
         display: 'flex',
+        alignItems: 'center',
+        height: '100%',
     },
     titleHeading: {
         height: '100%',
@@ -42,23 +49,14 @@ const SX = {
         flexShrink: 0,
     },
     titleText: {
-        borderRadius: 0,
-        flexGrow: 1,
-        boxShadow: 'none',
         textAlign: 'left',
-        display: 'block',
-        padding: '0 4px',
-        height: '100%',
-        backgroundColor: 'inherit',
-    },
-    titleTextCore: {
+        flexGrow: 1,
         lineHeight: '32px',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
     },
-    titleTextTime: {
-        float: 'right',
+    titleTime: {
         whiteSpace: 'nowrap',
         flexShrink: 0,
         lineHeight: '32px',
@@ -111,36 +109,19 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, end, isDone, isExpanded, calendarId, reminder} = this.props;
+        const {title, backgroundColor, start, end, isExpanded, calendarId, reminder, isDone} = this.props;
         const {contentHeight} = this.state;
 
         const timeInterval = this.memoTimeInterval(start, end);
         return (
             <div css={SX.root}>
-                <div css={this.memoTitleCss(backgroundColor, isExpanded)}>
-                    <Button
-                        cssNormal={SX.titleHeading}
-                        icon={CircleMedium}
-                        onClick={this.onHeadingClick}
-                        onHold={this.onHeadingHold}
-                        variant={'inverted'}
-                    />
-                    <Button
-                        cssNormal={SX.titleText}
-                        label={this.memoCleanTitle(title, timeInterval)}
-                        allowTouch={true}
-                        onClick={this.onTitleClick}
-                        onHold={this.onTitleHold}
-                    />
-                    <Button
-                        cssNormal={SX.titleStatus}
-                        icon={isDone ? CheckCircle : CircleOutline}
-                        onClick={this.onStatusClick}
-                        onHold={this.onStatusHold}
-                        variant={'inverted'}
-                    />
-                </div>
-
+                <Button
+                    cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
+                    label={this.memoTitleLabel(title, timeInterval, isDone)}
+                    allowTouch={true}
+                    onClick={this.onTitleClick}
+                    onHold={this.onTitleHold}
+                />
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         <Summary text={title} />
@@ -256,17 +237,31 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoContentCss = memoize((backgroundColor) => {
-        return {...SX.content, borderColor: backgroundColor};
+    memoTitleLabel = memoize((title, timeInterval, isDone) => {
+        return (
+            <div css={SX.titleContent}>
+                <Button
+                    cssNormal={SX.titleHeading}
+                    icon={CircleMedium}
+                    onClick={this.onHeadingClick}
+                    onHold={this.onHeadingHold}
+                    variant={'inverted'}
+                />
+                <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
+                {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
+                <Button
+                    cssNormal={SX.titleStatus}
+                    icon={isDone ? CheckCircle : CircleOutline}
+                    onClick={this.onStatusClick}
+                    onHold={this.onStatusHold}
+                    variant={'inverted'}
+                />
+            </div>
+        );
     });
 
-    memoCleanTitle = memoize((title, timeInterval) => {
-        return (
-            <>
-                {timeInterval && <div css={SX.titleTextTime}>{timeInterval}</div>}
-                <div css={SX.titleTextCore}>{title.replace(DONE_MATCH, '')}</div>
-            </>
-        );
+    memoContentCss = memoize((backgroundColor) => {
+        return {...SX.content, borderColor: backgroundColor};
     });
 }
 
