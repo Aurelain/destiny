@@ -7,6 +7,7 @@ import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import toggleEvent from './toggleEvent.js';
+import sanitizeSummary from '../../system/sanitizeSummary.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -17,7 +18,7 @@ import toggleEvent from './toggleEvent.js';
 const createEvent = async (calendarId, summary) => {
     const today = getYYYYMMDD();
     const eventId = Math.random().toString();
-    summary = summary.charAt(0).toLocaleUpperCase() + summary.substring(1);
+    summary = sanitizeSummary(summary);
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {

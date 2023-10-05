@@ -20,6 +20,7 @@ import toggleReminder from '../state/actions/toggleReminder.js';
 import CircleMedium from '../icons/CircleMedium.jsx';
 import CircleOutline from '../icons/CircleOutline.jsx';
 import Summary from './Summary.jsx';
+import updateSummary from '../state/actions/updateSummary.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -124,7 +125,7 @@ class Event extends React.PureComponent {
                 />
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
-                        <Summary text={title} />
+                        <Summary text={title} onChange={this.onSummaryChange} />
                         <div css={SX.toolbar}>
                             <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
@@ -192,6 +193,11 @@ class Event extends React.PureComponent {
     onTitleHold = () => {
         const {calendarId, eventId} = this.props;
         classifyEvent(calendarId, eventId);
+    };
+
+    onSummaryChange = (summary) => {
+        const {calendarId, eventId} = this.props;
+        updateSummary(calendarId, eventId, summary);
     };
 
     onStatusClick = () => {

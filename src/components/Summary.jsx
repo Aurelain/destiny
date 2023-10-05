@@ -6,6 +6,8 @@ import memoize from 'memoize-one';
 import Button from '../utils/ui/Button.jsx';
 import Pencil from '../icons/Pencil.jsx';
 import Shopping from './Shopping.jsx';
+import defocus from '../utils/defocus.js';
+import sanitizeSummary from '../system/sanitizeSummary.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -45,6 +47,7 @@ class Summary extends React.PureComponent {
                         contentEditable={true}
                         suppressContentEditableWarning={true}
                         onBlur={this.onTextBlur}
+                        onKeyDown={this.onTextKeyDown}
                         spellCheck={false}
                     >
                         {text}
@@ -91,10 +94,28 @@ class Summary extends React.PureComponent {
      */
     onTextBlur = (event) => {
         const {innerHTML} = event.currentTarget;
+        const {text, onChange} = this.props;
+        const freshText = sanitizeSummary(innerHTML);
+        if (freshText !== text) {
+            onChange(freshText);
+        }
         this.setState({
             isForcedSimple: false,
         });
-        console.log('innerHTML:', innerHTML);
+    };
+
+    /**
+     *
+     */
+    onTextKeyDown = (event) => {
+        const {key} = event;
+        switch (key) {
+            case 'Enter':
+                defocus();
+                break;
+            default:
+            // Nothing
+        }
     };
 
     /**
@@ -121,5 +142,6 @@ const addAnchors = (text) => {
 // =====================================================================================================================
 Summary.propTypes = {
     text: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 export default Summary;
