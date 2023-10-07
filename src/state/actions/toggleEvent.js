@@ -7,23 +7,19 @@ import {setState} from '../store.js';
 /**
  *
  */
-const toggleEvent = (eventId, value = undefined) => {
+const toggleEvent = (eventId, futureValue = undefined) => {
     setState((state) => {
         const expandedEvents = selectExpandedEvents(state);
-        if (value === undefined) {
-            if (eventId in expandedEvents) {
-                delete expandedEvents[eventId];
-            } else {
-                const options = selectOptions(state);
-                options.expandedEvents = {
-                    [eventId]: true,
-                };
-            }
-        } else {
+        if (futureValue === undefined) {
+            futureValue = !(eventId in expandedEvents);
+        }
+        if (futureValue) {
             const options = selectOptions(state);
             options.expandedEvents = {
-                [eventId]: value,
+                [eventId]: true,
             };
+        } else {
+            delete expandedEvents[eventId];
         }
     });
 };

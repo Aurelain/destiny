@@ -13,6 +13,8 @@ import {selectEvents} from '../selectors.js';
  *
  */
 const moveEvent = async (calendarId, eventId, destinationCalendarId) => {
+    // TODO: ensure this is not a recurring event, to avoid "cannotChangeOrganizerOfInstance"
+
     setState((state) => {
         const event = findEvent(state, calendarId, eventId);
         event.calendarId = destinationCalendarId;

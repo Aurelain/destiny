@@ -132,7 +132,7 @@ class New extends React.PureComponent {
      */
     memoBackgroundColor = memoize((preferredCalendar, calendars) => {
         const calendar = findCalendar(preferredCalendar, calendars);
-        return calendar.backgroundColor;
+        return calendar?.backgroundColor || '#000';
     });
 }
 

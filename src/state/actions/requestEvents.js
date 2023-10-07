@@ -40,7 +40,7 @@ const requestEvents = async () => {
  */
 const getCalendarEvents = async (calendarId) => {
     const now = Date.now();
-    const lastWeek = now - MILLISECONDS_IN_A_DAY;
+    const lastWeek = now - 7 * MILLISECONDS_IN_A_DAY;
     const nextMonth = now + 31 * MILLISECONDS_IN_A_DAY;
     const result = await requestApi('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
         searchParams: {

@@ -51,6 +51,9 @@ const createEvent = async (calendarId, summary) => {
             end: {
                 date: today,
             },
+            reminders: {
+                useDefault: false,
+            },
         },
         schema: EventSchema,
     });
