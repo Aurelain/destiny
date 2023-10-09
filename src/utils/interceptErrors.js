@@ -26,14 +26,14 @@ const interceptErrors = () => {
  *
  */
 const onError = (event) => {
-    panic(event.type, event.error.stack);
+    panic(event.type, event);
 };
 
 /**
  *
  */
 const onUnhandledRejection = (event) => {
-    panic(event.type, event.reason.stack);
+    panic(event.type, event.reason);
 };
 
 /**
@@ -42,14 +42,15 @@ const onUnhandledRejection = (event) => {
 const onServiceWorkerMessage = (event) => {
     if (event.data?.type === 'PANIC') {
         // This message came from a service worker that panicked.
-        panic(event.data.panic.type + ' in SW', event.data.panic.stack);
+        const payload = event.data.panic || {};
+        panic(payload.type + ' in SW', payload);
     }
 };
 
 /**
  *
  */
-const panic = (type, stack) => {
+const panic = (type, {message, stack}) => {
     clearTimeout(destroyTimeout);
     if (!queue) {
         queue = [];
@@ -73,7 +74,7 @@ const panic = (type, stack) => {
     if (!isExpanded) {
         destroyTimeout = setTimeout(onDestroyTimeout, DESTROY_TIMEOUT);
     }
-    queue.push({type, stack});
+    queue.push({type, message, stack});
     renderQueue();
 };
 
@@ -82,11 +83,11 @@ const panic = (type, stack) => {
  */
 const renderQueue = () => {
     let items = [];
-    for (const {type, stack} of queue) {
+    for (const {type, message, stack} of queue) {
         if (isExpanded) {
-            items.push(type + '<br/>' + stack);
+            items.push(type + '<br/>' + message + '<br/>' + stack);
         } else {
-            items.push(stack.match(/.*/)[0]);
+            items.push(message.match(/.*/)[0]);
         }
     }
     containerElement.innerHTML = `<ul><li>${items.join('</li><li>')}</li></ul>`;

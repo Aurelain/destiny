@@ -284,7 +284,9 @@ class Event extends React.PureComponent {
     });
 
     memoSummaryComponent = memoize((title) => {
-        return title.match(SHOPPING_MATCH) ? Shopping : Editable;
+        const shoppingTitle = title.match(/^[\s-]*\S+:/)?.[0];
+        const isShopping = shoppingTitle && !shoppingTitle.match(/http/i);
+        return isShopping ? Shopping : Editable;
     });
 }
 

@@ -18,21 +18,21 @@ const interceptSwErrors = () => {
  *
  */
 const onError = (event) => {
-    panic(event.type, event.error.stack);
+    panic(event.type, event);
 };
 
 /**
  *
  */
 const onUnhandledRejection = (event) => {
-    panic(event.type, event.reason.stack);
+    panic(event.type, event.reason);
 };
 
 /**
  *
  */
-const panic = (type, stack) => {
-    announceClients({type: 'PANIC', panic: {type, stack}});
+const panic = (type, {message, stack}) => {
+    announceClients({type: 'PANIC', panic: {type, message, stack}});
 };
 
 // =====================================================================================================================

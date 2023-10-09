@@ -15,7 +15,7 @@ const validateJson = (json, schema) => {
     const validate = ajv.compile(schema);
     if (!validate(json)) {
         const [error] = validate.errors; // get the first error
-        throw new Error(JSON.stringify(error.instancePath + ' ' + error.message));
+        throw new Error(error.instancePath + ' ' + error.message);
     }
     return json;
 };
