@@ -1,4 +1,4 @@
-import {DONE_MATCH} from '../SETTINGS.js';
+import sanitizeSummary from './sanitizeSummary.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -28,8 +28,8 @@ const compareEvents = (a, b) => {
         return calendarComparison;
     }
 
-    const aCleanSummary = a.summary.replace(DONE_MATCH, '');
-    const bCleanSummary = b.summary.replace(DONE_MATCH, '');
+    const aCleanSummary = sanitizeSummary(a.summary);
+    const bCleanSummary = sanitizeSummary(b.summary);
     const summaryComparison = aCleanSummary.localeCompare(bCleanSummary);
     return summaryComparison;
 };

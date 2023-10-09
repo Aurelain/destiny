@@ -74,7 +74,7 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onListRelease = (name) => {
+    onListRelease = ({name}) => {
         this.setState({isOpen: false});
         this.props.onSelect(name);
     };

@@ -140,7 +140,7 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    onMenuChoice = async (event, name) => {
+    onMenuChoice = async ({name}) => {
         switch (name) {
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');

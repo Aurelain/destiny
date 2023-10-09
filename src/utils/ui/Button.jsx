@@ -203,8 +203,9 @@ class Button extends React.PureComponent {
      *
      */
     onRootPointerDown = (event) => {
-        const {onPress, name} = this.props;
-        onPress?.(name);
+        const {onPress, name, data} = this.props;
+        const payload = {event, name, data};
+        onPress?.(payload);
 
         this.setState({isPressing: true});
         window.addEventListener('pointerup', this.onWindowRelease);
@@ -264,13 +265,14 @@ class Button extends React.PureComponent {
      *
      */
     onClickTimeout = () => {
-        const {onClick, onHold, name} = this.props;
+        const {onClick, onHold, name, data} = this.props;
         const {isHolding, event} = this.clickParams;
         this.clickParams = null;
+        const payload = {event, name, data};
         if (isHolding) {
-            onHold(event, name);
+            onHold(payload);
         } else {
-            onClick?.(event, name);
+            onClick?.(payload);
         }
     };
 
@@ -341,8 +343,9 @@ class Button extends React.PureComponent {
      *
      */
     onReleaseTimeout = () => {
-        const {onRelease, name} = this.props;
-        onRelease(name);
+        const {onRelease, name, data} = this.props;
+        const payload = {name, data};
+        onRelease(payload);
     };
 }
 
@@ -401,5 +404,6 @@ Button.propTypes = {
     onPress: PropTypes.func,
     onRelease: PropTypes.func,
     innerRef: PropTypes.object,
+    data: PropTypes.any,
 };
 export default Button;

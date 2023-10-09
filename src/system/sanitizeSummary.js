@@ -10,7 +10,7 @@ const sanitizeSummary = (summary) => {
     summary = summary.replace(/\s+/g, ' ');
     summary = summary.trim();
     summary = summary.replace(/[^\s-]\w*/, capitalizeSummary);
-    summary = summary.replace(/(http\S+)/gi, '<a href="$1" contentEditable="false" target="_blank">$1</a>');
+    summary = summary.replace(/(http[^\s),]+)/gi, '<a href="$1" contentEditable="false" target="_blank">$1</a>');
     summary = summary.replace(/ ,/g, ',');
     return summary;
 };

@@ -118,7 +118,7 @@ class Event extends React.PureComponent {
         const timeInterval = this.memoTimeInterval(start, end);
         const sanitizedTitle = this.memoSanitizeTitle(title);
         const titleWithoutAnchors = this.memoTitleWithoutAnchors(sanitizedTitle);
-        const SummaryComponent = this.memoSummaryComponent(sanitizedTitle);
+        const SummaryComponent = this.memoSummaryComponent(title);
         return (
             <div css={SX.root}>
                 <Button

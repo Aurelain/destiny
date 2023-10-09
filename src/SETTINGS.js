@@ -6,6 +6,7 @@ export const MILLISECONDS_IN_A_DAY = 1000 * 3600 * 24;
 export const BAR_HEIGHT = 60;
 export const NEW_HEIGHT = 48;
 export const PRIMARY_COLOR = '#528c1e';
+export const SHOPPING_MATCH = /^[\s-]*\S+:/;
 export const DONE_MATCH = /^--+/;
 export const DONE_MARKER = '-'.repeat(4);
 export const BOX_SHADOW =
