@@ -32,8 +32,8 @@ const SX = {
 // =====================================================================================================================
 class Shopping extends React.PureComponent {
     render() {
-        const {text, showDone} = this.props;
-        const shopping = parseShopping(text);
+        const {html, showDone} = this.props;
+        const shopping = parseShopping(html);
         return (
             <div css={SX.root}>
                 <Editable html={shopping.title} onChange={this.onTitleChange} />
@@ -78,6 +78,7 @@ class Shopping extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Shopping.propTypes = {
-    text: PropTypes.string.isRequired,
+    html: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 export default Shopping;

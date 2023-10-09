@@ -1,14 +1,19 @@
 import {configureStore, createSlice} from '@reduxjs/toolkit';
-import INITIAL_STATE from './INITIAL_STATE.js';
 import localforage from 'localforage';
 import {STORE_KEY, USE_MOCK} from '../SETTINGS.js';
+import healJson from '../utils/healJson.js';
+import STATE_SCHEMA from './STATE_SCHEMA.js';
 
 // =====================================================================================================================
 //  S E T U P
 // =====================================================================================================================
 const slice = createSlice({
     name: 'app',
-    initialState: INITIAL_STATE,
+    initialState: healJson(
+        {}, // target
+        STATE_SCHEMA, // schema
+        {verbose: false}, // options
+    ),
     reducers: {
         setState: (state, action) => action.payload(state),
     },

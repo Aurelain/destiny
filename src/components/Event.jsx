@@ -10,7 +10,7 @@ import Bell from '../icons/Bell.jsx';
 import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
-import {DONE_MATCH} from '../SETTINGS.js';
+import {DONE_MATCH, SHOPPING_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import ChooseCalendar from './ChooseCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
@@ -19,8 +19,10 @@ import BellRing from '../icons/BellRing.jsx';
 import toggleReminder from '../state/actions/toggleReminder.js';
 import CircleMedium from '../icons/CircleMedium.jsx';
 import CircleOutline from '../icons/CircleOutline.jsx';
-import Summary from './Summary.jsx';
 import updateSummary from '../state/actions/updateSummary.js';
+import Shopping from './Shopping.jsx';
+import Editable from '../utils/ui/Editable.jsx';
+import sanitizeSummary from '../system/sanitizeSummary.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -114,18 +116,21 @@ class Event extends React.PureComponent {
         const {contentHeight} = this.state;
 
         const timeInterval = this.memoTimeInterval(start, end);
+        const sanitizedTitle = this.memoSanitizeTitle(title);
+        const titleWithoutAnchors = this.memoTitleWithoutAnchors(sanitizedTitle);
+        const SummaryComponent = this.memoSummaryComponent(sanitizedTitle);
         return (
             <div css={SX.root}>
                 <Button
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
-                    label={this.memoTitleLabel(title, timeInterval, isDone)}
+                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, isDone)}
                     allowTouch={true}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
-                        <Summary text={title} onChange={this.onSummaryChange} />
+                        <SummaryComponent html={sanitizedTitle} onChange={this.onSummaryChange} />
                         <div css={SX.toolbar}>
                             <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             <Button // Bell
@@ -268,6 +273,18 @@ class Event extends React.PureComponent {
 
     memoContentCss = memoize((backgroundColor) => {
         return {...SX.content, borderColor: backgroundColor};
+    });
+
+    memoSanitizeTitle = memoize((title) => {
+        return sanitizeSummary(title);
+    });
+
+    memoTitleWithoutAnchors = memoize((title) => {
+        return title.replace(/<.*?>/g, '');
+    });
+
+    memoSummaryComponent = memoize((title) => {
+        return title.match(SHOPPING_MATCH) ? Shopping : Editable;
     });
 }
 
