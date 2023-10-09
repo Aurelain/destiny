@@ -9,7 +9,7 @@ const sanitizeSummary = (summary) => {
     summary = summary.replace(/&\w+;/g, ' ');
     summary = summary.replace(/\s+/g, ' ');
     summary = summary.trim();
-    summary = summary.charAt(0).toLocaleUpperCase() + summary.substring(1);
+    summary = summary.replace(/[^\s-]/, (c) => c.toUpperCase());
     return summary;
 };
 

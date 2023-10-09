@@ -57,7 +57,12 @@ const MOCK = USE_MOCK && {
         {
             id: 'urm29vfme6ebe49npr1hrn5k2',
             calendarId: 'foo@gmail.com',
-            summary: 'Foo: bar, hello, world, lorem ipsum',
+            summary: `
+            Foo:
+            bar,
+            hello Lorem ipsum dolor sit amet consectetuer adipiscing elit Phasellus aliquet est ut quam rutrum fringla,
+            world, lorem ipsum
+            `,
             start: '2023-09-28',
             end: '2023-09-28',
             status: 'confirmed',

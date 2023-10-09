@@ -17,11 +17,11 @@ import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
 import {selectCalendars, selectHiddenCalendars, selectShowDone} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
-import Magnify from '../icons/Magnify.jsx';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
-import TimelineCheckOutline from '../icons/TimelineCheckOutline.jsx';
 import Separator from '../utils/ui/Separator.jsx';
 import Avatar from '../utils/ui/Avatar.jsx';
+import CheckCircle from '../icons/CheckCircle.jsx';
+import CheckCircleOutline from '../icons/CheckCircleOutline.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -62,7 +62,6 @@ const SX = {
 
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
-const MENU_SHOW_DONE = 'MENU_SHOW_DONE';
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -86,7 +85,12 @@ class Bar extends React.PureComponent {
                     variant={'inverted'}
                 />
                 <div css={SX.grow} />
-                <Button icon={Magnify} cssNormal={SX.btn} onClick={this.onMagnifyClick} variant={'inverted'} />
+                <Button
+                    icon={showDone ? CheckCircle : CheckCircleOutline}
+                    cssNormal={SX.btn}
+                    onClick={this.onDoneClick}
+                    variant={'inverted'}
+                />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <div css={SX.sliver} />
                 <SideMenu
@@ -94,7 +98,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    list={this.memoMenuList(calendars, hiddenCalendars, showDone)}
+                    list={this.memoMenuList(calendars, hiddenCalendars)}
                     listItemCss={SX.listItem}
                 />
             </div>
@@ -138,9 +142,6 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async (event, name) => {
         switch (name) {
-            case MENU_SHOW_DONE:
-                toggleShowDone();
-                break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
@@ -165,8 +166,8 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    onMagnifyClick = () => {
-        // TODO
+    onDoneClick = () => {
+        toggleShowDone();
     };
 
     /**
@@ -187,7 +188,7 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((calendars, hiddenCalendars, showDone) => {
+    memoMenuList = memoize((calendars, hiddenCalendars) => {
         const list = [];
         for (const calendarItem of calendars) {
             const {id, summary, backgroundColor} = calendarItem;
@@ -206,11 +207,6 @@ class Bar extends React.PureComponent {
         list.push(
             ...[
                 Separator,
-                {
-                    name: MENU_SHOW_DONE,
-                    icon: TimelineCheckOutline,
-                    label: `${showDone ? 'Hide' : 'Show'} done`,
-                },
                 {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,

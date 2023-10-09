@@ -1,17 +1,17 @@
 import React from 'react';
-import {mdiTimelineCheckOutline} from '@mdi/js';
+import {mdiCheckCircleOutline} from '@mdi/js';
 import Icon from './Icon.jsx';
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class TimelineCheckOutline extends React.PureComponent {
+class CheckCircleOutline extends React.PureComponent {
     render() {
-        return <Icon path={mdiTimelineCheckOutline} />;
+        return <Icon path={mdiCheckCircleOutline} {...this.props} />;
     }
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default TimelineCheckOutline;
+export default CheckCircleOutline;

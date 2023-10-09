@@ -80,7 +80,7 @@ class Summary extends React.PureComponent {
      *
      */
     memoType = memoize((text) => {
-        if (text.match(/^\S+:/)) {
+        if (text.match(/^\s*\S+:/)) {
             return TYPE_SHOPPING;
         }
         if (text.match(/http/i)) {
