@@ -18,7 +18,7 @@ const VISIBILITY_EXPIRATION = 5 * 60 * 1000; // milliseconds
 //  C O M P O N E N T
 // =====================================================================================================================
 class App extends React.PureComponent {
-    visibilityTimestamp = Date.now();
+    constructionTimestamp = Date.now();
 
     render() {
         const {accessToken} = this.props;
@@ -51,10 +51,10 @@ class App extends React.PureComponent {
     onDocumentVisibilityChange = async () => {
         const {accessToken} = this.props;
         const hasBecomeVisible = !document.hidden;
-        const isExpired = Date.now() > this.visibilityTimestamp + VISIBILITY_EXPIRATION;
+        const isExpired = Date.now() > this.constructionTimestamp + VISIBILITY_EXPIRATION;
         if (accessToken && hasBecomeVisible && isExpired) {
-            this.visibilityTimestamp = Date.now();
-            this.syncWithCloud();
+            window.scrollTo(0, 0);
+            window.location.reload();
         }
     };
 
