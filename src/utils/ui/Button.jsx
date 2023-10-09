@@ -375,7 +375,7 @@ const getTargetFromEvent = (event) => {
 const checkButtonInButton = (child, topButton) => {
     let target = child;
     while (target !== topButton) {
-        if (target.role === 'button') {
+        if (target.getAttribute('role') === 'button') {
             return true;
         }
         target = target.parentNode;

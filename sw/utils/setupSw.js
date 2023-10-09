@@ -107,7 +107,7 @@ const onWorkerFetch = (event) => {
 const respondToRoot = async () => {
     const home = getSwHome(); // without trailing slash, e.g. https://foo.com/bar
     const cachedResponse = await caches.match(home + '/');
-    const freshResponse = await fetchUrl(home + '/');
+    const freshResponse = await fetchUrl(home + '/index.html?' + Math.random());
     if (freshResponse) {
         // console.log('We are online.');
         if (cachedResponse) {

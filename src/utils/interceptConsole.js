@@ -1,9 +1,9 @@
 /*
 Manages the browser's console:
 - Depending on the value of the `console` localStorage key, the console can be:
-    1. allowed (when `console=native`)
-    2. emulated (when `console=emulated`)
-    3. muted (when `console` has any other value, including undefined)
+    1. emulated (when `console=emulated`)
+    2. muted (when `console=muted`)
+    3. allowed (when `console` has any other value, including undefined)
 */
 
 // =====================================================================================================================
@@ -64,10 +64,6 @@ const interceptConsole = () => {
     isInitialized = true;
 
     switch (localStorage.getItem('console')) {
-        case 'native':
-            // No changes to the console system.
-            return;
-
         case 'emulated': {
             emulatedConsole = {};
             for (const property of PROPERTIES) {
@@ -83,8 +79,7 @@ const interceptConsole = () => {
             break;
         }
 
-        default: {
-            // silent
+        case 'muted': {
             const noopConsole = {};
             for (const property of PROPERTIES) {
                 noopConsole[property] = EMPTY_OBJECT;
@@ -94,6 +89,11 @@ const interceptConsole = () => {
             }
 
             window.console = noopConsole;
+            return;
+        }
+
+        default: {
+            // No changes to the console system.
         }
     }
 };

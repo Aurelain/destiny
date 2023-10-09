@@ -20,8 +20,8 @@ import toggleCalendar from '../state/actions/toggleCalendar.js';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
 import Separator from '../utils/ui/Separator.jsx';
 import Avatar from '../utils/ui/Avatar.jsx';
-import CheckCircle from '../icons/CheckCircle.jsx';
-import CheckCircleOutline from '../icons/CheckCircleOutline.jsx';
+import EyeCircle from '../icons/EyeCircle.jsx';
+import EyeOutline from '../icons/EyeOutline.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -86,7 +86,7 @@ class Bar extends React.PureComponent {
                 />
                 <div css={SX.grow} />
                 <Button
-                    icon={showDone ? CheckCircle : CheckCircleOutline}
+                    icon={showDone ? EyeCircle : EyeOutline}
                     cssNormal={SX.btn}
                     onClick={this.onDoneClick}
                     variant={'inverted'}

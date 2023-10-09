@@ -10,7 +10,7 @@ import Bell from '../icons/Bell.jsx';
 import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
-import {DONE_MATCH, SHOPPING_MATCH} from '../SETTINGS.js';
+import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import ChooseCalendar from './ChooseCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
