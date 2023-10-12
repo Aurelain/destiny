@@ -35,7 +35,7 @@ const requestJson = async (url, options = {}) => {
     try {
         response = await fetchWithLoading(url, fetchOptions);
     } catch (e) {
-        throw new Error(`Failed to fetch "${url}"!`);
+        throw new Error(`Failed to fetch ${prettifyUrl(url)}!`);
     }
 
     const text = await response.text();
@@ -44,15 +44,48 @@ const requestJson = async (url, options = {}) => {
         try {
             json = JSON.parse(text);
         } catch (e) {
-            throw new Error(`Cannot parse response from "${url}" as json! ${e.message}`);
+            throw new Error(`Cannot parse json from ${prettifyUrl(url)}! ${e.message}`);
+        }
+        const {error} = json;
+        if (error) {
+            let message;
+            if (typeof error === 'string') {
+                message = error;
+            } else if (error.message) {
+                message = error.message;
+            } else {
+                message = JSON.stringify(error);
+            }
+            throw new Error(prettifyUrl(url) + ': ' + message);
         }
     }
 
     if (options.schema) {
-        validateJson(json, options.schema);
+        try {
+            validateJson(json, options.schema);
+        } catch (e) {
+            throw new Error(`Unexpected reply from ${prettifyUrl(url)}: ${e.message}`);
+        }
     }
 
     return json;
+};
+
+// =====================================================================================================================
+//  P R I V A T E
+// =====================================================================================================================
+/**
+ *
+ */
+const prettifyUrl = (url) => {
+    url = url.replace(/^https?:\/\//, '');
+    const urlParts = url.split('/');
+    let last = urlParts.pop();
+    last = last.replace(/[?#].*/, '');
+    const first = urlParts.shift();
+    const domainParts = first.split('.');
+    const mainDomain = domainParts.at(-2) || first;
+    return last + '@' + mainDomain;
 };
 
 // =====================================================================================================================
