@@ -30,12 +30,15 @@ const SX = {
         flexGrow: 1,
     },
 };
+const ENTER_TIMEOUT = 100;
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class Shopping extends React.PureComponent {
     shoppingStructure; // filled by `memoShoppingStructure()`
+    enterTimeout;
+    rootRef = React.createRef();
 
     render() {
         const {html, showDone} = this.props;
@@ -44,7 +47,7 @@ class Shopping extends React.PureComponent {
         // TODO: offer a way to raw edit the whole summary
 
         return (
-            <div css={SX.root}>
+            <div css={SX.root} ref={this.rootRef}>
                 <Editable html={shoppingStructure.title} onChange={this.onTitleChange} />
                 {shoppingStructure.items.map((item, index) => {
                     const {text, isDone} = item;
@@ -69,6 +72,10 @@ class Shopping extends React.PureComponent {
         );
     }
 
+    componentWillUnmount() {
+        clearTimeout(this.enterTimeout);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // I N T E R N A L
     // -----------------------------------------------------------------------------------------------------------------
@@ -90,7 +97,13 @@ class Shopping extends React.PureComponent {
             draft.items[index].text = text;
         });
         this.announceChange(freshShopping);
-        console.log('isEnter:', isEnter);
+        if (isEnter) {
+            this.enterTimeout = setTimeout(() => {
+                const editableElements = this.rootRef.current.querySelectorAll('[contenteditable="true"]');
+                const nextEditable = editableElements[index + 2];
+                nextEditable?.focus();
+            }, ENTER_TIMEOUT);
+        }
     };
 
     /**
