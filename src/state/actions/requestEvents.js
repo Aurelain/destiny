@@ -66,7 +66,7 @@ const getCalendarEvents = async (calendarId) => {
  *
  */
 const sanitizeAndEnhanceEvent = (event, calendarId) => {
-    const {id, summary, start, end, status, reminders} = event;
+    const {id, summary, start, end, status, reminders, recurringEventId, recurrence} = event;
     // if (summary.includes('nazurro')) {
     //     console.log('event: ' + JSON.stringify(event, null, 4));
     // }
@@ -80,6 +80,8 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         end: unifiedEnd,
         status,
         reminder: Boolean(reminders.overrides?.length),
+        recurringEventId,
+        recurrence: recurrence ? recurrence[0] : undefined,
     };
 };
 

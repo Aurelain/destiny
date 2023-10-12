@@ -51,6 +51,9 @@ export default {
                 },
             ],
         },
+        status: {
+            enum: ['confirmed', 'tentative', 'cancelled'],
+        },
         reminders: {
             type: 'object',
             properties: {
@@ -59,8 +62,16 @@ export default {
                 },
             },
         },
-        status: {
-            enum: ['confirmed', 'tentative', 'cancelled'],
+        recurringEventId: {
+            // optional
+            type: 'string',
+        },
+        recurrence: {
+            // optional
+            type: 'array',
+            items: {
+                type: 'string',
+            },
         },
     },
     required: ['id', 'summary', 'start', 'end', 'status', 'reminders'],

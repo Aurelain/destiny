@@ -43,7 +43,7 @@ class Select extends React.PureComponent {
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <ButtonClass {...buttonProps} onClick={this.onButtonPress} innerRef={this.buttonRef} />
+                <ButtonClass {...buttonProps} onClick={this.onButtonClick} innerRef={this.buttonRef} />
                 {isOpen &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
@@ -67,8 +67,9 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onButtonPress = () => {
+    onButtonClick = () => {
         this.setState({isOpen: true});
+        this.props.onOpen?.();
     };
 
     /**
@@ -126,6 +127,7 @@ Select.propTypes = {
     buttonProps: PropTypes.object,
     list: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
     listProps: PropTypes.object,
+    onOpen: PropTypes.func,
     onSelect: PropTypes.func,
 };
 

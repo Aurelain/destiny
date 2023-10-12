@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {BOX_SHADOW} from '../../SETTINGS.js';
+import {BOX_SHADOW} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -17,14 +17,14 @@ const SX = {
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class MonthTime extends React.PureComponent {
+class Recurrence extends React.PureComponent {
     rootRef = React.createRef();
     render() {
         const {innerRef, styling} = this.props;
         const ref = innerRef || this.rootRef;
         return (
             <div css={[SX.root, styling]} ref={ref}>
-                MonthTime
+                Recurrence
             </div>
         );
     }
@@ -37,12 +37,12 @@ class MonthTime extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-MonthTime.propTypes = {
+Recurrence.propTypes = {
     // -------------------------------- direct:
-    date: PropTypes.object,
+    recurrence: PropTypes.arrayOf(PropTypes.string),
     styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,
     onRelease: PropTypes.func.isRequired,
 };
 
-export default MonthTime;
+export default Recurrence;

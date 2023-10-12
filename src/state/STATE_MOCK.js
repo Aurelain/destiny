@@ -48,6 +48,8 @@ const STATE_MOCK = {
             end: '2023-09-28T17:00:00+03:00',
             status: 'confirmed',
             reminder: false,
+            recurringEventId: 'myRecurringEventId',
+            recurrence: 'x',
         },
         {
             id: 'urm29vfme6ebe49npr1hrn5k2',

@@ -69,6 +69,14 @@ export default {
                     reminder: {
                         type: 'boolean',
                     },
+                    recurringEventId: {
+                        // optional
+                        type: 'string',
+                    },
+                    recurrence: {
+                        // optional
+                        type: 'string',
+                    },
                 },
                 required: ['id', 'calendarId', 'summary', 'start', 'end', 'status', 'reminder'],
             },

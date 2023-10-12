@@ -27,6 +27,7 @@ import TrashCan from '../icons/TrashCan.jsx';
 import Select from '../utils/ui/Select.jsx';
 import MonthTime from '../utils/ui/MonthTime.jsx';
 import FanAlert from '../icons/FanAlert.jsx';
+import Recurrence from './Recurrence.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -129,7 +130,8 @@ class Event extends React.PureComponent {
         contentHeight: null,
     };
     render() {
-        const {title, backgroundColor, start, end, isExpanded, calendarId, reminder, isDone} = this.props;
+        const {title, backgroundColor, start, end, isExpanded, calendarId, reminder, isDone, recurringEventId} =
+            this.props;
         const {contentHeight} = this.state;
 
         const timeInterval = this.memoTimeInterval(start, end);
@@ -156,7 +158,12 @@ class Event extends React.PureComponent {
                                 icon={reminder ? BellRing : Bell}
                                 onClick={this.onBellClick}
                             />
-                            <Select buttonProps={FAN_BUTTON_PROPS} list={MonthTime} onSelect={this.onFanSelect} />
+                            <Select
+                                buttonProps={recurringEventId ? FAN_ALERT_BUTTON_PROPS : FAN_BUTTON_PROPS}
+                                list={Recurrence}
+                                onOpen={this.onFanOpen}
+                                onSelect={this.onFanSelect}
+                            />
                             <Button // Duplicate
                                 cssNormal={SX.btn}
                                 icon={ContentDuplicate}
@@ -229,6 +236,10 @@ class Event extends React.PureComponent {
     onBellClick = () => {
         const {calendarId, eventId} = this.props;
         toggleReminder(calendarId, eventId);
+    };
+
+    onFanOpen = () => {
+        console.log('onFanOpen:');
     };
 
     onFanSelect = (value) => {
@@ -313,5 +324,7 @@ Event.propTypes = {
     title: PropTypes.string.isRequired,
     reminder: PropTypes.bool.isRequired,
     backgroundColor: PropTypes.string.isRequired,
+    recurringEventId: PropTypes.string,
+    recurrence: PropTypes.string,
 };
 export default Event;

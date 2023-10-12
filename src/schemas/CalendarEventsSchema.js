@@ -59,8 +59,27 @@ export default {
                     status: {
                         enum: ['confirmed', 'tentative', 'cancelled'],
                     },
+                    reminders: {
+                        type: 'object',
+                        properties: {
+                            overrides: {
+                                type: 'array',
+                            },
+                        },
+                    },
+                    recurringEventId: {
+                        // optional
+                        type: 'string',
+                    },
+                    recurrence: {
+                        // optional
+                        type: 'array',
+                        items: {
+                            type: 'string',
+                        },
+                    },
                 },
-                required: ['id', 'summary', 'start', 'end', 'status'],
+                required: ['id', 'summary', 'start', 'end', 'status', 'reminders'],
             },
         },
     },
