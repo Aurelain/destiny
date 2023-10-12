@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import Button from '../utils/ui/Button.jsx';
 import CalendarMonth from '../icons/CalendarMonth.jsx';
-import ArrowCollapseUp from '../icons/ArrowCollapseUp.jsx';
 import scheduleEvent from '../state/actions/scheduleEvent.js';
-import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 import Bell from '../icons/Bell.jsx';
 import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
@@ -17,12 +15,15 @@ import deleteEvent from '../state/actions/deleteEvent.js';
 import moveEvent from '../state/actions/moveEvent.js';
 import BellRing from '../icons/BellRing.jsx';
 import toggleReminder from '../state/actions/toggleReminder.js';
-import CircleMedium from '../icons/CircleMedium.jsx';
 import CircleOutline from '../icons/CircleOutline.jsx';
 import updateSummary from '../state/actions/updateSummary.js';
 import Shopping from './Shopping.jsx';
 import Editable from '../utils/ui/Editable.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
+import Fan from '../icons/Fan.jsx';
+import ArrowDownThin from '../icons/ArrowDownThin.jsx';
+import ChevronDoubleDown from '../icons/ChevronDoubleDown.jsx';
+import TrashCan from '../icons/TrashCan.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -92,7 +93,7 @@ const SX = {
         margin: 2,
         padding: 4,
     },
-    btnWithReminder: {
+    btnSpecial: {
         color: 'yellow',
     },
     grow: {
@@ -102,7 +103,6 @@ const SX = {
         padding: 8,
     },
 };
-const TODAY = getYYYYMMDD();
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -132,30 +132,28 @@ class Event extends React.PureComponent {
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         <SummaryComponent html={sanitizedTitle} onChange={this.onSummaryChange} />
                         <div css={SX.toolbar}>
-                            <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
+                            <div css={SX.grow} />
+                            <Button // Move Custom
+                                cssNormal={SX.btn}
+                                icon={CalendarMonth}
+                                onClick={this.onCalendarClick}
+                            />
                             <Button // Bell
-                                cssNormal={[SX.btn, reminder && SX.btnWithReminder]}
+                                cssNormal={[SX.btn, reminder && SX.btnSpecial]}
                                 icon={reminder ? BellRing : Bell}
                                 onClick={this.onBellClick}
+                            />
+                            <Button // Repeating
+                                cssNormal={SX.btn}
+                                icon={Fan}
+                                onClick={this.onFanClick}
                             />
                             <Button // Duplicate
                                 cssNormal={SX.btn}
                                 icon={ContentDuplicate}
                                 onClick={this.onDuplicateClick}
                             />
-                            <div css={SX.grow} />
-                            {!start.startsWith(TODAY) && (
-                                <Button // Move Today
-                                    cssNormal={SX.btn}
-                                    icon={ArrowCollapseUp}
-                                    onClick={this.onTodayClick}
-                                />
-                            )}
-                            <Button // Move Custom
-                                cssNormal={SX.btn}
-                                icon={CalendarMonth}
-                                onClick={this.onCalendarClick}
-                            />
+                            <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                         </div>
                     </div>
                 )}
@@ -224,9 +222,10 @@ class Event extends React.PureComponent {
         // TODO
     };
 
-    onTodayClick = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, null, start, end);
+    onFanClick = async () => {
+        // const {calendarId, eventId, start, end} = this.props;
+        // await scheduleEvent(calendarId, eventId, null, start, end);
+        // TODO
     };
 
     onCalendarClick = () => {
@@ -252,19 +251,21 @@ class Event extends React.PureComponent {
         return (
             <div css={SX.titleContent}>
                 <Button
-                    cssNormal={SX.titleHeading}
-                    icon={CircleMedium}
-                    onClick={this.onHeadingClick}
-                    onHold={this.onHeadingHold}
+                    cssNormal={SX.titleStatus}
+                    icon={isDone ? CheckCircle : CircleOutline}
+                    holdIcon={TrashCan}
+                    onClick={this.onStatusClick}
+                    onHold={this.onStatusHold}
                     variant={'inverted'}
                 />
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
                 <Button
-                    cssNormal={SX.titleStatus}
-                    icon={isDone ? CheckCircle : CircleOutline}
-                    onClick={this.onStatusClick}
-                    onHold={this.onStatusHold}
+                    cssNormal={SX.titleHeading}
+                    icon={ArrowDownThin}
+                    holdIcon={ChevronDoubleDown}
+                    onClick={this.onHeadingClick}
+                    onHold={this.onHeadingHold}
                     variant={'inverted'}
                 />
             </div>
@@ -276,7 +277,9 @@ class Event extends React.PureComponent {
     });
 
     memoSanitizeTitle = memoize((title) => {
-        return sanitizeSummary(title);
+        title = sanitizeSummary(title);
+        title = title.replace(DONE_MATCH, '');
+        return title;
     });
 
     memoTitleWithoutAnchors = memoize((title) => {

@@ -9,6 +9,7 @@ import Button from '../utils/ui/Button.jsx';
 import Editable from '../utils/ui/Editable.jsx';
 import {selectShowDone} from '../state/selectors.js';
 import sanitizeSummary from '../system/sanitizeSummary.js';
+import TrashCan from '../icons/TrashCan.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -59,6 +60,7 @@ class Shopping extends React.PureComponent {
                             <Button
                                 cssNormal={SX.itemDone}
                                 icon={isDone ? CheckCircle : CircleOutline}
+                                holdIcon={TrashCan}
                                 onClick={this.onDoneClick}
                                 onHold={this.onDoneHold}
                                 variant={'simple'}

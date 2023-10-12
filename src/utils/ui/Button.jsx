@@ -103,15 +103,26 @@ class Button extends React.PureComponent {
     initialY;
 
     render() {
-        const {label, icon, cssNormal, cssHover, cssActive, variant, disabled, allowTouch, innerRef, ...otherProps} =
-            this.props;
+        const {
+            label,
+            icon,
+            holdIcon,
+            cssNormal,
+            cssHover,
+            cssActive,
+            variant,
+            disabled,
+            allowTouch,
+            innerRef,
+            ...otherProps
+        } = this.props;
         delete otherProps.onHold;
         delete otherProps.onClick;
         delete otherProps.onPress;
         delete otherProps.onRelease;
         const {isHovering, isPressing, isHolding} = this.state;
         const ref = innerRef || this.rootRef;
-
+        const iconInstance = this.memoIcon(icon, holdIcon, isHolding);
         return (
             <div
                 {...otherProps}
@@ -143,8 +154,8 @@ class Button extends React.PureComponent {
                 onTouchEnd={this.onRootRelease}
                 role={'button'}
             >
-                {this.memoIcon(icon)}
-                {icon && label && ' '}
+                {this.memoIcon(iconInstance)}
+                {iconInstance && label && ' '}
                 {this.memoContent(label)}
             </div>
         );
@@ -176,7 +187,8 @@ class Button extends React.PureComponent {
     /**
      *
      */
-    memoIcon = memoize((icon) => {
+    memoIcon = memoize((icon, holdIcon, isHolding) => {
+        icon = isHolding && holdIcon ? holdIcon : icon;
         if (typeof icon === 'function') {
             const Icon = icon;
             return <Icon />;
@@ -392,6 +404,7 @@ Button.defaultProps = {
 Button.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
     icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    holdIcon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
     disabled: PropTypes.bool,
     name: PropTypes.string,

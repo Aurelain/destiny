@@ -68,12 +68,12 @@ const STATE_MOCK = {
     options: {
         hiddenCalendars: {},
         expandedEvents: {
-            urm29vfme6ebe49npr1hrn5kd1: true,
+            // urm29vfme6ebe49npr1hrn5kd1: true,
             urm29vfme6ebe49npr1hrn5kdg: true,
-            urm29vfme6ebe49npr1hrn5k2: true,
+            // urm29vfme6ebe49npr1hrn5k2: true,
         },
         preferredCalendar: '',
-        showDone: true,
+        showDone: false,
     },
 };
 
