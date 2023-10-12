@@ -10,7 +10,7 @@ import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
 import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
-import ChooseCalendar from './ChooseCalendar.jsx';
+import ChooseCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
 import moveEvent from '../state/actions/moveEvent.js';
 import BellRing from '../icons/BellRing.jsx';
@@ -24,6 +24,9 @@ import Fan from '../icons/Fan.jsx';
 import ArrowDownThin from '../icons/ArrowDownThin.jsx';
 import ChevronDoubleDown from '../icons/ChevronDoubleDown.jsx';
 import TrashCan from '../icons/TrashCan.jsx';
+import Select from '../utils/ui/Select.jsx';
+import MonthTime from '../utils/ui/MonthTime.jsx';
+import FanAlert from '../icons/FanAlert.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -103,6 +106,20 @@ const SX = {
         padding: 8,
     },
 };
+const TIME_BUTTON_PROPS = {
+    cssNormal: SX.btn,
+    icon: CalendarMonth,
+};
+
+const FAN_BUTTON_PROPS = {
+    cssNormal: SX.btn,
+    icon: Fan,
+};
+
+const FAN_ALERT_BUTTON_PROPS = {
+    cssNormal: [SX.btn, SX.btnSpecial],
+    icon: FanAlert,
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -133,21 +150,13 @@ class Event extends React.PureComponent {
                         <SummaryComponent html={sanitizedTitle} onChange={this.onSummaryChange} />
                         <div css={SX.toolbar}>
                             <div css={SX.grow} />
-                            <Button // Move Custom
-                                cssNormal={SX.btn}
-                                icon={CalendarMonth}
-                                onClick={this.onCalendarClick}
-                            />
+                            <Select buttonProps={TIME_BUTTON_PROPS} list={MonthTime} onSelect={this.onTimeSelect} />
                             <Button // Bell
                                 cssNormal={[SX.btn, reminder && SX.btnSpecial]}
                                 icon={reminder ? BellRing : Bell}
                                 onClick={this.onBellClick}
                             />
-                            <Button // Repeating
-                                cssNormal={SX.btn}
-                                icon={Fan}
-                                onClick={this.onFanClick}
-                            />
+                            <Select buttonProps={FAN_BUTTON_PROPS} list={MonthTime} onSelect={this.onFanSelect} />
                             <Button // Duplicate
                                 cssNormal={SX.btn}
                                 icon={ContentDuplicate}
@@ -213,23 +222,21 @@ class Event extends React.PureComponent {
         deleteEvent(calendarId, eventId);
     };
 
+    onTimeSelect = (value) => {
+        console.log('onTimeSelect:', value);
+    };
+
     onBellClick = () => {
         const {calendarId, eventId} = this.props;
         toggleReminder(calendarId, eventId);
     };
 
+    onFanSelect = (value) => {
+        console.log('onFanSelect:', value);
+    };
+
     onDuplicateClick = () => {
-        // TODO
-    };
-
-    onFanClick = async () => {
-        // const {calendarId, eventId, start, end} = this.props;
-        // await scheduleEvent(calendarId, eventId, null, start, end);
-        // TODO
-    };
-
-    onCalendarClick = () => {
-        // TODO
+        console.log('onDuplicateClick');
     };
 
     onCalendarSelect = (destinationCalendarId) => {

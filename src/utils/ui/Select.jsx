@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
+import {createPortal} from 'react-dom';
 import Button from './Button.jsx';
 import List from './List.jsx';
-import {createPortal} from 'react-dom';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -18,6 +19,9 @@ const SX = {
         backgroundColor: 'rgba(0,0,0,0)',
         zIndex: 999999,
     },
+    list: {
+        position: 'absolute',
+    },
 };
 
 // =====================================================================================================================
@@ -31,16 +35,19 @@ class Select extends React.PureComponent {
     listRef = React.createRef();
 
     render() {
-        const {button, list} = this.props;
+        const {button, buttonProps, list, listProps} = this.props;
         const {isOpen} = this.state;
+        const ButtonClass = typeof button === 'function' ? button : Button;
+        const ListClass = typeof list === 'function' ? list : List;
+        const finalListProps = this.memoListProps(listProps);
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <Button {...button} onClick={this.onButtonPress} innerRef={this.buttonRef} />
+                <ButtonClass {...buttonProps} onClick={this.onButtonPress} innerRef={this.buttonRef} />
                 {isOpen &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
-                            <List {...list} onRelease={this.onListRelease} innerRef={this.listRef} />
+                            <ListClass {...finalListProps} onRelease={this.onListRelease} innerRef={this.listRef} />
                         </div>,
                         document.body,
                     )}
@@ -95,14 +102,30 @@ class Select extends React.PureComponent {
         list.style.left = left + 'px';
         list.style.top = top + 'px';
     };
+
+    /**
+     *
+     */
+    memoListProps = memoize((listProps) => {
+        const output = {};
+        Object.assign(output, listProps);
+        if (output.styling) {
+            output.styling = [SX.list, output.styling];
+        } else {
+            output.styling = SX.list;
+        }
+        return output;
+    });
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
 Select.propTypes = {
-    button: PropTypes.object.isRequired,
-    list: PropTypes.object.isRequired,
+    button: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+    buttonProps: PropTypes.object,
+    list: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+    listProps: PropTypes.object,
     onSelect: PropTypes.func,
 };
 

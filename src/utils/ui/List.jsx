@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button.jsx';
 import memoize from 'memoize-one';
+import {BOX_SHADOW} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -10,6 +11,9 @@ const SX = {
     root: {
         display: 'flex',
         flexDirection: 'column',
+        background: '#fff',
+        borderRadius: 4,
+        boxShadow: BOX_SHADOW,
     },
     item: {
         padding: 16,
@@ -75,7 +79,7 @@ List.propTypes = {
     itemCss: PropTypes.object,
     onClick: PropTypes.func,
     onRelease: PropTypes.func,
-    styling: PropTypes.object,
+    styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,
 };
 export default List;

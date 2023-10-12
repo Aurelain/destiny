@@ -46,6 +46,10 @@ const SX = {
     subtitle: {
         fontSize: '0.5em',
     },
+    list: {
+        borderRadius: 0,
+        boxShadow: 'none',
+    },
 };
 
 // =====================================================================================================================
@@ -61,7 +65,7 @@ class SideMenu extends React.PureComponent {
                         {title}
                         {subtitle && <div css={SX.subtitle}>{subtitle}</div>}
                     </div>
-                    {list && <List items={list} itemCss={listItemCss} onClick={onClick} />}
+                    {list && <List styling={SX.list} items={list} itemCss={listItemCss} onClick={onClick} />}
                 </div>
             </div>
         );

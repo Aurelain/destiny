@@ -29,24 +29,18 @@ const SX = {
     itemCss: {
         padding: 4,
     },
-    list: {
-        background: '#fff',
-        position: 'absolute',
-        borderRadius: 4,
-        boxShadow: BOX_SHADOW,
-    },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class ChooseCalendar extends React.PureComponent {
+class SelectCalendar extends React.PureComponent {
     render() {
         const {calendars, calendarId, styling, onSelect} = this.props;
         return (
             <Select
-                button={this.memoButtonProps(calendars, calendarId, styling)}
-                list={this.memoListProps(calendars)}
+                buttonProps={this.memoButtonProps(calendars, calendarId, styling)}
+                listProps={this.memoListProps(calendars)}
                 onSelect={onSelect}
             />
         );
@@ -82,7 +76,6 @@ class ChooseCalendar extends React.PureComponent {
             });
         }
         return {
-            styling: SX.list,
             items,
             itemCss: SX.itemCss,
         };
@@ -92,7 +85,7 @@ class ChooseCalendar extends React.PureComponent {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-ChooseCalendar.propTypes = {
+SelectCalendar.propTypes = {
     // -------------------------------- direct:
     styling: PropTypes.object,
     calendarId: PropTypes.string,
@@ -111,4 +104,4 @@ const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
 });
 
-export default connect(mapStateToProps)(ChooseCalendar);
+export default connect(mapStateToProps)(SelectCalendar);

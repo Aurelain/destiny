@@ -408,7 +408,7 @@ Button.propTypes = {
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
     disabled: PropTypes.bool,
     name: PropTypes.string,
-    cssNormal: PropTypes.any,
+    cssNormal: PropTypes.any, // TODO: rename to `css`
     cssHover: PropTypes.any,
     cssActive: PropTypes.any,
     allowTouch: PropTypes.bool,

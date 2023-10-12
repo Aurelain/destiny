@@ -2,7 +2,7 @@ import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../utils/ui/Button.jsx';
 import Plus from '../icons/Plus.jsx';
-import ChooseCalendar from './ChooseCalendar.jsx';
+import ChooseCalendar from './SelectCalendar.jsx';
 import PropTypes from 'prop-types';
 import {selectCalendars, selectPreferredCalendar} from '../state/selectors.js';
 import {connect} from 'react-redux';
