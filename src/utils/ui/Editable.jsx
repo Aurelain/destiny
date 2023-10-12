@@ -17,6 +17,7 @@ const SX = {
 // =====================================================================================================================
 class Editable extends React.PureComponent {
     backupInnerHtml = null;
+    isEnter = false;
     render() {
         const {html, innerCss, innerRef} = this.props;
         return (
@@ -54,8 +55,10 @@ class Editable extends React.PureComponent {
             return;
         }
         const {html, onChange, data} = this.props;
+        const {isEnter} = this;
+        this.isEnter = false;
         if (innerHTML !== html) {
-            onChange(innerHTML, {data, event});
+            onChange(innerHTML, {data, event, isEnter});
         }
     };
 
@@ -66,6 +69,7 @@ class Editable extends React.PureComponent {
         const {key} = event;
         switch (key) {
             case 'Enter':
+                this.isEnter = true;
                 defocus();
                 break;
             case 'Escape':

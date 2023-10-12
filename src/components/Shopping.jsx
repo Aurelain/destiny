@@ -9,7 +9,6 @@ import Button from '../utils/ui/Button.jsx';
 import Editable from '../utils/ui/Editable.jsx';
 import {selectShowDone} from '../state/selectors.js';
 import sanitizeSummary from '../system/sanitizeSummary.js';
-import Plus from '../icons/Plus.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -41,6 +40,9 @@ class Shopping extends React.PureComponent {
     render() {
         const {html, showDone} = this.props;
         const shoppingStructure = this.memoShoppingStructure(html);
+
+        // TODO: offer a way to raw edit the whole summary
+
         return (
             <div css={SX.root}>
                 <Editable html={shoppingStructure.title} onChange={this.onTitleChange} />
@@ -63,7 +65,6 @@ class Shopping extends React.PureComponent {
                         </div>
                     );
                 })}
-                <Button icon={Plus} onClick={this.onPlusClick} onHold={this.onPlusHold} variant={'simple'} />
             </div>
         );
     }
@@ -84,11 +85,12 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onItemChange = (text, {data: index}) => {
+    onItemChange = (text, {data: index, isEnter}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             draft.items[index].text = text;
         });
         this.announceChange(freshShopping);
+        console.log('isEnter:', isEnter);
     };
 
     /**
@@ -97,7 +99,9 @@ class Shopping extends React.PureComponent {
     onDoneClick = ({data: index}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             const item = draft.items[index];
-            item.isDone = !item.isDone;
+            if (item.text) {
+                item.isDone = !item.isDone;
+            }
         });
         this.announceChange(freshShopping);
     };
@@ -115,27 +119,6 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onPlusClick = () => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items.push({
-                text: '',
-                isDone: false,
-            });
-        });
-        this.announceChange(freshShopping);
-    };
-
-    /**
-     *
-     */
-    onPlusHold = () => {
-        const {onChange, html} = this.props;
-        onChange('x ' + html);
-    };
-
-    /**
-     *
-     */
     announceChange = (freshShopping) => {
         const {onChange} = this.props;
         const freshSummary = stringifyShopping(freshShopping);
@@ -147,6 +130,17 @@ class Shopping extends React.PureComponent {
      */
     memoShoppingStructure = memoize((html) => {
         this.shoppingStructure = parseShopping(html); // harmless side-effect
+
+        // Ensure there's always exactly one empty slot at the end:
+        const {items} = this.shoppingStructure;
+        items.push({text: '', isDone: false});
+        for (let i = items.length - 2; i >= 0; i--) {
+            if (items[i].text) {
+                break;
+            }
+            items.splice(i, 1);
+            i--;
+        }
         return this.shoppingStructure;
     });
 }
@@ -191,7 +185,9 @@ const stringifyShopping = (shoppingStructure) => {
         draft += prepareTextForSaving(text);
         cleanItems.push(draft);
     }
-    return prepareTextForSaving(shoppingStructure.title) + ': ' + cleanItems.join(', ');
+    let output = prepareTextForSaving(shoppingStructure.title) + ': ' + cleanItems.join(', ');
+    output = output.replace(/[\s-,]*$/, '');
+    return output;
 };
 
 /**
