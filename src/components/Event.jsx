@@ -10,7 +10,7 @@ import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
 import {DONE_MATCH} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
-import ChooseCalendar from './SelectCalendar.jsx';
+import SelectCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
 import moveEvent from '../state/actions/moveEvent.js';
 import BellRing from '../icons/BellRing.jsx';
@@ -175,7 +175,7 @@ class Event extends React.PureComponent {
                                 icon={ContentDuplicate}
                                 onClick={this.onDuplicateClick}
                             />
-                            <ChooseCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
+                            <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                         </div>
                     </div>
                 )}
@@ -256,7 +256,7 @@ class Event extends React.PureComponent {
         console.log('onDuplicateClick');
     };
 
-    onCalendarSelect = (destinationCalendarId) => {
+    onCalendarSelect = ({name: destinationCalendarId}) => {
         const {calendarId, eventId} = this.props;
         if (calendarId !== destinationCalendarId) {
             moveEvent(calendarId, eventId, destinationCalendarId);

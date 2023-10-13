@@ -21,11 +21,11 @@ const SX = {
 class MonthTime extends React.PureComponent {
     rootRef = React.createRef();
     render() {
-        const {date, innerRef, styling} = this.props;
+        const {date, innerRef, styling, onRelease} = this.props;
         const ref = innerRef || this.rootRef;
         return (
             <div css={[SX.root, styling]} ref={ref}>
-                <Month date={date} onChange={this.onMonthChange} />
+                <Month date={date} onChange={onRelease} />
             </div>
         );
     }
@@ -33,9 +33,6 @@ class MonthTime extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    onMonthChange = (value) => {
-        console.log('onMonthChange:', value);
-    };
 }
 
 // =====================================================================================================================

@@ -2,7 +2,7 @@ import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../utils/ui/Button.jsx';
 import Plus from '../icons/Plus.jsx';
-import ChooseCalendar from './SelectCalendar.jsx';
+import SelectCalendar from './SelectCalendar.jsx';
 import PropTypes from 'prop-types';
 import {selectCalendars, selectPreferredCalendar} from '../state/selectors.js';
 import {connect} from 'react-redux';
@@ -25,7 +25,7 @@ const SX = {
         display: 'flex',
         flexDirection: 'row',
     },
-    chooseCalendar: {
+    selectCalendar: {
         padding: '0 8px',
     },
     input: {
@@ -62,8 +62,8 @@ class New extends React.PureComponent {
         const backgroundColor = this.memoBackgroundColor(preferredCalendar, calendars);
         return (
             <div css={SX.root} style={{backgroundColor}}>
-                <ChooseCalendar
-                    styling={SX.chooseCalendar}
+                <SelectCalendar
+                    styling={SX.selectCalendar}
                     calendarId={preferredCalendar}
                     onSelect={this.onCalendarSelect}
                 />
@@ -106,7 +106,7 @@ class New extends React.PureComponent {
     /**
      *
      */
-    onCalendarSelect = (name) => {
+    onCalendarSelect = ({name}) => {
         changePreferredCalendar(name);
     };
 

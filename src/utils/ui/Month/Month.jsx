@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
 import Button from '../Button.jsx';
 import ChevronLeft from '../../../icons/ChevronLeft.jsx';
 import ChevronRight from '../../../icons/ChevronRight.jsx';
@@ -24,9 +23,9 @@ const SX = {
     },
     nr: {
         padding: 0,
-        width: 24,
-        height: 24,
-        lineHeight: '24px',
+        width: 32,
+        height: 32,
+        lineHeight: '32px',
         borderRadius: '50%',
     },
     foreignNr: {
@@ -47,15 +46,17 @@ const SX = {
 // =====================================================================================================================
 class Month extends React.PureComponent {
     state = {
-        browsingDate: null,
+        mainDate: null,
+        currentDate: null,
     };
 
-    render() {
-        const {date} = this.props;
-        const {browsingDate} = this.state;
+    constructor(props) {
+        super(props);
+        Object.assign(this.state, parseDate(props.date));
+    }
 
-        const mainDate = this.memoMainDate(date);
-        const currentDate = browsingDate || mainDate;
+    render() {
+        const {mainDate, currentDate} = this.state;
 
         const month = buildMonth({
             date: currentDate,
@@ -72,7 +73,7 @@ class Month extends React.PureComponent {
                         variant={'simple'}
                     />
                     <Button
-                        label={'OCT 2023'}
+                        label={getMonthName(currentDate)}
                         cssNormal={[SX.btn, SX.grow]}
                         onClick={this.onMonthClick}
                         variant={'simple'}
@@ -114,9 +115,7 @@ class Month extends React.PureComponent {
 
     componentDidUpdate(prevProps) {
         if (prevProps.date !== this.props.date) {
-            this.setState({
-                browsingDate: null,
-            });
+            this.setState(parseDate(this.props.date));
         }
     }
 
@@ -126,24 +125,69 @@ class Month extends React.PureComponent {
     /**
      *
      */
-    memoMainDate = memoize((date) => {
-        return new Date(date);
-    });
+    onChevronLeftClick = () => {
+        const {currentDate} = this.state;
+        this.setState({
+            currentDate: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+        });
+    };
 
-    onChevronLeftClick = () => {};
-    onMonthClick = () => {};
-    onChevronRightClick = () => {};
+    /**
+     *
+     */
+    onMonthClick = () => {
+        const {mainDate} = this.state;
+        this.setState({
+            currentDate: new Date(mainDate.getFullYear(), mainDate.getMonth(), 1),
+        });
+    };
 
-    onNrClick = ({data: yyyymmdd}) => {
-        console.log('yyyymmdd:', yyyymmdd);
+    /**
+     *
+     */
+    onChevronRightClick = () => {
+        const {currentDate} = this.state;
+        this.setState({
+            currentDate: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+        });
+    };
+
+    /**
+     *
+     */
+    onNrClick = ({data: ymd}) => {
+        const {onChange} = this.props;
+        onChange(ymd);
     };
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const parseDate = (date) => {
+    date = new Date(date);
+    return {
+        mainDate: date,
+        currentDate: new Date(date.getFullYear(), date.getMonth(), 1), // first day of month
+    };
+};
+
+/**
+ *
+ */
+const getMonthName = (date) => {
+    return date
+        .toLocaleDateString('ro-RO', {month: 'long', year: 'numeric'})
+        .replace(/^./, (c) => c.toLocaleUpperCase());
+};
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
 Month.propTypes = {
-    // -------------------------------- direct:
     date: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).isRequired,
     onChange: PropTypes.func.isRequired,
 };
