@@ -35,7 +35,7 @@ class Select extends React.PureComponent {
     listRef = React.createRef();
 
     render() {
-        const {button, buttonProps, list, listProps} = this.props;
+        const {button, buttonProps, list, listProps, forcedOpen} = this.props;
         const {isOpen} = this.state;
         const ButtonClass = typeof button === 'function' ? button : Button;
         const ListClass = typeof list === 'function' ? list : List;
@@ -44,7 +44,7 @@ class Select extends React.PureComponent {
             <>
                 {/*TODO use press for quick selection*/}
                 <ButtonClass {...buttonProps} onClick={this.onButtonClick} innerRef={this.buttonRef} />
-                {isOpen &&
+                {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
                             <ListClass {...finalListProps} onRelease={this.onListRelease} innerRef={this.listRef} />
@@ -53,6 +53,12 @@ class Select extends React.PureComponent {
                     )}
             </>
         );
+    }
+
+    componentDidMount() {
+        if (this.props.forcedOpen) {
+            this.refreshListPosition();
+        }
     }
 
     componentDidUpdate() {
@@ -94,7 +100,12 @@ class Select extends React.PureComponent {
         const list = this.listRef.current;
         const buttonBounds = this.buttonRef.current.getBoundingClientRect();
         const listBounds = list.getBoundingClientRect();
-        const left = buttonBounds.left;
+
+        let left = buttonBounds.left;
+        if (left + listBounds.width > window.innerWidth) {
+            left = window.innerWidth - listBounds.width;
+        }
+
         let top = buttonBounds.top + buttonBounds.height;
         if (top + listBounds.height > window.innerHeight) {
             top = buttonBounds.top - listBounds.height;
@@ -129,6 +140,7 @@ Select.propTypes = {
     listProps: PropTypes.object,
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,
+    forcedOpen: PropTypes.bool,
 };
 
 export default Select;

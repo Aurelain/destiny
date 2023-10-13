@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {BOX_SHADOW} from '../../SETTINGS.js';
+import Month from './Month/Month.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -20,11 +21,11 @@ const SX = {
 class MonthTime extends React.PureComponent {
     rootRef = React.createRef();
     render() {
-        const {innerRef, styling} = this.props;
+        const {date, innerRef, styling} = this.props;
         const ref = innerRef || this.rootRef;
         return (
             <div css={[SX.root, styling]} ref={ref}>
-                MonthTime
+                <Month date={date} onChange={this.onMonthChange} />
             </div>
         );
     }
@@ -32,6 +33,9 @@ class MonthTime extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    onMonthChange = (value) => {
+        console.log('onMonthChange:', value);
+    };
 }
 
 // =====================================================================================================================
@@ -39,7 +43,7 @@ class MonthTime extends React.PureComponent {
 // =====================================================================================================================
 MonthTime.propTypes = {
     // -------------------------------- direct:
-    date: PropTypes.object,
+    date: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).isRequired,
     styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,
     onRelease: PropTypes.func.isRequired,

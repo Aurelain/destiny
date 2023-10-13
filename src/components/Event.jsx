@@ -152,7 +152,13 @@ class Event extends React.PureComponent {
                         <SummaryComponent html={sanitizedTitle} onChange={this.onSummaryChange} />
                         <div css={SX.toolbar}>
                             <div css={SX.grow} />
-                            <Select buttonProps={TIME_BUTTON_PROPS} list={MonthTime} onSelect={this.onTimeSelect} />
+                            <Select
+                                buttonProps={TIME_BUTTON_PROPS}
+                                list={MonthTime}
+                                listProps={this.memoListProps(start)}
+                                onSelect={this.onTimeSelect}
+                                // forcedOpen={true}
+                            />
                             <Button // Bell
                                 cssNormal={[SX.btn, reminder && SX.btnSpecial]}
                                 icon={reminder ? BellRing : Bell}
@@ -308,6 +314,12 @@ class Event extends React.PureComponent {
         const shoppingTitle = title.match(/^[\s-]*\S+:/)?.[0];
         const isShopping = shoppingTitle && !shoppingTitle.match(/http/i);
         return isShopping ? Shopping : Editable;
+    });
+
+    memoListProps = memoize((start) => {
+        return {
+            date: start,
+        };
     });
 }
 

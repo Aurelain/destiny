@@ -4,10 +4,19 @@
 /**
  *
  */
-const getYYYYMMDD = (date) => {
-    date = date || new Date();
-    const dateString = typeof date === 'string' ? date : date.toISOString();
-    return dateString.substring(0, 10);
+const getYYYYMMDD = (date = undefined) => {
+    date = date === undefined ? new Date() : new Date(date);
+    return [date.getFullYear(), padDouble(date.getMonth() + 1), padDouble(date.getDate())].join('-');
+};
+
+// =================================================================================================================
+//  P R I V A T E
+// =================================================================================================================
+/**
+ *
+ */
+const padDouble = (nr) => {
+    return nr.toString().padStart(2, '0');
 };
 
 // =================================================================================================================
