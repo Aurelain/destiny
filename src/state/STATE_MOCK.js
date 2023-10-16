@@ -14,11 +14,13 @@ const STATE_MOCK = {
             id: 'first',
             summary: 'First',
             backgroundColor: '#f4511e',
+            selected: true,
         },
         {
             id: 'foo@gmail.com',
             summary: 'Foo',
             backgroundColor: '#0b8043',
+            selected: true,
         },
     ],
     events: sortEvents([
@@ -68,7 +70,6 @@ const STATE_MOCK = {
         },
     ]),
     options: {
-        hiddenCalendars: {},
         expandedEvents: {
             // urm29vfme6ebe49npr1hrn5kd1: true,
             urm29vfme6ebe49npr1hrn5kdg: true,

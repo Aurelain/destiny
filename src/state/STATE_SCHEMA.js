@@ -35,8 +35,11 @@ export default {
                         type: 'string',
                         pattern: '#[0-9a-f]{6}',
                     },
+                    selected: {
+                        type: 'boolean',
+                    },
                 },
-                required: ['id', 'summary', 'backgroundColor'],
+                required: ['id', 'summary', 'backgroundColor', 'selected'],
             },
         },
         events: {
@@ -85,14 +88,6 @@ export default {
             type: 'object',
             additionalProperties: false,
             properties: {
-                hiddenCalendars: {
-                    type: 'object',
-                    patternProperties: {
-                        '.': {
-                            const: true,
-                        },
-                    },
-                },
                 expandedEvents: {
                     type: 'object',
                     patternProperties: {
@@ -109,7 +104,7 @@ export default {
                     type: 'string',
                 },
             },
-            required: ['hiddenCalendars', 'expandedEvents', 'showDone', 'preferredCalendar'],
+            required: ['expandedEvents', 'showDone', 'preferredCalendar'],
         },
     },
     required: ['tokens', 'calendars', 'events', 'options'],

@@ -53,13 +53,15 @@ const requestCalendars = async () => {
     });
 
     const calendars = [];
-    for (const {id, summary, backgroundColor} of result.items) {
+    for (const {id, summary, backgroundColor, selected} of result.items) {
         calendars.push({
             id,
             summary,
             backgroundColor: convertColor(backgroundColor),
+            selected: Boolean(selected),
         });
     }
+    calendars.sort(compareCalendars);
 
     setState((state) => {
         state.calendars = calendars;
@@ -82,6 +84,12 @@ const convertColor = (color) => {
     }
 };
 
+/**
+ *
+ */
+const compareCalendars = (a, b) => {
+    return a.summary.localeCompare(b.summary);
+};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================

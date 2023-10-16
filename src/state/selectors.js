@@ -4,7 +4,6 @@ export const selectExpirationTimestamp = (state) => state.tokens.expirationTimes
 export const selectCalendars = (state) => state.calendars;
 export const selectEvents = (state) => state.events;
 export const selectOptions = (state) => state.options;
-export const selectHiddenCalendars = (state) => state.options.hiddenCalendars;
 export const selectExpandedEvents = (state) => state.options.expandedEvents;
 export const selectShowDone = (state) => state.options.showDone;
 export const selectPreferredCalendar = (state) => state.options.preferredCalendar;

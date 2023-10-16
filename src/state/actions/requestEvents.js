@@ -1,4 +1,4 @@
-import {selectCalendars, selectHiddenCalendars} from '../selectors.js';
+import {selectCalendars} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
@@ -19,10 +19,9 @@ const requestEvents = async () => {
 
     const state = getState();
     const calendars = selectCalendars(state);
-    const hiddenCalendars = selectHiddenCalendars(state);
     const events = [];
-    for (const {id: calendarId} of calendars) {
-        if (!hiddenCalendars[calendarId]) {
+    for (const {id: calendarId, selected} of calendars) {
+        if (selected) {
             const calendarEvents = await getCalendarEvents(calendarId);
             events.push(...calendarEvents);
         }

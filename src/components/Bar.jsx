@@ -15,7 +15,7 @@ import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
-import {selectCalendars, selectHiddenCalendars, selectShowDone} from '../state/selectors.js';
+import {selectCalendars, selectShowDone} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
 import Separator from '../utils/ui/Separator.jsx';
@@ -73,7 +73,7 @@ class Bar extends React.PureComponent {
     };
 
     render() {
-        const {calendars, hiddenCalendars, showDone} = this.props;
+        const {calendars, showDone} = this.props;
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? Spin : Reload;
         return (
@@ -98,7 +98,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    list={this.memoMenuList(calendars, hiddenCalendars)}
+                    list={this.memoMenuList(calendars)}
                     listItemCss={SX.listItem}
                 />
             </div>
@@ -188,11 +188,11 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((calendars, hiddenCalendars) => {
+    memoMenuList = memoize((calendars) => {
         const list = [];
         for (const calendarItem of calendars) {
-            const {id, summary, backgroundColor} = calendarItem;
-            const CheckboxIcon = id in hiddenCalendars ? CheckboxBlankOutline : CheckboxMarked;
+            const {id, summary, backgroundColor, selected} = calendarItem;
+            const CheckboxIcon = selected ? CheckboxMarked : CheckboxBlankOutline;
             list.push({
                 name: id,
                 icon: (
@@ -235,13 +235,11 @@ Bar.propTypes = {
             backgroundColor: PropTypes.string.isRequired,
         }),
     ).isRequired,
-    hiddenCalendars: PropTypes.objectOf(PropTypes.bool).isRequired,
     showDone: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
-    hiddenCalendars: selectHiddenCalendars(state),
     showDone: selectShowDone(state),
 });
 

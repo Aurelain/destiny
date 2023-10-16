@@ -20,11 +20,11 @@ export default {
                         type: 'string',
                         pattern: '#[0-9a-f]{6}',
                     },
-                    foregroundColor: {
-                        type: 'string',
-                        pattern: '#[0-9a-f]{6}',
+                    selected: {
+                        type: 'boolean',
                     },
                 },
+                required: ['id', 'summary', 'backgroundColor'],
             },
         },
     },
