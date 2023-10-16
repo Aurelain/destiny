@@ -3,11 +3,12 @@ import getYYYYMMDD from '../../utils/getYYYYMMDD.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import EventSchema from '../../schemas/EventSchema.js';
 import {selectEvents} from '../selectors.js';
-import {setState} from '../store.js';
+import {getState, setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import toggleEvent from './toggleEvent.js';
+import localizeTime from '../../utils/localizeTime.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -15,10 +16,9 @@ import toggleEvent from './toggleEvent.js';
 /**
  *
  */
-const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
-    const patchProp = start.length === 10 ? 'date' : 'dateTime';
-    const freshStart = parseDestination(destination, start);
-    const freshEnd = parseDestination(destination, end);
+const scheduleEvent = async (calendarId, eventId, destination) => {
+    const {freshStart, freshEnd} = analyzeDestination(calendarId, eventId, destination);
+    const patchProp = freshStart.length === 10 ? 'date' : 'dateTime';
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {
@@ -55,22 +55,37 @@ const scheduleEvent = async (calendarId, eventId, destination, start, end) => {
 /**
  *
  */
-const parseDestination = (destination, origin) => {
-    if (destination === null) {
-        // Move today
-        const today = getYYYYMMDD();
-        return today + origin.substring(10);
-    } else if (typeof destination === 'number') {
+const analyzeDestination = (calendarId, eventId, destination) => {
+    let freshStart;
+    let freshEnd;
+    if (typeof destination === 'number') {
         // Move by a few days
-        const originDay = getYYYYMMDD(origin);
-        const originMorningMillisecond = Number(new Date(originDay));
-        const destinationMorningMillisecond = originMorningMillisecond + destination * MILLISECONDS_IN_A_DAY;
-        const destinationDay = getYYYYMMDD(new Date(destinationMorningMillisecond));
-        return destinationDay + origin.substring(10);
+        const state = getState();
+        const event = findEvent(state, calendarId, eventId);
+        const {start, end} = event;
+        freshStart = getOffsetDestination(destination, start);
+        freshEnd = getOffsetDestination(destination, end);
     } else {
-        // Move to a precise point in time
-        // TODO
+        freshStart = destination;
+        if (freshStart.length === 10) {
+            freshEnd = freshStart;
+        } else {
+            const freshEndTimestamp = Number(new Date(freshStart)) + 30 * 60 * 1000; // add 30 minutes
+            freshEnd = localizeTime(new Date(freshEndTimestamp));
+        }
     }
+    return {freshStart, freshEnd};
+};
+
+/**
+ *
+ */
+const getOffsetDestination = (destination, origin) => {
+    const originDay = getYYYYMMDD(origin);
+    const originMorningMillisecond = Number(new Date(originDay));
+    const destinationMorningMillisecond = originMorningMillisecond + destination * MILLISECONDS_IN_A_DAY;
+    const destinationDay = getYYYYMMDD(new Date(destinationMorningMillisecond));
+    return destinationDay + origin.substring(10);
 };
 
 // =====================================================================================================================

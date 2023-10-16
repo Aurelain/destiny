@@ -201,13 +201,13 @@ class Event extends React.PureComponent {
     });
 
     onHeadingClick = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, 1, start, end);
+        const {calendarId, eventId} = this.props;
+        await scheduleEvent(calendarId, eventId, 1);
     };
 
     onHeadingHold = async () => {
-        const {calendarId, eventId, start, end} = this.props;
-        await scheduleEvent(calendarId, eventId, 7, start, end);
+        const {calendarId, eventId} = this.props;
+        await scheduleEvent(calendarId, eventId, 7);
     };
 
     onTitleClick = () => {
@@ -237,6 +237,8 @@ class Event extends React.PureComponent {
 
     onTimeSelect = (value) => {
         console.log('onTimeSelect:', value);
+        const {calendarId, eventId} = this.props;
+        scheduleEvent(calendarId, eventId, value);
     };
 
     onBellClick = () => {
