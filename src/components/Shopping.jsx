@@ -8,8 +8,9 @@ import CircleOutline from '../icons/CircleOutline.jsx';
 import Button from '../utils/ui/Button.jsx';
 import Editable from '../utils/ui/Editable.jsx';
 import {selectShowDone} from '../state/selectors.js';
-import sanitizeSummary from '../system/sanitizeSummary.js';
 import TrashCan from '../icons/TrashCan.jsx';
+import parseShopping from '../system/parseShopping.js';
+import stringifyShopping from '../system/stringifyShopping.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -159,60 +160,6 @@ class Shopping extends React.PureComponent {
         return this.shoppingStructure;
     });
 }
-
-// =====================================================================================================================
-//  H E L P E R S
-// =====================================================================================================================
-/**
- *
- */
-const parseShopping = (summary) => {
-    summary = sanitizeSummary(summary);
-    const head = summary.match(/^\S+:/)[0];
-    const title = head.substring(0, head.length - 1);
-
-    const body = summary.substring(head.length);
-    const parts = body.split(',');
-    const items = [];
-    for (const part of parts) {
-        let text = sanitizeSummary(part);
-        let isDone = false;
-        if (text.startsWith('-')) {
-            text = text.replace(/^-+/, '');
-            isDone = true;
-        }
-        items.push({text, isDone});
-    }
-    return {title, items};
-};
-
-/**
- *
- */
-const stringifyShopping = (shoppingStructure) => {
-    const cleanItems = [];
-    for (const item of shoppingStructure.items) {
-        const {text, isDone} = item;
-        let draft = '';
-        if (isDone) {
-            draft += '-';
-        }
-        draft += prepareTextForSaving(text);
-        cleanItems.push(draft);
-    }
-    let output = prepareTextForSaving(shoppingStructure.title) + ': ' + cleanItems.join(', ');
-    output = output.replace(/[\s-,]*$/, '');
-    return output;
-};
-
-/**
- *
- */
-const prepareTextForSaving = (text) => {
-    text = sanitizeSummary(text);
-    text = text.replace(/<.*?>/g, '');
-    return text;
-};
 
 // =====================================================================================================================
 //  E X P O R T

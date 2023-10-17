@@ -4,12 +4,19 @@ import Button from '../utils/ui/Button.jsx';
 import Plus from '../icons/Plus.jsx';
 import SelectCalendar from './SelectCalendar.jsx';
 import PropTypes from 'prop-types';
-import {selectCalendars, selectPreferredCalendar} from '../state/selectors.js';
+import {selectCalendars, selectPreferredCalendar, selectShopping} from '../state/selectors.js';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import changePreferredCalendar from '../state/actions/changePreferredCalendar.js';
 import createEvent from '../state/actions/createEvent.js';
 import findCalendar from '../system/findCalendar.js';
+import NewShopping from './NewShopping.jsx';
+import checkShopping from '../system/checkShopping.js';
+import stringifyShopping from '../system/stringifyShopping.js';
+import populateShopping from '../state/actions/populateShopping.js';
+import applyShopping from '../state/actions/applyShopping.js';
+import clearShopping from '../state/actions/clearShopping.js';
+import TrashCan from '../icons/TrashCan.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -57,9 +64,10 @@ class New extends React.PureComponent {
     };
 
     render() {
-        const {preferredCalendar, calendars} = this.props;
+        const {preferredCalendar, calendars, shopping} = this.props;
         const {value} = this.state;
         const backgroundColor = this.memoBackgroundColor(preferredCalendar, calendars);
+        const inputValue = this.memoInputValue(shopping, value);
         return (
             <div css={SX.root} style={{backgroundColor}}>
                 <SelectCalendar
@@ -72,13 +80,21 @@ class New extends React.PureComponent {
                     autoComplete={'off'}
                     css={SX.input}
                     spellCheck={false}
-                    value={value}
+                    value={inputValue}
                     placeholder={'Event'}
                     onChange={this.onInputChange}
                     onKeyDown={this.onInputKeyDown}
                 />
-                <Button icon={Plus} cssNormal={SX.plus} variant={'inverted'} onClick={this.onPlusClick} />
+                <Button
+                    icon={Plus}
+                    holdIcon={TrashCan}
+                    cssNormal={SX.plus}
+                    variant={'inverted'}
+                    onClick={this.onPlusClick}
+                    onHold={this.onPlusHold}
+                />
                 <div css={SX.sliver} />
+                {shopping && <NewShopping />}
             </div>
         );
     }
@@ -86,6 +102,21 @@ class New extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
+    memoInputValue = memoize((shopping, value) => {
+        if (shopping) {
+            const shoppingStructure = {
+                title: shopping.title,
+                items: shopping.items.filter((item) => item.isSelected),
+            };
+            return stringifyShopping(shoppingStructure);
+        } else {
+            return value;
+        }
+    });
+
     /**
      *
      */
@@ -120,10 +151,31 @@ class New extends React.PureComponent {
     /**
      *
      */
+    onPlusHold = () => {
+        clearShopping();
+        this.setState({value: ''});
+    };
+
+    /**
+     *
+     */
     create = () => {
-        const {calendars, preferredCalendar} = this.props;
-        const calendar = findCalendar(preferredCalendar, calendars);
-        createEvent(calendar.id, this.state.value);
+        const {calendars, preferredCalendar, shopping} = this.props;
+        const {value} = this.state;
+        if (!shopping) {
+            // Phase 1
+            const calendar = findCalendar(preferredCalendar, calendars);
+            if (checkShopping(value)) {
+                // Engage Phase 2
+                populateShopping(calendar.id, value);
+            } else {
+                // Basic (simple) creation
+                createEvent(calendar.id, value);
+            }
+        } else {
+            // Phase 2
+            applyShopping(shopping);
+        }
         this.setState({value: ''});
     };
 
@@ -148,11 +200,13 @@ New.propTypes = {
         }),
     ).isRequired,
     preferredCalendar: PropTypes.string,
+    shopping: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     preferredCalendar: selectPreferredCalendar(state),
+    shopping: selectShopping(state),
 });
 
 export default connect(mapStateToProps)(New);

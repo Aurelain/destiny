@@ -44,9 +44,8 @@ const getCalendarEvents = async (calendarId) => {
     const now = Date.now();
     const lastWeek = now - 7 * MILLISECONDS_IN_A_DAY;
     const nextMonth = now + 31 * MILLISECONDS_IN_A_DAY;
-    const result = await requestApi('https://content.googleapis.com/calendar/v3/calendars/primary/events', {
+    const result = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
         searchParams: {
-            calendarId: calendarId,
             timeMin: new Date(lastWeek).toISOString(),
             timeMax: new Date(nextMonth).toISOString(),
             showDeleted: true,

@@ -28,6 +28,7 @@ import Select from '../utils/ui/Select.jsx';
 import MonthTime from '../utils/ui/MonthTime.jsx';
 import FanAlert from '../icons/FanAlert.jsx';
 import Recurrence from './Recurrence.jsx';
+import checkShopping from '../system/checkShopping.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -313,9 +314,7 @@ class Event extends React.PureComponent {
     });
 
     memoSummaryComponent = memoize((title) => {
-        const shoppingTitle = title.match(/^[\s-]*\S+:/)?.[0];
-        const isShopping = shoppingTitle && !shoppingTitle.match(/http/i);
-        return isShopping ? Shopping : Editable;
+        return checkShopping(title) ? Shopping : Editable;
     });
 
     memoListProps = memoize((start) => {
