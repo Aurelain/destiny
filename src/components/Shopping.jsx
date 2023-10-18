@@ -12,12 +12,12 @@ import TrashCan from '../ui/Icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
 import Plus from '../ui/Icons/Plus.jsx';
-import WrenchClock from '../ui/Icons/WrenchClock.jsx';
 import Pencil from '../ui/Icons/Pencil.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
 import collectShoppingSuggestions from '../system/collectShoppingSuggestions.js';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import ShoppingSuggestions from './ShoppingSuggestions.jsx';
+import FormatListBulletedSquare from '../ui/Icons/FormatListBulletedSquare.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -151,8 +151,8 @@ class Shopping extends React.PureComponent {
                 <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
                 <Button
                     cssNormal={SX.btn}
-                    icon={isLoadingSuggestions ? DotsCircle : WrenchClock}
-                    onClick={this.onWrenchClockClick}
+                    icon={isLoadingSuggestions ? DotsCircle : FormatListBulletedSquare}
+                    onClick={this.onBulletsClick}
                 />
                 <Button cssNormal={SX.btn} icon={Pencil} onClick={this.onPencilClick} />
             </div>
@@ -200,7 +200,7 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onWrenchClockClick = async () => {
+    onBulletsClick = async () => {
         const {title} = this.shoppingStructure;
         this.setState({
             isLoadingSuggestions: true,

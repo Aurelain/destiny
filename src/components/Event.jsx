@@ -41,13 +41,15 @@ const SX = {
         height: 32,
         borderRadius: 6,
         color: '#fff',
-        display: 'block',
+        display: 'flex',
         boxShadow: 'none',
         padding: 0,
+        paddingLeft: 4,
     },
     titleContent: {
         display: 'flex',
         alignItems: 'center',
+        width: 'calc(100% - 28px)',
         height: '100%',
     },
     titleHeading: {
@@ -110,6 +112,7 @@ const SX = {
 const TIME_BUTTON_PROPS = {
     cssNormal: SX.btn,
     icon: CalendarMonth,
+    holdIcon: TrashCan,
 };
 
 const FAN_BUTTON_PROPS = {
@@ -144,7 +147,9 @@ class Event extends React.PureComponent {
             <div css={SX.root} ref={this.rootRef}>
                 <Button
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
-                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, isDone)}
+                    icon={isDone ? CheckCircle : CircleOutline}
+                    holdIcon={isDone ? CircleOutline : CheckCircle}
+                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval)}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
@@ -158,6 +163,7 @@ class Event extends React.PureComponent {
                                 list={MonthTime}
                                 listProps={this.memoListProps(start)}
                                 onSelect={this.onTimeSelect}
+                                onHold={this.onMonthTimeHold}
                                 // forcedOpen={true}
                             />
                             <Button // Bell
@@ -235,20 +241,15 @@ class Event extends React.PureComponent {
         updateSummary(calendarId, eventId, value);
     };
 
-    onStatusClick = () => {
-        const {calendarId, eventId} = this.props;
-        classifyEvent(calendarId, eventId);
-    };
-
-    onStatusHold = () => {
-        const {calendarId, eventId} = this.props;
-        deleteEvent(calendarId, eventId);
-    };
-
     onTimeSelect = (value) => {
         console.log('onTimeSelect:', value);
         const {calendarId, eventId} = this.props;
         scheduleEvent(calendarId, eventId, value);
+    };
+
+    onMonthTimeHold = () => {
+        const {calendarId, eventId} = this.props;
+        deleteEvent(calendarId, eventId);
     };
 
     onBellClick = () => {
@@ -279,17 +280,17 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoTitleLabel = memoize((title, timeInterval, isDone) => {
+    memoTitleLabel = memoize((title, timeInterval) => {
         return (
             <div css={SX.titleContent}>
-                <Button
-                    cssNormal={SX.titleStatus}
-                    icon={isDone ? CheckCircle : CircleOutline}
-                    holdIcon={TrashCan}
-                    onClick={this.onStatusClick}
-                    onHold={this.onStatusHold}
-                    variant={'inverted'}
-                />
+                {/*<Button*/}
+                {/*    cssNormal={SX.titleStatus}*/}
+                {/*    icon={isDone ? CheckCircle : CircleOutline}*/}
+                {/*    holdIcon={TrashCan}*/}
+                {/*    onClick={this.onStatusClick}*/}
+                {/*    onHold={this.onStatusHold}*/}
+                {/*    variant={'inverted'}*/}
+                {/*/>*/}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
                 <Button

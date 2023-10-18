@@ -75,6 +75,7 @@ const SX = {
 
     isHolding: {
         background: '#f5c045',
+        filter: 'brightness(1)',
     },
 };
 const HOLD_TIMEOUT = 500; // milliseconds

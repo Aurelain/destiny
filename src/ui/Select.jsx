@@ -18,6 +18,7 @@ const SX = {
         inset: 0,
         backgroundColor: 'rgba(0,0,0,0)',
         zIndex: 999999,
+        touchAction: 'none', // to prevent scrolling on mobile
     },
     list: {
         position: 'absolute',
@@ -35,7 +36,7 @@ class Select extends React.PureComponent {
     listRef = React.createRef();
 
     render() {
-        const {button, buttonProps, list, listProps, forcedOpen} = this.props;
+        const {button, buttonProps, list, listProps, forcedOpen, onHold} = this.props;
         const {isOpen} = this.state;
         const ButtonClass = typeof button === 'function' ? button : Button;
         const ListClass = typeof list === 'function' ? list : List;
@@ -43,7 +44,7 @@ class Select extends React.PureComponent {
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <ButtonClass {...buttonProps} onClick={this.onButtonClick} innerRef={this.buttonRef} />
+                <ButtonClass {...buttonProps} onClick={this.onButtonClick} onHold={onHold} innerRef={this.buttonRef} />
                 {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
@@ -141,6 +142,7 @@ Select.propTypes = {
     listProps: PropTypes.object,
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,
+    onHold: PropTypes.func,
     forcedOpen: PropTypes.bool,
 };
 
