@@ -306,7 +306,7 @@ class Shopping extends React.PureComponent {
      */
     onRawChange = ({value}) => {
         const {onChange} = this.props;
-        onChange(value);
+        onChange({value});
         this.setState({isRawEditing: false});
     };
 
