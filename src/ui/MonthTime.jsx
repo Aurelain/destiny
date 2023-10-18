@@ -1,36 +1,31 @@
 import React from 'react';
-import Button from '../ui/Button.jsx';
-import {BAR_HEIGHT} from '../SETTINGS.js';
-import connectGoogle from '../state/actions/connectGoogle.js';
+import PropTypes from 'prop-types';
+import {BOX_SHADOW} from '../SETTINGS.js';
+import Month from './Month/Month.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
-        display: 'flex',
-        flexGrow: 1,
-        justifyContent: 'center',
-        paddingTop: BAR_HEIGHT + 32,
+        padding: 16,
+        background: '#fff',
+        borderRadius: 4,
+        boxShadow: BOX_SHADOW,
     },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class Connect extends React.PureComponent {
+class MonthTime extends React.PureComponent {
+    rootRef = React.createRef();
     render() {
+        const {date, innerRef, styling, onRelease} = this.props;
+        const ref = innerRef || this.rootRef;
         return (
-            <div css={SX.root}>
-                <Button
-                    label={
-                        <>
-                            Connect your
-                            <br /> Google Calendar
-                        </>
-                    }
-                    onClick={this.onButtonClick}
-                />
+            <div css={[SX.root, styling]} ref={ref}>
+                <Month date={date} onChange={onRelease} />
             </div>
         );
     }
@@ -38,16 +33,17 @@ class Connect extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onButtonClick = async () => {
-        await connectGoogle();
-    };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-Connect.propTypes = {};
-export default Connect;
+MonthTime.propTypes = {
+    // -------------------------------- direct:
+    date: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).isRequired,
+    styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
+    innerRef: PropTypes.object,
+    onRelease: PropTypes.func.isRequired,
+};
+
+export default MonthTime;

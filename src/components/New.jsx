@@ -1,7 +1,7 @@
 import React from 'react';
 import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
-import Button from '../utils/ui/Button.jsx';
-import Plus from '../icons/Plus.jsx';
+import Button from '../ui/Button.jsx';
+import Plus from '../ui/Icons/Plus.jsx';
 import SelectCalendar from './SelectCalendar.jsx';
 import PropTypes from 'prop-types';
 import {selectCalendars, selectEvents, selectPreferredCalendar} from '../state/selectors.js';
@@ -11,7 +11,7 @@ import changePreferredCalendar from '../state/actions/changePreferredCalendar.js
 import createEvent from '../state/actions/createEvent.js';
 import findCalendar from '../system/findCalendar.js';
 import clearShopping from '../state/actions/clearShopping.js';
-import TrashCan from '../icons/TrashCan.jsx';
+import TrashCan from '../ui/Icons/TrashCan.jsx';
 import checkShopping from '../system/checkShopping.js';
 import {getState} from '../state/store.js';
 import parseShopping from '../system/parseShopping.js';

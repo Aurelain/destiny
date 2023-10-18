@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import Button from '../utils/ui/Button.jsx';
+import Button from '../ui/Button.jsx';
 import {selectShoppingSuggestions} from '../state/selectors.js';
 import toggleShoppingSuggestion from '../state/actions/toggleShoppingSelection.js';
 import clearShoppingSuggestions from '../state/actions/clearShoppingSuggestions.js';
-import Check from '../icons/Check.jsx';
-import CheckboxMarked from '../icons/CheckboxMarked.jsx';
-import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
-import Close from '../icons/Close.jsx';
+import Check from '../ui/Icons/Check.jsx';
+import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
+import CheckboxBlankOutline from '../ui/Icons/CheckboxBlankOutline.jsx';
+import Close from '../ui/Icons/Close.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S

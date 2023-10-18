@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import {produce} from 'immer';
-import CheckCircle from '../icons/CheckCircle.jsx';
-import CircleOutline from '../icons/CircleOutline.jsx';
-import Button from '../utils/ui/Button.jsx';
-import Editable from '../utils/ui/Editable.jsx';
+import CheckCircle from '../ui/Icons/CheckCircle.jsx';
+import CircleOutline from '../ui/Icons/CircleOutline.jsx';
+import Button from '../ui/Button.jsx';
+import Editable from '../ui/Editable.jsx';
 import {selectShoppingSuggestions, selectShowDone} from '../state/selectors.js';
-import TrashCan from '../icons/TrashCan.jsx';
+import TrashCan from '../ui/Icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
-import Plus from '../icons/Plus.jsx';
-import WrenchClock from '../icons/WrenchClock.jsx';
+import Plus from '../ui/Icons/Plus.jsx';
+import WrenchClock from '../ui/Icons/WrenchClock.jsx';
 import ShoppingSuggestions from './ShoppingSuggestions.jsx';
 import populateShoppingSuggestions from '../state/actions/populateShoppingSuggestions.js';
-import Pencil from '../icons/Pencil.jsx';
+import Pencil from '../ui/Icons/Pencil.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
 
 // =====================================================================================================================

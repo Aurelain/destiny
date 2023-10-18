@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {selectCalendars} from '../state/selectors.js';
 import {connect} from 'react-redux';
-import Avatar from '../utils/ui/Avatar.jsx';
+import Avatar from '../ui/Avatar.jsx';
 import memoize from 'memoize-one';
-import Select from '../utils/ui/Select.jsx';
+import Select from '../ui/Select.jsx';
 import {BOX_SHADOW} from '../SETTINGS.js';
-import CalendarMonth from '../icons/CalendarMonth.jsx';
+import CalendarMonth from '../ui/Icons/CalendarMonth.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S

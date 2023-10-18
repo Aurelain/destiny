@@ -3,25 +3,25 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import localforage from 'localforage';
-import Button from '../utils/ui/Button.jsx';
-import Reload from '../icons/Reload.jsx';
-import Menu from '../icons/Menu.jsx';
-import SideMenu from '../utils/ui/SideMenu.jsx';
-import Console from '../icons/Console.jsx';
-import LocationExit from '../icons/LocationExit.jsx';
+import Button from '../ui/Button.jsx';
+import Reload from '../ui/Icons/Reload.jsx';
+import Menu from '../ui/Icons/Menu.jsx';
+import SideMenu from '../ui/SideMenu.jsx';
+import Console from '../ui/Icons/Console.jsx';
+import LocationExit from '../ui/Icons/LocationExit.jsx';
 import {BAR_HEIGHT, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
-import Spin from '../icons/Spin.jsx';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
-import CheckboxMarked from '../icons/CheckboxMarked.jsx';
-import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
+import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
+import CheckboxBlankOutline from '../ui/Icons/CheckboxBlankOutline.jsx';
 import {selectCalendars, selectShowDone} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
-import Separator from '../utils/ui/Separator.jsx';
-import Avatar from '../utils/ui/Avatar.jsx';
-import EyeCircle from '../icons/EyeCircle.jsx';
-import EyeOutline from '../icons/EyeOutline.jsx';
+import Separator from '../ui/Separator.jsx';
+import Avatar from '../ui/Avatar.jsx';
+import EyeCircle from '../ui/Icons/EyeCircle.jsx';
+import EyeOutline from '../ui/Icons/EyeOutline.jsx';
+import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -75,7 +75,7 @@ class Bar extends React.PureComponent {
     render() {
         const {calendars, showDone} = this.props;
         const {isMenuOpen, isLoading} = this.state;
-        const reloadIcon = isLoading ? Spin : Reload;
+        const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
                 <Button
