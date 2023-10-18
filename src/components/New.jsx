@@ -4,7 +4,7 @@ import Button from '../utils/ui/Button.jsx';
 import Plus from '../icons/Plus.jsx';
 import SelectCalendar from './SelectCalendar.jsx';
 import PropTypes from 'prop-types';
-import {selectCalendars, selectPreferredCalendar} from '../state/selectors.js';
+import {selectCalendars, selectEvents, selectPreferredCalendar} from '../state/selectors.js';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import changePreferredCalendar from '../state/actions/changePreferredCalendar.js';
@@ -12,6 +12,11 @@ import createEvent from '../state/actions/createEvent.js';
 import findCalendar from '../system/findCalendar.js';
 import clearShopping from '../state/actions/clearShopping.js';
 import TrashCan from '../icons/TrashCan.jsx';
+import checkShopping from '../system/checkShopping.js';
+import {getState} from '../state/store.js';
+import parseShopping from '../system/parseShopping.js';
+import stringifyShopping from '../system/stringifyShopping.js';
+import updateSummary from '../state/actions/updateSummary.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -86,6 +91,7 @@ class New extends React.PureComponent {
                     variant={'inverted'}
                     onClick={this.onPlusClick}
                     onHold={this.onPlusHold}
+                    disabled={!value}
                 />
                 <div css={SX.sliver} />
             </div>
@@ -140,26 +146,27 @@ class New extends React.PureComponent {
     create = () => {
         const {calendars, preferredCalendar} = this.props;
         const {value} = this.state;
+        this.setState({value: ''});
+
+        if (checkShopping(value)) {
+            const {title, items} = parseShopping(value);
+            const state = getState();
+            const events = selectEvents(state);
+            const pendingEvent = events.find((event) => {
+                const {summary} = event;
+                return checkShopping(summary) && parseShopping(summary).title === title;
+            });
+            if (pendingEvent) {
+                const {summary, calendarId, id} = pendingEvent;
+                const shoppingStructure = parseShopping(summary);
+                shoppingStructure.items.push(...items);
+                updateSummary(calendarId, id, stringifyShopping(shoppingStructure));
+                return;
+            }
+        }
 
         const calendar = findCalendar(preferredCalendar, calendars);
         createEvent(calendar.id, value);
-
-        /*
-        if (!shoppingSuggestions) {
-            // Phase 1
-            const calendar = findCalendar(preferredCalendar, calendars);
-            if (checkShopping(value)) {
-                // Engage Phase 2
-                populateShopping(calendar.id, value);
-            } else {
-                // Basic (simple) creation
-                createEvent(calendar.id, value);
-            }
-        } else {
-            // Phase 2
-            applyShopping(shoppingSuggestions);
-        }
-        this.setState({value: ''});*/
     };
 
     /**

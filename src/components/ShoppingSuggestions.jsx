@@ -58,7 +58,7 @@ class ShoppingSuggestions extends React.PureComponent {
                         />
                     );
                 })}
-                <Button cssNormal={SX.btnCheck} icon={Check} onClick={this.onCheckClick} />
+                <Button cssNormal={SX.btnCheck} icon={Check} onClick={this.onCheckClick} onHold={this.onCheckHold} />
             </div>
         );
     }
@@ -71,6 +71,13 @@ class ShoppingSuggestions extends React.PureComponent {
      */
     onItemClick = ({data: index}) => {
         toggleShoppingSuggestion(index);
+    };
+
+    /**
+     *
+     */
+    onCheckHold = () => {
+        clearShoppingSuggestions();
     };
 
     /**

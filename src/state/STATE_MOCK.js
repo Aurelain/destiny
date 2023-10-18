@@ -63,8 +63,8 @@ const STATE_MOCK = {
             hello Lorem ipsum dolor sit amet consectetuer adipiscing elit Phasellus aliquet est ut quam rutrum fringla,
             world, lorem ipsum
             `,
-            start: '2023-10-25',
-            end: '2023-10-25',
+            start: '2023-12-25',
+            end: '2023-12-25',
             status: 'confirmed',
             reminder: false,
         },
@@ -73,7 +73,7 @@ const STATE_MOCK = {
         expandedEvents: {
             // urm29vfme6ebe49npr1hrn5kd1: true,
             // urm29vfme6ebe49npr1hrn5kdg: true,
-            urm29vfme6ebe49npr1hrn5k2: true,
+            // urm29vfme6ebe49npr1hrn5k2: true,
         },
         preferredCalendar: '',
         showDone: false,

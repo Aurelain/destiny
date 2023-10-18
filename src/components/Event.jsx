@@ -5,10 +5,9 @@ import Button from '../utils/ui/Button.jsx';
 import CalendarMonth from '../icons/CalendarMonth.jsx';
 import scheduleEvent from '../state/actions/scheduleEvent.js';
 import Bell from '../icons/Bell.jsx';
-import ContentDuplicate from '../icons/ContentDuplicate.jsx';
 import CheckCircle from '../icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
-import {DONE_MATCH} from '../SETTINGS.js';
+import {BAR_HEIGHT, DONE_MATCH, NEW_HEIGHT} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import SelectCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
@@ -29,6 +28,7 @@ import MonthTime from '../utils/ui/MonthTime.jsx';
 import FanAlert from '../icons/FanAlert.jsx';
 import Recurrence from './Recurrence.jsx';
 import checkShopping from '../system/checkShopping.js';
+import scrollIntoView from '../utils/scrollIntoView.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -129,6 +129,8 @@ class Event extends React.PureComponent {
     state = {
         contentHeight: null,
     };
+    rootRef = React.createRef();
+
     render() {
         const {title, backgroundColor, start, end, isExpanded, calendarId, reminder, isDone, recurringEventId} =
             this.props;
@@ -139,7 +141,7 @@ class Event extends React.PureComponent {
         const titleWithoutAnchors = this.memoTitleWithoutAnchors(sanitizedTitle);
         const SummaryComponent = this.memoSummaryComponent(title);
         return (
-            <div css={SX.root}>
+            <div css={SX.root} ref={this.rootRef}>
                 <Button
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
                     label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, isDone)}
@@ -170,11 +172,6 @@ class Event extends React.PureComponent {
                                 onOpen={this.onFanOpen}
                                 onSelect={this.onFanSelect}
                             />
-                            <Button // Duplicate
-                                cssNormal={SX.btn}
-                                icon={ContentDuplicate}
-                                onClick={this.onDuplicateClick}
-                            />
                             <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                         </div>
                     </div>
@@ -183,9 +180,23 @@ class Event extends React.PureComponent {
         );
     }
 
+    componentDidMount() {
+        const {isExpanded} = this.props;
+        if (isExpanded) {
+            scrollIntoView(this.rootRef.current, {
+                header: BAR_HEIGHT,
+                footer: NEW_HEIGHT,
+            });
+        }
+    }
+
     componentDidUpdate(prevProps) {
-        if (prevProps.isExpanded !== this.props.isExpanded) {
-            // TODO
+        const {isExpanded} = this.props;
+        if (isExpanded && prevProps.isExpanded !== isExpanded) {
+            scrollIntoView(this.rootRef.current, {
+                header: BAR_HEIGHT,
+                footer: NEW_HEIGHT,
+            });
         }
     }
 
@@ -252,10 +263,6 @@ class Event extends React.PureComponent {
 
     onFanSelect = (value) => {
         console.log('onFanSelect:', value);
-    };
-
-    onDuplicateClick = () => {
-        console.log('onDuplicateClick');
     };
 
     onCalendarSelect = ({name: destinationCalendarId}) => {

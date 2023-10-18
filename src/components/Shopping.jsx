@@ -40,14 +40,13 @@ const SX = {
         margin: 2,
     },
 };
-const ENTER_TIMEOUT = 100;
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class Shopping extends React.PureComponent {
     shoppingStructure; // filled by `memoShoppingStructure()`
-    enterTimeout;
+    plusTimeout;
     rootRef = React.createRef();
 
     render() {
@@ -83,15 +82,22 @@ class Shopping extends React.PureComponent {
                         </div>
                     );
                 })}
-                <Button cssNormal={SX.btn} icon={Plus} />
+                <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
                 <Button cssNormal={SX.btn} icon={WrenchClock} onClick={this.onWrenchClockClick} />
-                <Button cssNormal={SX.btn} icon={RepeatVariant} />
             </div>
         );
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.html !== this.props.html && !this.shoppingStructure.items.at(-1)?.text) {
+            // An empty item has just been added
+            const editableElements = this.rootRef.current.querySelectorAll('[contenteditable="true"]');
+            editableElements[editableElements.length - 1].focus();
+        }
+    }
+
     componentWillUnmount() {
-        clearTimeout(this.enterTimeout);
+        clearTimeout(this.plusTimeout);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -103,6 +109,19 @@ class Shopping extends React.PureComponent {
     onTitleChange = (text) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             draft.title = text;
+        });
+        this.announceChange(freshShopping);
+    };
+
+    /**
+     *
+     */
+    onPlusClick = () => {
+        const freshShopping = produce(this.shoppingStructure, (draft) => {
+            draft.items.push({
+                text: '',
+                isDone: false,
+            });
         });
         this.announceChange(freshShopping);
     };
@@ -132,18 +151,11 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onItemChange = (text, {data: index, isEnter}) => {
+    onItemChange = (text, {data: index}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             draft.items[index].text = text;
         });
         this.announceChange(freshShopping);
-        if (isEnter) {
-            this.enterTimeout = setTimeout(() => {
-                const editableElements = this.rootRef.current.querySelectorAll('[contenteditable="true"]');
-                const nextEditable = editableElements[index + 2];
-                nextEditable?.focus();
-            }, ENTER_TIMEOUT);
-        }
     };
 
     /**
@@ -183,17 +195,6 @@ class Shopping extends React.PureComponent {
      */
     memoShoppingStructure = memoize((html) => {
         this.shoppingStructure = parseShopping(html); // harmless side-effect
-
-        // Ensure there's always exactly one empty slot at the end:
-        const {items} = this.shoppingStructure;
-        items.push({text: '', isDone: false});
-        for (let i = items.length - 2; i >= 0; i--) {
-            if (items[i].text) {
-                break;
-            }
-            items.splice(i, 1);
-            i--;
-        }
         return this.shoppingStructure;
     });
 }

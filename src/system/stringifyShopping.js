@@ -15,12 +15,9 @@ const stringifyShopping = (shoppingStructure) => {
             draft += '-';
         }
         draft += prepareTextForSaving(text);
-        if (draft) {
-            cleanItems.push(draft);
-        }
+        cleanItems.push(draft);
     }
     let output = prepareTextForSaving(shoppingStructure.title) + ': ' + cleanItems.join(', ');
-    output = output.replace(/[\s-,]*$/, '');
     return output;
 };
 

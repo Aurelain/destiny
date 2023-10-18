@@ -30,7 +30,7 @@ const SX = {
         pointerEvents: 'none',
         cursor: 'pointer',
         boxShadow: 'none',
-        background: '#aaa',
+        opacity: 0.5,
     },
     allowTouch: {
         touchAction: 'unset',
