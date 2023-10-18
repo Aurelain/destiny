@@ -1,4 +1,3 @@
-import {selectShoppingSuggestions} from '../selectors.js';
 import {setState} from '../store.js';
 
 // =====================================================================================================================
@@ -7,14 +6,13 @@ import {setState} from '../store.js';
 /**
  *
  */
-const toggleShoppingSuggestion = async (index) => {
+const clearShoppingSuggestions = () => {
     setState((state) => {
-        const shoppingSuggestions = selectShoppingSuggestions(state);
-        shoppingSuggestions.items[index].isSelected = !shoppingSuggestions.items[index].isSelected;
+        delete state.shoppingSuggestions;
     });
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default toggleShoppingSuggestion;
+export default clearShoppingSuggestions;

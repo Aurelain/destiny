@@ -96,7 +96,6 @@ const SX = {
     },
     btn: {
         margin: 2,
-        padding: 4,
     },
     btnSpecial: {
         color: 'yellow',

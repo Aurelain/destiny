@@ -3,7 +3,7 @@ import checkShopping from '../../system/checkShopping.js';
 import parseShopping from '../../system/parseShopping.js';
 import searchEvents from '../../system/searchEvents.js';
 import checkEventIsDone from '../../system/checkEventIsDone.js';
-import createEvent from './createEvent.js';
+import {selectShoppingSuggestions} from '../selectors.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -11,20 +11,21 @@ import createEvent from './createEvent.js';
 /**
  *
  */
-const populateShopping = async (fallbackCalendarId, summary) => {
-    const shopping = parseShopping(summary);
-    const {title, items} = shopping;
-    const similarEvents = await searchEvents(title + ':', true); // smart searching only a calendar, if possible
+const populateShoppingSuggestions = async (title) => {
+    setState((state) => {
+        state.shoppingSuggestions = {
+            title,
+            items: [],
+        };
+    });
 
-    const candidateItems = items.map((item) => ({
-        text: item.text,
-        isSelected: true, // any text that was mentioned while creating the event is selected by default
-    }));
+    const similarEvents = await searchEvents(title + ':', true); // smart searching only one calendar, if possible
 
+    const candidateItems = [];
     for (const {summary, status} of similarEvents) {
-        const isEventDone = checkEventIsDone(summary, status);
         const similarShopping = checkShopping(summary) && parseShopping(summary);
         if (similarShopping?.title === title) {
+            const isEventDone = checkEventIsDone(summary, status);
             for (const {text, isDone} of similarShopping.items) {
                 candidateItems.push({
                     text,
@@ -34,24 +35,13 @@ const populateShopping = async (fallbackCalendarId, summary) => {
         }
     }
 
-    const shoppingItems = consolidateShoppingItems(candidateItems);
-    if (!shoppingItems.length) {
-        await createEvent(fallbackCalendarId, summary);
-        return;
-    }
-
-    shoppingItems.sort(compareShoppingItems);
-
-    const pendingEvent = similarEvents.find((event) => !checkEventIsDone(event.summary, event.status));
-    const calendarId = pendingEvent?.calendarId || similarEvents[0]?.calendarId || fallbackCalendarId;
-
+    const suggestedItems = consolidateShoppingItems(candidateItems);
+    suggestedItems.sort(compareShoppingItems);
     setState((state) => {
-        state.shopping = {
-            calendarId,
-            eventId: pendingEvent?.id || '',
-            title,
-            items: shoppingItems,
-        };
+        const shoppingSuggestions = selectShoppingSuggestions(state);
+        if (shoppingSuggestions?.title === title) {
+            shoppingSuggestions.items = suggestedItems;
+        }
     });
 };
 
@@ -83,4 +73,4 @@ const compareShoppingItems = (a, b) => {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default populateShopping;
+export default populateShoppingSuggestions;

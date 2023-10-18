@@ -106,16 +106,10 @@ export default {
             },
             required: ['expandedEvents', 'showDone', 'preferredCalendar'],
         },
-        shopping: {
+        shoppingSuggestions: {
             type: 'object',
             additionalProperties: false,
             properties: {
-                calendarId: {
-                    type: 'string',
-                },
-                eventId: {
-                    type: 'string',
-                },
                 title: {
                     type: 'string',
                 },
@@ -136,7 +130,7 @@ export default {
                     },
                 },
             },
-            required: ['calendarId', 'eventId', 'title', 'items'],
+            required: ['title', 'items'],
         },
     },
     required: ['tokens', 'calendars', 'events', 'options'],

@@ -7,10 +7,15 @@ import CheckCircle from '../icons/CheckCircle.jsx';
 import CircleOutline from '../icons/CircleOutline.jsx';
 import Button from '../utils/ui/Button.jsx';
 import Editable from '../utils/ui/Editable.jsx';
-import {selectShowDone} from '../state/selectors.js';
+import {selectShoppingSuggestions, selectShowDone} from '../state/selectors.js';
 import TrashCan from '../icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
+import RepeatVariant from '../icons/RepeatVariant.jsx';
+import Plus from '../icons/Plus.jsx';
+import WrenchClock from '../icons/WrenchClock.jsx';
+import ShoppingSuggestions from './ShoppingSuggestions.jsx';
+import populateShoppingSuggestions from '../state/actions/populateShoppingSuggestions.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -31,6 +36,9 @@ const SX = {
         paddingLeft: 4,
         flexGrow: 1,
     },
+    btn: {
+        margin: 2,
+    },
 };
 const ENTER_TIMEOUT = 100;
 
@@ -43,8 +51,12 @@ class Shopping extends React.PureComponent {
     rootRef = React.createRef();
 
     render() {
-        const {html, showDone} = this.props;
+        const {html, showDone, shoppingSuggestions} = this.props;
         const shoppingStructure = this.memoShoppingStructure(html);
+        const isSuggesting = shoppingSuggestions?.title === shoppingStructure.title;
+        if (isSuggesting) {
+            return <ShoppingSuggestions onApply={this.onShoppingSuggestionsApply} />;
+        }
 
         // TODO: offer a way to raw edit the whole summary
 
@@ -71,6 +83,9 @@ class Shopping extends React.PureComponent {
                         </div>
                     );
                 })}
+                <Button cssNormal={SX.btn} icon={Plus} />
+                <Button cssNormal={SX.btn} icon={WrenchClock} onClick={this.onWrenchClockClick} />
+                <Button cssNormal={SX.btn} icon={RepeatVariant} />
             </div>
         );
     }
@@ -88,6 +103,28 @@ class Shopping extends React.PureComponent {
     onTitleChange = (text) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             draft.title = text;
+        });
+        this.announceChange(freshShopping);
+    };
+
+    /**
+     *
+     */
+    onWrenchClockClick = () => {
+        const {html} = this.props;
+        const shoppingStructure = this.memoShoppingStructure(html);
+        populateShoppingSuggestions(shoppingStructure.title);
+    };
+
+    /**
+     *
+     */
+    onShoppingSuggestionsApply = (suggestedItems) => {
+        const freshShopping = produce(this.shoppingStructure, (draft) => {
+            draft.items = suggestedItems.map((item) => ({
+                text: item,
+                isDone: false,
+            }));
         });
         this.announceChange(freshShopping);
     };
@@ -169,10 +206,12 @@ Shopping.propTypes = {
     onChange: PropTypes.func.isRequired,
     // -------------------------------- redux:
     showDone: PropTypes.bool.isRequired,
+    shoppingSuggestions: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
     showDone: selectShowDone(state),
+    shoppingSuggestions: selectShoppingSuggestions(state),
 });
 
 export default connect(mapStateToProps)(Shopping);
