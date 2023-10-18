@@ -18,11 +18,13 @@ const SX = {
 class Editable extends React.PureComponent {
     backupInnerHtml = null;
     isEnter = false;
+    rootRef = React.createRef();
+
     render() {
         const {html, innerCss, innerRef} = this.props;
         return (
             <div
-                ref={innerRef}
+                ref={innerRef || this.rootRef}
                 css={this.memoCss(innerCss)}
                 contentEditable={true}
                 suppressContentEditableWarning={true}
@@ -33,6 +35,14 @@ class Editable extends React.PureComponent {
                 dangerouslySetInnerHTML={{__html: html}}
             />
         );
+    }
+
+    componentDidMount() {
+        const {autoFocus, innerRef} = this.props;
+        if (autoFocus) {
+            const root = (innerRef || this.rootRef).current;
+            root.focus();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -51,15 +61,13 @@ class Editable extends React.PureComponent {
      */
     onTextBlur = (event) => {
         const {innerHTML} = event.currentTarget;
-        if (this.backupInnerHtml === innerHTML) {
-            return;
+        const {html, onChange, onBlur, data} = this.props;
+        if (this.backupInnerHtml !== innerHTML && innerHTML !== html) {
+            const {isEnter} = this;
+            this.isEnter = false;
+            onChange({value: innerHTML, data, event, isEnter});
         }
-        const {html, onChange, data} = this.props;
-        const {isEnter} = this;
-        this.isEnter = false;
-        if (innerHTML !== html) {
-            onChange(innerHTML, {data, event, isEnter});
-        }
+        onBlur?.();
     };
 
     /**
@@ -95,8 +103,10 @@ class Editable extends React.PureComponent {
 Editable.propTypes = {
     html: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    onBlur: PropTypes.func,
     innerCss: PropTypes.object,
     innerRef: PropTypes.object,
     data: PropTypes.any,
+    autoFocus: PropTypes.bool,
 };
 export default Editable;

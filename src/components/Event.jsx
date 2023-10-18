@@ -145,7 +145,6 @@ class Event extends React.PureComponent {
                 <Button
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
                     label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, isDone)}
-                    allowTouch={true}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
@@ -231,9 +230,9 @@ class Event extends React.PureComponent {
         classifyEvent(calendarId, eventId);
     };
 
-    onSummaryChange = (summary) => {
+    onSummaryChange = ({value}) => {
         const {calendarId, eventId} = this.props;
-        updateSummary(calendarId, eventId, summary);
+        updateSummary(calendarId, eventId, value);
     };
 
     onStatusClick = () => {

@@ -11,11 +11,12 @@ import {selectShoppingSuggestions, selectShowDone} from '../state/selectors.js';
 import TrashCan from '../icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
-import RepeatVariant from '../icons/RepeatVariant.jsx';
 import Plus from '../icons/Plus.jsx';
 import WrenchClock from '../icons/WrenchClock.jsx';
 import ShoppingSuggestions from './ShoppingSuggestions.jsx';
 import populateShoppingSuggestions from '../state/actions/populateShoppingSuggestions.js';
+import Pencil from '../icons/Pencil.jsx';
+import sanitizeSummary from '../system/sanitizeSummary.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -28,6 +29,25 @@ const SX = {
         display: 'flex',
         alignItems: 'start',
         marginTop: 4,
+    },
+    buttonItem: {
+        display: 'block',
+        textAlign: 'left',
+        lineHeight: '32px',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        '& > svg': {
+            position: 'relative',
+            display: 'inline-block',
+            verticalAlign: 'text-bottom',
+            top: 2,
+        },
+    },
+    emptyItem: {
+        display: 'flex',
+        alignItems: 'start',
+        marginTop: 5,
     },
     itemDone: {
         flexShrink: 0,
@@ -48,42 +68,76 @@ class Shopping extends React.PureComponent {
     shoppingStructure; // filled by `memoShoppingStructure()`
     plusTimeout;
     rootRef = React.createRef();
+    state = {
+        isRawEditing: false,
+    };
 
     render() {
         const {html, showDone, shoppingSuggestions} = this.props;
+        const {isRawEditing} = this.state;
+
+        if (isRawEditing) {
+            return (
+                <Editable
+                    html={sanitizeSummary(html)}
+                    onChange={this.onRawChange}
+                    onBlur={this.onRawCancel}
+                    autoFocus={true}
+                />
+            );
+        }
+
         const shoppingStructure = this.memoShoppingStructure(html);
         const isSuggesting = shoppingSuggestions?.title === shoppingStructure.title;
         if (isSuggesting) {
             return <ShoppingSuggestions onApply={this.onShoppingSuggestionsApply} />;
         }
 
-        // TODO: offer a way to raw edit the whole summary
-
         return (
             <div css={SX.root} ref={this.rootRef}>
                 <Editable html={shoppingStructure.title} onChange={this.onTitleChange} />
                 {shoppingStructure.items.map((item, index) => {
                     const {text, isDone} = item;
-                    if (!showDone && isDone) {
-                        return null;
-                    }
-                    return (
-                        <div key={index} css={SX.item}>
+                    if (text) {
+                        if (!showDone && isDone) {
+                            return null;
+                        }
+                        return (
                             <Button
-                                cssNormal={SX.itemDone}
+                                key={index}
+                                cssNormal={SX.buttonItem}
                                 icon={isDone ? CheckCircle : CircleOutline}
-                                holdIcon={TrashCan}
-                                onClick={this.onDoneClick}
+                                label={text.replace(/<.*?>/g, '')}
+                                holdIcon={isDone ? CircleOutline : CheckCircle}
                                 onHold={this.onDoneHold}
                                 variant={'simple'}
                                 data={index}
                             />
-                            <Editable html={text} onChange={this.onItemChange} innerCss={SX.itemText} data={index} />
-                        </div>
-                    );
+                        );
+                    } else {
+                        return (
+                            <div key={index} css={SX.emptyItem}>
+                                <Button
+                                    key={index}
+                                    icon={CircleOutline}
+                                    holdIcon={TrashCan}
+                                    onClick={this.onEmptyClick}
+                                    variant={'simple'}
+                                    data={index}
+                                />
+                                <Editable
+                                    html={text}
+                                    onChange={this.onItemChange}
+                                    innerCss={SX.itemText}
+                                    data={index}
+                                />
+                            </div>
+                        );
+                    }
                 })}
                 <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
                 <Button cssNormal={SX.btn} icon={WrenchClock} onClick={this.onWrenchClockClick} />
+                <Button cssNormal={SX.btn} icon={Pencil} onClick={this.onPencilClick} />
             </div>
         );
     }
@@ -106,9 +160,9 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onTitleChange = (text) => {
+    onTitleChange = ({value}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.title = text;
+            draft.title = value;
         });
         this.announceChange(freshShopping);
     };
@@ -151,9 +205,9 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onItemChange = (text, {data: index}) => {
+    onItemChange = ({value, data: index}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items[index].text = text;
+            draft.items[index].text = value;
         });
         this.announceChange(freshShopping);
     };
@@ -161,7 +215,17 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onDoneClick = ({data: index}) => {
+    onEmptyClick = ({data: index}) => {
+        const freshShopping = produce(this.shoppingStructure, (draft) => {
+            draft.items.splice(index, 1);
+        });
+        this.announceChange(freshShopping);
+    };
+
+    /**
+     *
+     */
+    onDoneHold = ({data: index}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             const item = draft.items[index];
             if (item.text) {
@@ -174,20 +238,32 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onDoneHold = ({data: index}) => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items.splice(index, 1);
-        });
-        this.announceChange(freshShopping);
+    announceChange = (freshShopping) => {
+        const {onChange} = this.props;
+        onChange({value: stringifyShopping(freshShopping)});
     };
 
     /**
      *
      */
-    announceChange = (freshShopping) => {
+    onPencilClick = () => {
+        this.setState({isRawEditing: true});
+    };
+
+    /**
+     *
+     */
+    onRawChange = ({value}) => {
         const {onChange} = this.props;
-        const freshSummary = stringifyShopping(freshShopping);
-        onChange(freshSummary);
+        onChange(value);
+        this.setState({isRawEditing: false});
+    };
+
+    /**
+     *
+     */
+    onRawCancel = () => {
+        this.setState({isRawEditing: false});
     };
 
     /**

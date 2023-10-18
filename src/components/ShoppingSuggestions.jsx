@@ -8,6 +8,7 @@ import clearShoppingSuggestions from '../state/actions/clearShoppingSuggestions.
 import Check from '../icons/Check.jsx';
 import CheckboxMarked from '../icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../icons/CheckboxBlankOutline.jsx';
+import Close from '../icons/Close.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -33,6 +34,7 @@ const SX = {
     },
     btnCheck: {
         marginTop: 10,
+        marginRight: 10,
     },
 };
 
@@ -58,7 +60,8 @@ class ShoppingSuggestions extends React.PureComponent {
                         />
                     );
                 })}
-                <Button cssNormal={SX.btnCheck} icon={Check} onClick={this.onCheckClick} onHold={this.onCheckHold} />
+                <Button cssNormal={SX.btnCheck} icon={Check} onClick={this.onCheckClick} />
+                <Button icon={Close} onClick={this.onClearClick} variant={'simple'} />
             </div>
         );
     }
@@ -76,7 +79,7 @@ class ShoppingSuggestions extends React.PureComponent {
     /**
      *
      */
-    onCheckHold = () => {
+    onClearClick = () => {
         clearShoppingSuggestions();
     };
 

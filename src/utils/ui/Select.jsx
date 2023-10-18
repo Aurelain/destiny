@@ -100,10 +100,11 @@ class Select extends React.PureComponent {
         const list = this.listRef.current;
         const buttonBounds = this.buttonRef.current.getBoundingClientRect();
         const listBounds = list.getBoundingClientRect();
+        const windowWidth = window.innerWidth - 20;
 
         let left = buttonBounds.left;
-        if (left + listBounds.width > window.innerWidth) {
-            left = window.innerWidth - listBounds.width;
+        if (left + listBounds.width > windowWidth) {
+            left = windowWidth - listBounds.width;
         }
 
         let top = buttonBounds.top + buttonBounds.height;

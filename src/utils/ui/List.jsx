@@ -18,6 +18,7 @@ const SX = {
     item: {
         padding: 16,
         justifyContent: 'start',
+        whiteSpace: 'nowrap',
     },
 };
 

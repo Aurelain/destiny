@@ -16,7 +16,7 @@ const SX = {
         justifyContent: 'center',
         textAlign: 'center',
         lineHeight: 1.5,
-        touchAction: 'none', // so dragging/scrolling doesn't mess with us
+        // touchAction: 'none', // so dragging/scrolling doesn't mess with us
         cursor: 'pointer',
         padding: 2,
         transitionProperty: 'background-color,color',
@@ -31,9 +31,6 @@ const SX = {
         cursor: 'pointer',
         boxShadow: 'none',
         opacity: 0.5,
-    },
-    allowTouch: {
-        touchAction: 'unset',
     },
 
     // Variant `simple`:
@@ -77,7 +74,7 @@ const SX = {
     },
 
     isHolding: {
-        background: '#f00',
+        background: '#f5c045',
     },
 };
 const HOLD_TIMEOUT = 500; // milliseconds
@@ -103,19 +100,8 @@ class Button extends React.PureComponent {
     initialY;
 
     render() {
-        const {
-            label,
-            icon,
-            holdIcon,
-            cssNormal,
-            cssHover,
-            cssActive,
-            variant,
-            disabled,
-            allowTouch,
-            innerRef,
-            ...otherProps
-        } = this.props;
+        const {label, icon, holdIcon, cssNormal, cssHover, cssActive, variant, disabled, innerRef, ...otherProps} =
+            this.props;
         delete otherProps.onHold;
         delete otherProps.onClick;
         delete otherProps.onPress;
@@ -140,8 +126,6 @@ class Button extends React.PureComponent {
                     isHovering && isPressing && cssActive,
 
                     disabled && SX.disabled,
-
-                    allowTouch && SX.allowTouch,
 
                     isHolding && SX.isHolding,
                 ]}
@@ -411,7 +395,6 @@ Button.propTypes = {
     cssNormal: PropTypes.any, // TODO: rename to `css`
     cssHover: PropTypes.any,
     cssActive: PropTypes.any,
-    allowTouch: PropTypes.bool,
     onClick: PropTypes.func,
     onHold: PropTypes.func,
     onPress: PropTypes.func,
