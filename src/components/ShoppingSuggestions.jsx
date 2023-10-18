@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import Button from '../ui/Button.jsx';
-import {selectShoppingSuggestions} from '../state/selectors.js';
-import toggleShoppingSuggestion from '../state/actions/toggleShoppingSelection.js';
-import clearShoppingSuggestions from '../state/actions/clearShoppingSuggestions.js';
 import Check from '../ui/Icons/Check.jsx';
 import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../ui/Icons/CheckboxBlankOutline.jsx';
@@ -43,11 +39,11 @@ const SX = {
 // =====================================================================================================================
 class ShoppingSuggestions extends React.PureComponent {
     render() {
-        const {shoppingSuggestions} = this.props;
+        const {list, onApply, onCancel} = this.props;
 
         return (
             <div css={SX.root}>
-                {shoppingSuggestions.items.map((item, index) => {
+                {list.map((item, index) => {
                     return (
                         <Button
                             key={item.text}
@@ -60,8 +56,8 @@ class ShoppingSuggestions extends React.PureComponent {
                         />
                     );
                 })}
-                <Button cssNormal={SX.btnCheck} icon={Check} onClick={this.onCheckClick} />
-                <Button icon={Close} onClick={this.onClearClick} variant={'simple'} />
+                <Button cssNormal={SX.btnCheck} icon={Check} onClick={onApply} />
+                <Button icon={Close} onClick={onCancel} variant={'simple'} />
             </div>
         );
     }
@@ -73,24 +69,8 @@ class ShoppingSuggestions extends React.PureComponent {
      *
      */
     onItemClick = ({data: index}) => {
-        toggleShoppingSuggestion(index);
-    };
-
-    /**
-     *
-     */
-    onClearClick = () => {
-        clearShoppingSuggestions();
-    };
-
-    /**
-     *
-     */
-    onCheckClick = () => {
-        const {onApply, shoppingSuggestions} = this.props;
-        const selectedItems = shoppingSuggestions.items.filter((item) => item.isSelected);
-        onApply(selectedItems.map((item) => item.text));
-        clearShoppingSuggestions();
+        const {onToggle} = this.props;
+        onToggle({index});
     };
 }
 
@@ -98,14 +78,15 @@ class ShoppingSuggestions extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 ShoppingSuggestions.propTypes = {
-    // -------------------------------- direct:
+    list: PropTypes.arrayOf(
+        PropTypes.shape({
+            text: PropTypes.string.isRequired,
+            isSelected: PropTypes.bool.isRequired,
+        }),
+    ).isRequired,
+    onToggle: PropTypes.func.isRequired,
     onApply: PropTypes.func.isRequired,
-    // -------------------------------- redux:
-    shoppingSuggestions: PropTypes.object,
+    onCancel: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-    shoppingSuggestions: selectShoppingSuggestions(state),
-});
-
-export default connect(mapStateToProps)(ShoppingSuggestions);
+export default ShoppingSuggestions;

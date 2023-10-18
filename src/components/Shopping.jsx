@@ -7,16 +7,17 @@ import CheckCircle from '../ui/Icons/CheckCircle.jsx';
 import CircleOutline from '../ui/Icons/CircleOutline.jsx';
 import Button from '../ui/Button.jsx';
 import Editable from '../ui/Editable.jsx';
-import {selectShoppingSuggestions, selectShowDone} from '../state/selectors.js';
+import {selectShowDone} from '../state/selectors.js';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
 import Plus from '../ui/Icons/Plus.jsx';
 import WrenchClock from '../ui/Icons/WrenchClock.jsx';
-import ShoppingSuggestions from './ShoppingSuggestions.jsx';
-import populateShoppingSuggestions from '../state/actions/populateShoppingSuggestions.js';
 import Pencil from '../ui/Icons/Pencil.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
+import collectShoppingSuggestions from '../system/collectShoppingSuggestions.js';
+import DotsCircle from '../ui/Animations/DotsCircle.jsx';
+import ShoppingSuggestions from './ShoppingSuggestions.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,6 +25,9 @@ import sanitizeSummary from '../system/sanitizeSummary.js';
 const SX = {
     root: {
         padding: 8,
+    },
+    rootDisabled: {
+        pointerEvents: 'none',
     },
     item: {
         display: 'flex',
@@ -70,11 +74,13 @@ class Shopping extends React.PureComponent {
     rootRef = React.createRef();
     state = {
         isRawEditing: false,
+        isLoadingSuggestions: false,
+        shoppingSuggestions: null,
     };
 
     render() {
-        const {html, showDone, shoppingSuggestions} = this.props;
-        const {isRawEditing} = this.state;
+        const {html, showDone} = this.props;
+        const {isRawEditing, isLoadingSuggestions, shoppingSuggestions} = this.state;
 
         if (isRawEditing) {
             return (
@@ -87,14 +93,21 @@ class Shopping extends React.PureComponent {
             );
         }
 
-        const shoppingStructure = this.memoShoppingStructure(html);
-        const isSuggesting = shoppingSuggestions?.title === shoppingStructure.title;
-        if (isSuggesting) {
-            return <ShoppingSuggestions onApply={this.onShoppingSuggestionsApply} />;
+        if (shoppingSuggestions) {
+            return (
+                <ShoppingSuggestions
+                    list={shoppingSuggestions}
+                    onToggle={this.onSuggestionsToggle}
+                    onApply={this.onSuggestionsApply}
+                    onCancel={this.onSuggestionsCancel}
+                />
+            );
         }
 
+        const shoppingStructure = this.memoShoppingStructure(html);
+
         return (
-            <div css={SX.root} ref={this.rootRef}>
+            <div css={[SX.root, isLoadingSuggestions && SX.rootDisabled]} ref={this.rootRef}>
                 <Editable html={shoppingStructure.title} onChange={this.onTitleChange} />
                 {shoppingStructure.items.map((item, index) => {
                     const {text, isDone} = item;
@@ -136,7 +149,11 @@ class Shopping extends React.PureComponent {
                     }
                 })}
                 <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
-                <Button cssNormal={SX.btn} icon={WrenchClock} onClick={this.onWrenchClockClick} />
+                <Button
+                    cssNormal={SX.btn}
+                    icon={isLoadingSuggestions ? DotsCircle : WrenchClock}
+                    onClick={this.onWrenchClockClick}
+                />
                 <Button cssNormal={SX.btn} icon={Pencil} onClick={this.onPencilClick} />
             </div>
         );
@@ -183,23 +200,57 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onWrenchClockClick = () => {
-        const {html} = this.props;
-        const shoppingStructure = this.memoShoppingStructure(html);
-        populateShoppingSuggestions(shoppingStructure.title);
+    onWrenchClockClick = async () => {
+        const {title} = this.shoppingStructure;
+        this.setState({
+            isLoadingSuggestions: true,
+        });
+        const shoppingSuggestions = await collectShoppingSuggestions(title);
+        this.setState({
+            isLoadingSuggestions: false,
+            shoppingSuggestions,
+        });
     };
 
     /**
      *
      */
-    onShoppingSuggestionsApply = (suggestedItems) => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items = suggestedItems.map((item) => ({
-                text: item,
-                isDone: false,
-            }));
+    onSuggestionsToggle = ({index}) => {
+        const {shoppingSuggestions} = this.state;
+        const freshSuggestions = produce(shoppingSuggestions, (draft) => {
+            draft[index].isSelected = !draft[index].isSelected;
         });
+        this.setState({
+            shoppingSuggestions: freshSuggestions,
+        });
+    };
+
+    /**
+     *
+     */
+    onSuggestionsApply = () => {
+        const {shoppingSuggestions} = this.state;
+        const selectedItems = shoppingSuggestions.filter((item) => item.isSelected);
+        const freshShopping = {
+            title: this.shoppingStructure.title,
+            items: selectedItems.map((item) => ({
+                text: item.text,
+                isDone: false,
+            })),
+        };
         this.announceChange(freshShopping);
+        this.setState({
+            shoppingSuggestions: null,
+        });
+    };
+
+    /**
+     *
+     */
+    onSuggestionsCancel = () => {
+        this.setState({
+            shoppingSuggestions: null,
+        });
     };
 
     /**
@@ -283,12 +334,10 @@ Shopping.propTypes = {
     onChange: PropTypes.func.isRequired,
     // -------------------------------- redux:
     showDone: PropTypes.bool.isRequired,
-    shoppingSuggestions: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
     showDone: selectShowDone(state),
-    shoppingSuggestions: selectShoppingSuggestions(state),
 });
 
 export default connect(mapStateToProps)(Shopping);

@@ -106,32 +106,6 @@ export default {
             },
             required: ['expandedEvents', 'showDone', 'preferredCalendar'],
         },
-        shoppingSuggestions: {
-            type: 'object',
-            additionalProperties: false,
-            properties: {
-                title: {
-                    type: 'string',
-                },
-                items: {
-                    type: 'array',
-                    items: {
-                        type: 'object',
-                        additionalProperties: false,
-                        properties: {
-                            text: {
-                                type: 'string',
-                            },
-                            isSelected: {
-                                type: 'boolean',
-                            },
-                        },
-                        required: ['text', 'isSelected'],
-                    },
-                },
-            },
-            required: ['title', 'items'],
-        },
     },
     required: ['tokens', 'calendars', 'events', 'options'],
 };

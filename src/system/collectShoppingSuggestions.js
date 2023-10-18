@@ -1,9 +1,7 @@
-import {setState} from '../store.js';
-import checkShopping from '../../system/checkShopping.js';
-import parseShopping from '../../system/parseShopping.js';
-import searchEvents from '../../system/searchEvents.js';
-import checkEventIsDone from '../../system/checkEventIsDone.js';
-import {selectShoppingSuggestions} from '../selectors.js';
+import searchEvents from './searchEvents.js';
+import checkShopping from './checkShopping.js';
+import parseShopping from './parseShopping.js';
+import checkEventIsDone from './checkEventIsDone.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -11,14 +9,7 @@ import {selectShoppingSuggestions} from '../selectors.js';
 /**
  *
  */
-const populateShoppingSuggestions = async (title) => {
-    setState((state) => {
-        state.shoppingSuggestions = {
-            title,
-            items: [],
-        };
-    });
-
+const collectShoppingSuggestions = async (title) => {
     const similarEvents = await searchEvents(title + ':', true); // smart searching only one calendar, if possible
 
     const candidateItems = [];
@@ -37,12 +28,8 @@ const populateShoppingSuggestions = async (title) => {
 
     const suggestedItems = consolidateShoppingItems(candidateItems);
     suggestedItems.sort(compareShoppingItems);
-    setState((state) => {
-        const shoppingSuggestions = selectShoppingSuggestions(state);
-        if (shoppingSuggestions?.title === title) {
-            shoppingSuggestions.items = suggestedItems;
-        }
-    });
+
+    return suggestedItems;
 };
 
 // =====================================================================================================================
@@ -73,4 +60,4 @@ const compareShoppingItems = (a, b) => {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default populateShoppingSuggestions;
+export default collectShoppingSuggestions;
