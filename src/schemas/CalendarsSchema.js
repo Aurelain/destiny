@@ -23,8 +23,12 @@ export default {
                     selected: {
                         type: 'boolean',
                     },
+                    timeZone: {
+                        type: 'string',
+                        minLength: 1,
+                    },
                 },
-                required: ['id', 'summary', 'backgroundColor'],
+                required: ['id', 'summary', 'backgroundColor', 'timeZone'],
             },
         },
     },

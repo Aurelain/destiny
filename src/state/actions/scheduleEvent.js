@@ -2,13 +2,13 @@ import requestApi from '../../system/requestApi.js';
 import getYYYYMMDD from '../../utils/getYYYYMMDD.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import EventSchema from '../../schemas/EventSchema.js';
-import {selectEvents} from '../selectors.js';
+import {selectCalendars, selectEvents} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import toggleEvent from './toggleEvent.js';
-import localizeTime from '../../utils/localizeTime.js';
+import findCalendar from '../../system/findCalendar.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -31,20 +31,40 @@ const scheduleEvent = async (calendarId, eventId, destination) => {
 
     toggleEvent(eventId, false);
 
+    const state = getState();
+    const calendars = selectCalendars(state);
+    const {timeZone} = findCalendar(calendarId, calendars);
+
     if (checkOffline()) {
         // TODO: add to pending operations
         return;
     }
+
+    const body = {
+        start: {
+            [patchProp]: freshStart,
+            timeZone,
+        },
+        end: {
+            [patchProp]: freshEnd,
+            timeZone,
+        },
+    };
+    if (patchProp === 'dateTime') {
+        // body.start.timeZone = timeZone;
+        // body.end.timeZone = timeZone;
+        // const existingEvent = findEvent(state, calendarId, eventId);
+        // console.log('existingEvent:', existingEvent);
+        // if (existingEvent.reminders.overrides)
+        // body.reminders = {
+        //     useDefault: false,
+        //
+        // };
+    }
+
     await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
         method: 'PATCH',
-        body: {
-            start: {
-                [patchProp]: freshStart,
-            },
-            end: {
-                [patchProp]: freshEnd,
-            },
-        },
+        body,
         schema: EventSchema,
     });
 };
@@ -66,13 +86,8 @@ const analyzeDestination = (calendarId, eventId, destination) => {
         freshStart = getOffsetDestination(destination, start);
         freshEnd = getOffsetDestination(destination, end);
     } else {
-        freshStart = destination;
-        if (freshStart.length === 10) {
-            freshEnd = freshStart;
-        } else {
-            const freshEndTimestamp = Number(new Date(freshStart)) + 30 * 60 * 1000; // add 30 minutes
-            freshEnd = localizeTime(new Date(freshEndTimestamp));
-        }
+        freshStart = destination.start;
+        freshEnd = destination.end;
     }
     return {freshStart, freshEnd};
 };

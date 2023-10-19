@@ -138,8 +138,18 @@ class Event extends React.PureComponent {
     rootRef = React.createRef();
 
     render() {
-        const {title, backgroundColor, start, end, isExpanded, calendarId, reminder, isDone, recurringEventId} =
-            this.props;
+        const {
+            title,
+            backgroundColor,
+            start,
+            end,
+            timeZone,
+            isExpanded,
+            calendarId,
+            reminder,
+            isDone,
+            recurringEventId,
+        } = this.props;
         const {contentHeight} = this.state;
 
         const timeInterval = this.memoTimeInterval(start, end);
@@ -164,8 +174,8 @@ class Event extends React.PureComponent {
                             <Select
                                 buttonProps={TIME_BUTTON_PROPS}
                                 list={MonthTime}
-                                listProps={this.memoListProps(start)}
-                                onSelect={this.onTimeSelect}
+                                listProps={this.memoListProps(start, end, timeZone)}
+                                onSelect={this.onMonthTimeSelect}
                                 onHold={this.onMonthTimeHold}
                                 // forcedOpen={true}
                             />
@@ -247,10 +257,10 @@ class Event extends React.PureComponent {
         updateSummary(calendarId, eventId, value);
     };
 
-    onTimeSelect = (value) => {
-        console.log('onTimeSelect:', value);
-        // const {calendarId, eventId} = this.props;
-        // scheduleEvent(calendarId, eventId, value);
+    onMonthTimeSelect = (startAndEnd) => {
+        console.log('onMonthTimeSelect:', startAndEnd);
+        const {calendarId, eventId} = this.props;
+        scheduleEvent(calendarId, eventId, startAndEnd);
     };
 
     onMonthTimeHold = () => {
@@ -329,10 +339,8 @@ class Event extends React.PureComponent {
         return checkShopping(title) ? Shopping : Editable;
     });
 
-    memoListProps = memoize((start) => {
-        return {
-            date: start,
-        };
+    memoListProps = memoize((start, end, timeZone) => {
+        return {start, end, timeZone};
     });
 }
 
@@ -344,6 +352,7 @@ Event.propTypes = {
     eventId: PropTypes.string.isRequired,
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
+    timeZone: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,

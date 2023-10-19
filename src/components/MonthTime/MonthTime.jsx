@@ -4,6 +4,8 @@ import {BOX_SHADOW} from '../../SETTINGS.js';
 import Month from '../../ui/Month/Month.jsx';
 import Stepper from '../../ui/Stepper.jsx';
 import Button from '../../ui/Button.jsx';
+import dissectStartEnd from './dissectStartEnd.js';
+import produceStartEnd from './produceStartEnd.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -37,17 +39,20 @@ class MonthTime extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        Object.assign(this.state, this.parseDate(props.date));
+        const {start, end} = props;
+        Object.assign(this.state, dissectStartEnd({start, end}));
     }
 
     render() {
-        const {date, innerRef, styling} = this.props;
-        const {monthDate, startMinute, hasDuration, duration} = this.state;
+        const {innerRef, styling} = this.props;
+        const {monthDate, startMinute, hasDuration, duration, timeZone} = this.state;
+
+        const {pretty} = produceStartEnd({monthDate, startMinute, duration, timeZone});
 
         const ref = innerRef || this.rootRef;
         return (
             <div css={[SX.root, styling]} ref={ref}>
-                <Month date={monthDate || date} onChange={this.onMonthChange} onHold={this.onMonthHold} />
+                <Month date={monthDate} onChange={this.onMonthChange} onHold={this.onMonthHold} />
                 <Stepper
                     value={startMinute}
                     step={15}
@@ -58,19 +63,19 @@ class MonthTime extends React.PureComponent {
                     onHold={this.onTimeHold}
                     renderValue={this.renderTimeValue}
                 />
-                {hasDuration && (
+                {hasDuration && duration && (
                     <Stepper value={duration} step={15} min={0} max={24 * 60} onChange={this.onDurationChange} />
                 )}
-                <Button cssNormal={SX.apply} label={date} onClick={this.onApplyClick} />
+                <Button cssNormal={SX.apply} label={pretty} onClick={this.onApplyClick} />
             </div>
         );
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.date !== this.props.date && this.state.monthDate) {
-            this.setState({
-                monthDate: null,
-            });
+        const {start, end} = this.props;
+        if (prevProps.start !== start || prevProps.end !== end) {
+            const {startMinute, duration, monthDate} = dissectStartEnd({start, end});
+            this.setState({startMinute, duration, monthDate});
         }
     }
 
@@ -81,6 +86,7 @@ class MonthTime extends React.PureComponent {
      *
      */
     onMonthChange = ({ymd}) => {
+        console.log('ymd:', ymd);
         this.setState({
             monthDate: ymd,
         });
@@ -90,8 +96,9 @@ class MonthTime extends React.PureComponent {
      *
      */
     onMonthHold = ({ymd}) => {
-        const {onRelease} = this.props;
-        onRelease(stringifyDate(ymd));
+        const {onRelease, timeZone} = this.props;
+        const {start, end} = produceStartEnd({monthDate: ymd, startMinute: 0, duration: 0, timeZone});
+        onRelease({start, end});
     };
 
     /**
@@ -99,8 +106,9 @@ class MonthTime extends React.PureComponent {
      */
     onApplyClick = () => {
         const {startMinute, duration, monthDate} = this.state;
-        const {onRelease} = this.props;
-        onRelease(stringifyDate(monthDate, startMinute, duration));
+        const {onRelease, timeZone} = this.props;
+        const {start, end} = produceStartEnd({monthDate, startMinute, duration, timeZone});
+        onRelease({start, end});
     };
 
     /**
@@ -153,7 +161,9 @@ class MonthTime extends React.PureComponent {
 // =====================================================================================================================
 MonthTime.propTypes = {
     // -------------------------------- direct:
-    date: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).isRequired,
+    start: PropTypes.string.isRequired,
+    end: PropTypes.string.isRequired,
+    timeZone: PropTypes.string.isRequired,
     styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,
     onRelease: PropTypes.func.isRequired,

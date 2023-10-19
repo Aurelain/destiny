@@ -38,8 +38,11 @@ export default {
                     selected: {
                         type: 'boolean',
                     },
+                    timeZone: {
+                        type: 'string',
+                    },
                 },
-                required: ['id', 'summary', 'backgroundColor', 'selected'],
+                required: ['id', 'summary', 'backgroundColor', 'selected', 'timeZone'],
             },
         },
         events: {
