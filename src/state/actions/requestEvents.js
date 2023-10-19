@@ -24,8 +24,12 @@ const requestEvents = async (calendarId) => {
     if (calendarId) {
         const existingEvents = selectEvents(state);
         const staticEvents = existingEvents.filter((event) => event.calendarId !== calendarId);
-        const freshEvents = await getCalendarEvents(calendarId);
-        events.push(...staticEvents, ...freshEvents);
+        try {
+            const freshEvents = await getCalendarEvents(calendarId);
+            events.push(...staticEvents, ...freshEvents);
+        } catch (e) {
+            console.log(`Failed at ${calendarId}`);
+        }
     } else {
         for (const {id: calendarId, selected} of calendars) {
             if (selected) {

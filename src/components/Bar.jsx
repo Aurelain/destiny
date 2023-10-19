@@ -9,7 +9,7 @@ import Menu from '../ui/Icons/Menu.jsx';
 import SideMenu from '../ui/SideMenu.jsx';
 import Console from '../ui/Icons/Console.jsx';
 import LocationExit from '../ui/Icons/LocationExit.jsx';
-import {BAR_HEIGHT, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
@@ -32,11 +32,12 @@ const SX = {
         top: 0,
         left: 0,
         right: 0,
-        height: BAR_HEIGHT,
+        height: BAR_HEIGHT + BAR_SAFETY,
         zIndex: 100,
         display: 'flex',
         background: PRIMARY_COLOR,
         color: '#fff',
+        paddingTop: BAR_SAFETY,
     },
     grow: {
         flexGrow: 1,

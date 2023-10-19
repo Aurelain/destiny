@@ -7,7 +7,7 @@ import scheduleEvent from '../state/actions/scheduleEvent.js';
 import Bell from '../ui/Icons/Bell.jsx';
 import CheckCircle from '../ui/Icons/CheckCircle.jsx';
 import classifyEvent from '../state/actions/classifyEvent.js';
-import {BAR_HEIGHT, DONE_MATCH, NEW_HEIGHT} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, NEW_HEIGHT} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import SelectCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
@@ -204,7 +204,7 @@ class Event extends React.PureComponent {
         const {isExpanded} = this.props;
         if (isExpanded) {
             scrollIntoView(this.rootRef.current, {
-                header: BAR_HEIGHT,
+                header: BAR_HEIGHT + BAR_SAFETY,
                 footer: NEW_HEIGHT,
             });
         }
@@ -214,7 +214,7 @@ class Event extends React.PureComponent {
         const {isExpanded} = this.props;
         if (isExpanded && prevProps.isExpanded !== isExpanded) {
             scrollIntoView(this.rootRef.current, {
-                header: BAR_HEIGHT,
+                header: BAR_HEIGHT + BAR_SAFETY,
                 footer: NEW_HEIGHT,
             });
         }
