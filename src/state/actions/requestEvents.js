@@ -33,8 +33,12 @@ const requestEvents = async (calendarId) => {
     } else {
         for (const {id: calendarId, selected} of calendars) {
             if (selected) {
-                const calendarEvents = await getCalendarEvents(calendarId);
-                events.push(...calendarEvents);
+                try {
+                    const calendarEvents = await getCalendarEvents(calendarId);
+                    events.push(...calendarEvents);
+                } catch (e) {
+                    console.log(`Failed at ${calendarId}`);
+                }
             }
         }
     }
