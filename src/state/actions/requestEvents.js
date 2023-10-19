@@ -1,4 +1,4 @@
-import {selectCalendars} from '../selectors.js';
+import {selectCalendars, selectEvents} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
@@ -12,7 +12,7 @@ import checkOffline from '../../system/checkOffline.js';
 /**
  *
  */
-const requestEvents = async () => {
+const requestEvents = async (calendarId) => {
     if (checkOffline()) {
         return;
     }
@@ -20,10 +20,18 @@ const requestEvents = async () => {
     const state = getState();
     const calendars = selectCalendars(state);
     const events = [];
-    for (const {id: calendarId, selected} of calendars) {
-        if (selected) {
-            const calendarEvents = await getCalendarEvents(calendarId);
-            events.push(...calendarEvents);
+
+    if (calendarId) {
+        const existingEvents = selectEvents(state);
+        const staticEvents = existingEvents.filter((event) => event.calendarId !== calendarId);
+        const freshEvents = await getCalendarEvents(calendarId);
+        events.push(...staticEvents, ...freshEvents);
+    } else {
+        for (const {id: calendarId, selected} of calendars) {
+            if (selected) {
+                const calendarEvents = await getCalendarEvents(calendarId);
+                events.push(...calendarEvents);
+            }
         }
     }
 

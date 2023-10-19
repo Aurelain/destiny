@@ -34,7 +34,7 @@ const toggleCalendar = async (calendarId) => {
     });
 
     if (futureSelected) {
-        await requestEvents(); // TODO only request if we've never requested this calendar
+        await requestEvents(calendarId);
     }
 };
 
