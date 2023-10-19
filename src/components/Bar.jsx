@@ -60,6 +60,7 @@ const SX = {
     },
 };
 
+const MENU_SHOW_DONE = 'MENU_SHOW_DONE';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 
@@ -85,12 +86,6 @@ class Bar extends React.PureComponent {
                     variant={'inverted'}
                 />
                 <div css={SX.grow} />
-                <Button
-                    icon={showDone ? EyeCircle : EyeOutline}
-                    cssNormal={SX.btn}
-                    onClick={this.onDoneClick}
-                    variant={'inverted'}
-                />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <div css={SX.sliver} />
                 <SideMenu
@@ -98,7 +93,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Destiny'}
-                    list={this.memoMenuList(calendars)}
+                    list={this.memoMenuList(calendars, showDone)}
                     listItemCss={SX.listItem}
                 />
             </div>
@@ -142,6 +137,9 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async ({name}) => {
         switch (name) {
+            case MENU_SHOW_DONE:
+                toggleShowDone();
+                break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
@@ -166,13 +164,6 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    onDoneClick = () => {
-        toggleShowDone();
-    };
-
-    /**
-     *
-     */
     onReloadClick = () => {
         window.scrollTo(0, 0);
         window.location.reload();
@@ -188,7 +179,7 @@ class Bar extends React.PureComponent {
     /**
      *
      */
-    memoMenuList = memoize((calendars) => {
+    memoMenuList = memoize((calendars, showDone) => {
         const list = [];
         for (const calendarItem of calendars) {
             const {id, summary, backgroundColor, selected} = calendarItem;
@@ -207,6 +198,11 @@ class Bar extends React.PureComponent {
         list.push(
             ...[
                 Separator,
+                {
+                    name: MENU_SHOW_DONE,
+                    icon: showDone ? EyeCircle : EyeOutline,
+                    label: showDone ? 'Hide done' : 'Show done',
+                },
                 {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,
