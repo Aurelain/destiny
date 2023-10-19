@@ -53,7 +53,7 @@ class SelectCalendar extends React.PureComponent {
      *
      */
     memoButtonProps = memoize((calendars, calendarId, styling) => {
-        const calendar = findCalendar(calendarId, calendars);
+        const calendar = findCalendar(calendarId, calendars) || {summary: '', backgroundColor: '#000'};
         const {summary, backgroundColor} = calendar;
         return {
             cssNormal: {...SX.buttonNormal, ...styling},

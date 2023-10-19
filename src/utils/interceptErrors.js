@@ -6,6 +6,7 @@ let queue;
 let destroyTimeout;
 let containerElement;
 let isExpanded = false;
+const listeners = new Map();
 
 // =====================================================================================================================
 //  P U B L I C
@@ -17,6 +18,20 @@ const interceptErrors = () => {
     window.addEventListener('error', onError, true);
     window.addEventListener('unhandledrejection', onUnhandledRejection, true);
     navigator.serviceWorker?.addEventListener('message', onServiceWorkerMessage, true);
+};
+
+/**
+ *
+ */
+const addErrorListener = (handler) => {
+    listeners.set(handler, true);
+};
+
+/**
+ *
+ */
+const removeErrorListener = (handler) => {
+    listeners.remove(handler);
 };
 
 // =====================================================================================================================
@@ -83,11 +98,15 @@ const panic = (type, {message, stack}) => {
  */
 const renderQueue = () => {
     let items = [];
-    for (const {type, message, stack} of queue) {
+    for (const item of queue) {
+        const {type, message, stack} = item;
         if (isExpanded) {
             items.push(type + '<br/>' + message + '<br/>' + stack);
         } else {
             items.push(message.match(/.*/)[0]);
+        }
+        for (const [handler] of listeners) {
+            handler(item);
         }
     }
     containerElement.innerHTML = `<ul><li>${items.join('</li><li>')}</li></ul>`;
@@ -128,4 +147,5 @@ const destroyContainerElement = () => {
 // =====================================================================================================================
 //  R U N
 // =====================================================================================================================
+export {addErrorListener, removeErrorListener};
 interceptErrors();

@@ -9,6 +9,8 @@ import {selectAccessToken} from '../state/selectors.js';
 import requestCalendars from '../state/actions/requestCalendars.js';
 import requestEvents from '../state/actions/requestEvents.js';
 import Fireworks from '../ui/Fireworks.jsx';
+import {addErrorListener} from '../utils/interceptErrors.js';
+import clearTokens from '../state/actions/clearTokens.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -38,6 +40,8 @@ class App extends React.PureComponent {
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 
+        addErrorListener(this.onGlobalError);
+
         if (this.props.accessToken) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
             this.syncWithCloud();
@@ -66,6 +70,15 @@ class App extends React.PureComponent {
     syncWithCloud = async () => {
         await requestCalendars();
         await requestEvents();
+    };
+
+    /**
+     *
+     */
+    onGlobalError = ({message}) => {
+        if (message.match(/grant/i) || message.match(/token/i)) {
+            clearTokens();
+        }
     };
 }
 

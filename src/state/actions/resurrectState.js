@@ -28,7 +28,10 @@ const resurrectState = async () => {
         console.warn(e);
         return;
     }
+
     // delete stored.tokens;
+    // stored.tokens.accessToken += 'x';
+    // stored.tokens.refreshToken += 'x';
 
     setState((state) => {
         for (const key in stored) {
