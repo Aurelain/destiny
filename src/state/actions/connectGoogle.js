@@ -73,6 +73,7 @@ const onCodeReceived = async (codeClientResponse) => {
             refreshToken: tokensFromGoogle.refresh_token,
             expirationTimestamp: Date.now() + tokensFromGoogle.expires_in * 1000,
         };
+        state.volatile.isAuthenticated = true;
     });
 
     await requestCalendars();

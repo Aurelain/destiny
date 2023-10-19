@@ -5,12 +5,12 @@ import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import New from './New.jsx';
-import {selectAccessToken} from '../state/selectors.js';
+import {selectIsAuthenticated} from '../state/selectors.js';
 import requestCalendars from '../state/actions/requestCalendars.js';
 import requestEvents from '../state/actions/requestEvents.js';
 import Fireworks from '../ui/Fireworks.jsx';
 import {addErrorListener} from '../utils/interceptErrors.js';
-import clearTokens from '../state/actions/clearTokens.js';
+import failAuthentication from '../state/actions/failAuthentication.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,13 +24,13 @@ class App extends React.PureComponent {
     constructionTimestamp = Date.now();
 
     render() {
-        const {accessToken} = this.props;
+        const {isAuthenticated} = this.props;
         return (
             <>
                 <Bar />
-                {!accessToken && <Connect />}
-                {accessToken && <Calendar />}
-                {accessToken && <New />}
+                {!isAuthenticated && <Connect />}
+                {isAuthenticated && <Calendar />}
+                {isAuthenticated && <New />}
                 <Fireworks />
             </>
         );
@@ -42,7 +42,7 @@ class App extends React.PureComponent {
 
         addErrorListener(this.onGlobalError);
 
-        if (this.props.accessToken) {
+        if (this.props.isAuthenticated) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
             this.syncWithCloud();
         }
@@ -55,10 +55,10 @@ class App extends React.PureComponent {
      *
      */
     onDocumentVisibilityChange = async () => {
-        const {accessToken} = this.props;
+        const {isAuthenticated} = this.props;
         const hasBecomeVisible = !document.hidden;
         const isExpired = Date.now() > this.constructionTimestamp + VISIBILITY_EXPIRATION;
-        if (accessToken && hasBecomeVisible && isExpired) {
+        if (isAuthenticated && hasBecomeVisible && isExpired) {
             window.scrollTo(0, 0);
             window.location.reload();
         }
@@ -77,7 +77,7 @@ class App extends React.PureComponent {
      */
     onGlobalError = ({message}) => {
         if (message.match(/grant/i) || message.match(/token/i)) {
-            clearTokens();
+            failAuthentication();
         }
     };
 }
@@ -86,11 +86,11 @@ class App extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 App.propTypes = {
-    accessToken: PropTypes.string.isRequired,
+    isAuthenticated: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-    accessToken: selectAccessToken(state),
+    isAuthenticated: selectIsAuthenticated(state),
 });
 
 export default connect(mapStateToProps)(App);

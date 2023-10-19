@@ -39,7 +39,9 @@ store.subscribe(() => {
     const state = getState();
     // console.log('Persisting', state);
     if (!USE_MOCK) {
-        localforage.setItem(STORE_KEY, state);
+        const safeState = {...state};
+        safeState.volatile = {};
+        localforage.setItem(STORE_KEY, safeState);
     }
 });
 

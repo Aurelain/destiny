@@ -4,6 +4,7 @@ import {STORE_KEY, USE_MOCK} from '../../SETTINGS.js';
 import healJson from '../../utils/healJson.js';
 import STATE_SCHEMA from '../STATE_SCHEMA.js';
 import STATE_MOCK from '../STATE_MOCK.js';
+import {selectAccessToken} from '../selectors.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -30,13 +31,12 @@ const resurrectState = async () => {
     }
 
     // delete stored.tokens;
-    // stored.tokens.accessToken += 'x';
-    // stored.tokens.refreshToken += 'x';
 
     setState((state) => {
         for (const key in stored) {
             state[key] = stored[key];
         }
+        state.volatile.isAuthenticated = Boolean(selectAccessToken(state)); // ugly :(
     });
 };
 

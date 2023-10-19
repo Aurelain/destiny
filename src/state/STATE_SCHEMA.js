@@ -119,6 +119,10 @@ export default {
             },
             required: ['expandedEvents', 'showDone', 'preferredCalendar'],
         },
+        volatile: {
+            type: 'object',
+            additionalProperties: false,
+        },
     },
-    required: ['tokens', 'calendars', 'events', 'options'],
+    required: ['tokens', 'calendars', 'events', 'options', 'volatile'],
 };

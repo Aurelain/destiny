@@ -60,6 +60,7 @@ export default {
                         enum: ['confirmed', 'tentative', 'cancelled'],
                     },
                     reminders: {
+                        // optional, this is missing in `en.romanian#holiday@group.v.calendar.google.com`
                         type: 'object',
                         properties: {
                             useDefault: {
@@ -82,7 +83,7 @@ export default {
                         },
                     },
                 },
-                required: ['id', 'summary', 'start', 'end', 'status', 'reminders'],
+                required: ['id', 'summary', 'start', 'end', 'status'],
             },
         },
     },

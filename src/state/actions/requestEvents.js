@@ -24,21 +24,13 @@ const requestEvents = async (calendarId) => {
     if (calendarId) {
         const existingEvents = selectEvents(state);
         const staticEvents = existingEvents.filter((event) => event.calendarId !== calendarId);
-        try {
-            const freshEvents = await getCalendarEvents(calendarId);
-            events.push(...staticEvents, ...freshEvents);
-        } catch (e) {
-            console.log(`Failed at ${calendarId}`);
-        }
+        const freshEvents = await getCalendarEvents(calendarId);
+        events.push(...staticEvents, ...freshEvents);
     } else {
         for (const {id: calendarId, selected} of calendars) {
             if (selected) {
-                try {
-                    const calendarEvents = await getCalendarEvents(calendarId);
-                    events.push(...calendarEvents);
-                } catch (e) {
-                    console.log(`Failed at ${calendarId}`);
-                }
+                const calendarEvents = await getCalendarEvents(calendarId);
+                events.push(...calendarEvents);
             }
         }
     }
@@ -60,7 +52,8 @@ const getCalendarEvents = async (calendarId) => {
     const now = Date.now();
     const lastWeek = now - 7 * MILLISECONDS_IN_A_DAY;
     const nextMonth = now + 31 * MILLISECONDS_IN_A_DAY;
-    const result = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
+    const safeCalendarId = encodeURIComponent(calendarId);
+    const result = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${safeCalendarId}/events`, {
         searchParams: {
             timeMin: new Date(lastWeek).toISOString(),
             timeMax: new Date(nextMonth).toISOString(),

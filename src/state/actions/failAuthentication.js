@@ -6,13 +6,13 @@ import {setState} from '../store.js';
 /**
  *
  */
-const clearTokens = () => {
+const failAuthentication = () => {
     setState((state) => {
-        state.tokens = {};
+        state.volatile.isAuthenticated = false;
     });
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default clearTokens;
+export default failAuthentication;
