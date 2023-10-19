@@ -17,6 +17,7 @@ import {getState} from '../state/store.js';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
 import updateSummary from '../state/actions/updateSummary.js';
+import defocus from '../utils/defocus.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -115,6 +116,7 @@ class New extends React.PureComponent {
     onInputKeyDown = (event) => {
         if (event.key === 'Enter') {
             this.create();
+            defocus();
         }
     };
 

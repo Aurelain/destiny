@@ -4,6 +4,7 @@ import Button from '../Button.jsx';
 import ChevronLeft from '../Icons/ChevronLeft.jsx';
 import ChevronRight from '../Icons/ChevronRight.jsx';
 import buildMonth from './buildMonth.js';
+import {LOCALE} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -27,6 +28,7 @@ const SX = {
         height: 32,
         lineHeight: '32px',
         borderRadius: '50%',
+        textAlign: 'center',
     },
     foreignNr: {
         color: 'silver',
@@ -36,10 +38,26 @@ const SX = {
         fontWeight: 'bold',
     },
     markedNr: {
-        color: '#fff',
-        backgroundColor: '#1976d2',
+        border: 'solid 2px #1976d2',
+        // color: '#fff',
+        // backgroundColor: '#1976d2',
     },
 };
+const WEEKDAYS = ['2023-10-16', '2023-10-17', '2023-10-18', '2023-10-19', '2023-10-20', '2023-10-21', '2023-10-22'];
+const TODAY_WEEKDAY_INDEX = new Date().getDay();
+const WEEKDAY_NAMES_ROW = (
+    <div css={SX.row}>
+        {WEEKDAYS.map((ymd) => {
+            const date = new Date(ymd);
+            const isTodayWeekday = date.getDay() === TODAY_WEEKDAY_INDEX;
+            return (
+                <div key={ymd} css={[SX.nr, isTodayWeekday && SX.todayNr]}>
+                    {date.toLocaleString(LOCALE, {weekday: 'narrow'})}
+                </div>
+            );
+        })}
+    </div>
+);
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -85,6 +103,7 @@ class Month extends React.PureComponent {
                         variant={'simple'}
                     />
                 </div>
+                {WEEKDAY_NAMES_ROW}
                 {month.map((row, index) => {
                     return (
                         <div css={SX.row} key={index}>
@@ -103,6 +122,7 @@ class Month extends React.PureComponent {
                                         label={ymd.substring(8).replace(/^0/, '')}
                                         variant={'simple'}
                                         onClick={this.onNrClick}
+                                        onHold={this.onNrHold}
                                     />
                                 );
                             })}
@@ -157,7 +177,15 @@ class Month extends React.PureComponent {
      */
     onNrClick = ({data: ymd}) => {
         const {onChange} = this.props;
-        onChange(ymd);
+        onChange({ymd});
+    };
+
+    /**
+     *
+     */
+    onNrHold = ({data: ymd}) => {
+        const {onHold} = this.props;
+        onHold({ymd});
     };
 }
 
@@ -190,6 +218,7 @@ const getMonthName = (date) => {
 Month.propTypes = {
     date: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]).isRequired,
     onChange: PropTypes.func.isRequired,
+    onHold: PropTypes.func,
 };
 
 export default Month;

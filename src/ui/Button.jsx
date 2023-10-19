@@ -104,6 +104,8 @@ class Button extends React.PureComponent {
         const {label, icon, holdIcon, cssNormal, cssHover, cssActive, variant, disabled, innerRef, ...otherProps} =
             this.props;
         delete otherProps.onHold;
+        delete otherProps.onHoldStart;
+        delete otherProps.onHoldCancel;
         delete otherProps.onClick;
         delete otherProps.onPress;
         delete otherProps.onRelease;
@@ -146,12 +148,20 @@ class Button extends React.PureComponent {
         );
     }
 
+    componentDidUpdate() {
+        const {isHovering, isPressing, isHolding} = this.state;
+        if (this.props.disabled && (isHovering || isPressing || isHolding)) {
+            this.cancelInteractivity();
+            this.setState({
+                isHovering: false,
+                isPressing: false,
+                isHolding: false,
+            });
+        }
+    }
+
     componentWillUnmount() {
-        this.cancelHolding();
-        this.cancelPressing();
-        clearTimeout(this.releaseTimeout);
-        clearTimeout(this.clickTimeout);
-        this.clickParams = null;
+        this.cancelInteractivity();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -280,6 +290,7 @@ class Button extends React.PureComponent {
         this.setState({
             isHolding: true,
         });
+        this.props.onHoldStart?.();
     };
 
     /**
@@ -295,10 +306,14 @@ class Button extends React.PureComponent {
      *
      */
     cancelHolding = () => {
-        this.setState({isHolding: false});
+        const {isHolding} = this.state;
         clearTimeout(this.holdTimeout);
         window.removeEventListener('pointermove', this.onWindowMotion);
         window.removeEventListener('touchmove', this.onWindowMotion);
+        if (isHolding) {
+            this.setState({isHolding: false});
+            this.props.onHoldCancel?.();
+        }
     };
 
     /**
@@ -343,6 +358,17 @@ class Button extends React.PureComponent {
         const {onRelease, name, data} = this.props;
         const payload = {name, data};
         onRelease(payload);
+    };
+
+    /**
+     *
+     */
+    cancelInteractivity = () => {
+        this.cancelHolding();
+        this.cancelPressing();
+        clearTimeout(this.releaseTimeout);
+        clearTimeout(this.clickTimeout);
+        this.clickParams = null;
     };
 }
 
@@ -398,6 +424,8 @@ Button.propTypes = {
     cssActive: PropTypes.any,
     onClick: PropTypes.func,
     onHold: PropTypes.func,
+    onHoldStart: PropTypes.func,
+    onHoldCancel: PropTypes.func,
     onPress: PropTypes.func,
     onRelease: PropTypes.func,
     innerRef: PropTypes.object,

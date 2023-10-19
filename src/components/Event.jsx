@@ -24,7 +24,7 @@ import ArrowDownThin from '../ui/Icons/ArrowDownThin.jsx';
 import ChevronDoubleDown from '../ui/Icons/ChevronDoubleDown.jsx';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import Select from '../ui/Select.jsx';
-import MonthTime from '../ui/MonthTime.jsx';
+import MonthTime from './MonthTime/MonthTime.jsx';
 import FanAlert from '../ui/Icons/FanAlert.jsx';
 import Recurrence from './Recurrence.jsx';
 import checkShopping from '../system/checkShopping.js';
@@ -249,8 +249,8 @@ class Event extends React.PureComponent {
 
     onTimeSelect = (value) => {
         console.log('onTimeSelect:', value);
-        const {calendarId, eventId} = this.props;
-        scheduleEvent(calendarId, eventId, value);
+        // const {calendarId, eventId} = this.props;
+        // scheduleEvent(calendarId, eventId, value);
     };
 
     onMonthTimeHold = () => {
