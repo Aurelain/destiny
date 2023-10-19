@@ -18,6 +18,8 @@ import collectShoppingSuggestions from '../system/collectShoppingSuggestions.js'
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import ShoppingSuggestions from './ShoppingSuggestions.jsx';
 import FormatListBulletedSquare from '../ui/Icons/FormatListBulletedSquare.jsx';
+import {burstAtMouse} from '../ui/Fireworks.jsx';
+import collapse from '../system/collapse.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -47,6 +49,7 @@ const SX = {
             verticalAlign: 'text-bottom',
             top: 2,
         },
+        minHeight: 0,
     },
     emptyItem: {
         display: 'flex',
@@ -276,7 +279,9 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onDoneHold = ({data: index}) => {
+    onDoneHold = async ({data: index, event}) => {
+        collapse(event);
+        await burstAtMouse(event);
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             const item = draft.items[index];
             if (item.text) {

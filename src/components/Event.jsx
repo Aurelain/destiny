@@ -29,6 +29,8 @@ import FanAlert from '../ui/Icons/FanAlert.jsx';
 import Recurrence from './Recurrence.jsx';
 import checkShopping from '../system/checkShopping.js';
 import scrollIntoView from '../utils/scrollIntoView.js';
+import {burstAtMouse} from '../ui/Fireworks.jsx';
+import collapse from '../system/collapse.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -36,6 +38,7 @@ import scrollIntoView from '../utils/scrollIntoView.js';
 const SX = {
     root: {
         marginTop: 4,
+        overflow: 'hidden',
     },
     title: {
         height: 32,
@@ -231,7 +234,10 @@ class Event extends React.PureComponent {
         toggleEvent(eventId);
     };
 
-    onTitleHold = () => {
+    onTitleHold = async ({event}) => {
+        collapse({currentTarget: this.rootRef.current});
+        await burstAtMouse(event);
+
         const {calendarId, eventId} = this.props;
         classifyEvent(calendarId, eventId);
     };

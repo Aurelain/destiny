@@ -8,6 +8,7 @@ import New from './New.jsx';
 import {selectAccessToken} from '../state/selectors.js';
 import requestCalendars from '../state/actions/requestCalendars.js';
 import requestEvents from '../state/actions/requestEvents.js';
+import Fireworks from '../ui/Fireworks.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -28,6 +29,7 @@ class App extends React.PureComponent {
                 {!accessToken && <Connect />}
                 {accessToken && <Calendar />}
                 {accessToken && <New />}
+                <Fireworks />
             </>
         );
     }

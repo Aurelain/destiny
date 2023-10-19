@@ -20,6 +20,9 @@ dependencies:
   ajv:
     specifier: ^8.12.0
     version: 8.12.0
+  fireworks-js:
+    specifier: ^2.10.7
+    version: 2.10.7
   gsap:
     specifier: ^3.12.2
     version: 3.12.2
@@ -1109,6 +1112,10 @@ packages:
       locate-path: 6.0.0
       path-exists: 4.0.0
     dev: true
+
+  /fireworks-js@2.10.7:
+    resolution: {integrity: sha512-FyRNiqlgu9ZeFCjfN0UiGUlj5dUWNYLyFaWN/Q8sOMf0E+KGA4dMROaBZpCtym85fChgCspoa3jHoLTRZiy74A==}
+    dev: false
 
   /flat-cache@3.1.0:
     resolution: {integrity: sha512-OHx4Qwrrt0E4jEIcI5/Xb+f+QmJYNj2rrK8wiIdQOIrB9WrrJL8cjZvXdXuBTkkEwEqLycb5BeZDV1o2i9bTew==}
