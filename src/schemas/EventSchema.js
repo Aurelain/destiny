@@ -117,3 +117,38 @@ export default {
     "eventType": "default"
 }
  */
+
+/*
+event: {
+    "kind": "calendar#event",
+    "etag": "\"3392683874134000\"",
+    "id": "20231031_jbl674tc2duf8i9cl09kg2qvs4",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=MjAyMzE5pYW4jaG9saWRheUB2",
+    "created": "2023-10-03T14:05:37.000Z",
+    "updated": "2023-10-03T14:05:37.067Z",
+    "summary": "Halloween",
+    "description": "Observance\nTo hide observances, go to Google Calendar Settings > Holidays in Romania",
+    "creator": {
+        "email": "en.romanian#holiday@group.v.calendar.google.com",
+        "displayName": "Holidays in Romania",
+        "self": true
+    },
+    "organizer": {
+        "email": "en.romanian#holiday@group.v.calendar.google.com",
+        "displayName": "Holidays in Romania",
+        "self": true
+    },
+    "start": {
+        "date": "2023-10-31"
+    },
+    "end": {
+        "date": "2023-11-01"
+    },
+    "transparency": "transparent",
+    "visibility": "public",
+    "iCalUID": "20231031_jbl674tc2duf8i9cl09kg2qvs4@google.com",
+    "sequence": 0,
+    "eventType": "default"
+}
+ */

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {BAR_HEIGHT, BAR_SAFETY, MILLISECONDS_IN_A_DAY, NEW_HEIGHT} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, MILLISECONDS_IN_A_DAY, NEW_HEIGHT} from '../SETTINGS.js';
 import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
@@ -16,7 +16,7 @@ const SX = {
     root: {
         paddingTop: BAR_HEIGHT + BAR_SAFETY + 8,
         paddingRight: 8,
-        paddingBottom: NEW_HEIGHT + 8,
+        paddingBottom: NEW_HEIGHT + FOOTER_SAFETY + 8,
         paddingLeft: 8,
         '& > *:first-of-type': {
             marginTop: 8,

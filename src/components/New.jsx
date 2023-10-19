@@ -1,5 +1,5 @@
 import React from 'react';
-import {NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
+import {FOOTER_SAFETY, NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../ui/Button.jsx';
 import Plus from '../ui/Icons/Plus.jsx';
 import SelectCalendar from './SelectCalendar.jsx';
@@ -28,7 +28,8 @@ const SX = {
         bottom: 0,
         left: 0,
         right: 0,
-        height: NEW_HEIGHT,
+        height: NEW_HEIGHT + FOOTER_SAFETY,
+        paddingBottom: FOOTER_SAFETY,
         background: PRIMARY_COLOR,
         display: 'flex',
         flexDirection: 'row',
@@ -43,6 +44,8 @@ const SX = {
         borderRadius: 20,
         padding: '0 16px',
         margin: '8px 2px',
+        appearance: 'none',
+        background: '#fff',
     },
     plus: {
         height: '100%',
