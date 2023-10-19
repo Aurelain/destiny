@@ -31,40 +31,35 @@ const scheduleEvent = async (calendarId, eventId, destination) => {
 
     toggleEvent(eventId, false);
 
-    const state = getState();
-    const calendars = selectCalendars(state);
-    const {timeZone} = findCalendar(calendarId, calendars);
-
     if (checkOffline()) {
         // TODO: add to pending operations
         return;
     }
 
-    const body = {
-        start: {
-            [patchProp]: freshStart,
-            timeZone,
-        },
-        end: {
-            [patchProp]: freshEnd,
-            timeZone,
-        },
-    };
-    if (patchProp === 'dateTime') {
-        // body.start.timeZone = timeZone;
-        // body.end.timeZone = timeZone;
-        // const existingEvent = findEvent(state, calendarId, eventId);
-        // console.log('existingEvent:', existingEvent);
-        // if (existingEvent.reminders.overrides)
-        // body.reminders = {
-        //     useDefault: false,
-        //
-        // };
-    }
+    /*
+    Note: We're using PUT instead of PATCH because the PATCH fails when switching an event from "all-day" to a
+    precise timestamp or the other way around.
+     */
 
+    const state = getState();
+    const calendars = selectCalendars(state);
+    const {timeZone} = findCalendar(calendarId, calendars);
+    const existingEvent = findEvent(state, calendarId, eventId);
     await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
-        method: 'PATCH',
-        body,
+        method: 'PUT',
+        body: {
+            start: {
+                [patchProp]: freshStart,
+                timeZone,
+            },
+            end: {
+                [patchProp]: freshEnd,
+                timeZone,
+            },
+            // Ensure we don't lose the other properties, since we're using `update` (PUT):
+            summary: existingEvent.summary,
+            reminders: existingEvent.reminders,
+        },
         schema: EventSchema,
     });
 };

@@ -16,15 +16,16 @@ const toggleReminder = async (calendarId, eventId) => {
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {
         const event = findEvent(state, calendarId, eventId);
-        if (event.reminder) {
-            event.reminder = false;
-        } else {
+        if (!event.reminders?.overrides?.length) {
             overrides.push({
                 method: 'popup',
                 minutes: 0,
             });
-            event.reminder = true;
         }
+        event.reminders = {
+            useDefault: false,
+            overrides,
+        };
     });
 
     if (checkOffline()) {

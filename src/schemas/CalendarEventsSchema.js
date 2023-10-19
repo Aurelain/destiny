@@ -62,6 +62,9 @@ export default {
                     reminders: {
                         type: 'object',
                         properties: {
+                            useDefault: {
+                                type: 'boolean',
+                            },
                             overrides: {
                                 type: 'array',
                             },

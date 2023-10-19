@@ -77,7 +77,7 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         start: unifiedStart,
         end: unifiedEnd,
         status,
-        reminder: Boolean(reminders.overrides?.length),
+        reminders,
         recurringEventId,
         recurrence: recurrence ? recurrence[0] : undefined,
     };

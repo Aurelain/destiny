@@ -33,7 +33,15 @@ const STATE_MOCK = {
             start: '2023-12-25T15:00:00+03:00',
             end: '2023-12-25T16:00:00+03:00',
             status: 'confirmed',
-            reminder: false,
+            reminders: {
+                useDefault: false,
+                overrides: [
+                    {
+                        method: 'popup',
+                        minutes: 0,
+                    },
+                ],
+            },
         },
         {
             id: 'urm29vfme6ebe49npr1hrn5kd1',
@@ -42,7 +50,6 @@ const STATE_MOCK = {
             start: '2023-10-25',
             end: '2023-10-25',
             status: 'cancelled',
-            reminder: false,
         },
         {
             id: 'urm29vfme6ebe49npr1hrn5kdg',
@@ -51,7 +58,6 @@ const STATE_MOCK = {
             start: '2023-10-25T16:00:00+03:00',
             end: '2023-10-25T17:00:00+03:00',
             status: 'confirmed',
-            reminder: false,
             recurringEventId: 'myRecurringEventId',
             recurrence: 'x',
         },
@@ -68,7 +74,6 @@ const STATE_MOCK = {
             start: '2023-10-25',
             end: '2023-10-25',
             status: 'confirmed',
-            reminder: false,
         },
     ]),
     options: {

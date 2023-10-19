@@ -146,11 +146,13 @@ class Event extends React.PureComponent {
             timeZone,
             isExpanded,
             calendarId,
-            reminder,
+            reminders,
             isDone,
             recurringEventId,
         } = this.props;
         const {contentHeight} = this.state;
+
+        const hasReminders = Boolean(reminders?.overrides?.length);
 
         const timeInterval = this.memoTimeInterval(start, end);
         const sanitizedTitle = this.memoSanitizeTitle(title);
@@ -180,8 +182,8 @@ class Event extends React.PureComponent {
                                 // forcedOpen={true}
                             />
                             <Button // Bell
-                                cssNormal={[SX.btn, reminder && SX.btnSpecial]}
-                                icon={reminder ? BellRing : Bell}
+                                cssNormal={[SX.btn, hasReminders && SX.btnSpecial]}
+                                icon={hasReminders ? BellRing : Bell}
                                 onClick={this.onBellClick}
                             />
                             <Select
@@ -356,7 +358,7 @@ Event.propTypes = {
     isDone: PropTypes.bool.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
-    reminder: PropTypes.bool.isRequired,
+    reminders: PropTypes.object,
     backgroundColor: PropTypes.string.isRequired,
     recurringEventId: PropTypes.string,
     recurrence: PropTypes.string,

@@ -72,8 +72,18 @@ export default {
                         enum: ['confirmed', 'tentative', 'cancelled'],
                         default: 'confirmed',
                     },
-                    reminder: {
-                        type: 'boolean',
+                    reminders: {
+                        // optional
+                        type: 'object',
+                        additionalProperties: false,
+                        properties: {
+                            useDefault: {
+                                type: 'boolean',
+                            },
+                            overrides: {
+                                type: 'array',
+                            },
+                        },
                     },
                     recurringEventId: {
                         // optional
@@ -84,7 +94,7 @@ export default {
                         type: 'string',
                     },
                 },
-                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status', 'reminder'],
+                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status'],
             },
         },
         options: {
