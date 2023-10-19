@@ -47,12 +47,13 @@ const SX = {
         display: 'flex',
         boxShadow: 'none',
         padding: 0,
-        paddingLeft: 4,
+        paddingLeft: 8,
     },
     titleContent: {
         display: 'flex',
         alignItems: 'center',
-        width: 'calc(100% - 28px)',
+        // width: 'calc(100% - 28px)',
+        width: '100%',
         height: '100%',
     },
     titleHeading: {
@@ -81,6 +82,11 @@ const SX = {
         borderBottomLeftRadius: 0,
         borderTopLeftRadius: 0,
         flexShrink: 0,
+    },
+    doneIcon: {
+        flexShrink: 0,
+        marginRight: 2,
+        marginLeft: -4,
     },
     titleExpanded: {
         borderBottomRightRadius: 0,
@@ -148,6 +154,7 @@ class Event extends React.PureComponent {
             calendarId,
             reminders,
             isDone,
+            showDone,
             recurringEventId,
         } = this.props;
         const {contentHeight} = this.state;
@@ -162,9 +169,9 @@ class Event extends React.PureComponent {
             <div css={SX.root} ref={this.rootRef}>
                 <Button
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
-                    icon={isDone ? CheckCircle : CircleOutline}
-                    holdIcon={isDone ? CircleOutline : CheckCircle}
-                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval)}
+                    // icon={showDone && (isDone ? CheckCircle : CircleOutline)}
+                    // holdIcon={showDone && (isDone ? CircleOutline : CheckCircle)}
+                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, showDone, isDone)}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
@@ -292,7 +299,12 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoTitleLabel = memoize((title, timeInterval) => {
+    memoTitleLabel = memoize((title, timeInterval, showDone, isDone) => {
+        let DoneIcon = null;
+        if (showDone) {
+            DoneIcon = isDone ? CheckCircle : CircleOutline;
+        }
+
         return (
             <div css={SX.titleContent}>
                 {/*<Button*/}
@@ -303,6 +315,7 @@ class Event extends React.PureComponent {
                 {/*    onHold={this.onStatusHold}*/}
                 {/*    variant={'inverted'}*/}
                 {/*/>*/}
+                {DoneIcon && <DoneIcon styling={SX.doneIcon} />}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
                 <Button
@@ -357,6 +370,7 @@ Event.propTypes = {
     end: PropTypes.string.isRequired,
     timeZone: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
+    showDone: PropTypes.bool.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
     reminders: PropTypes.object,

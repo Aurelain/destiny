@@ -141,7 +141,7 @@ class Button extends React.PureComponent {
                 onTouchEnd={this.onRootRelease}
                 role={'button'}
             >
-                {this.memoIcon(iconInstance)}
+                {iconInstance}
                 {iconInstance && label && ' '}
                 {this.memoContent(label)}
             </div>
@@ -184,6 +184,9 @@ class Button extends React.PureComponent {
      */
     memoIcon = memoize((icon, holdIcon, isHolding) => {
         icon = isHolding && holdIcon ? holdIcon : icon;
+        if (!icon) {
+            return undefined;
+        }
         if (typeof icon === 'function') {
             const Icon = icon;
             return <Icon />;
@@ -414,8 +417,8 @@ Button.defaultProps = {
 };
 Button.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
-    icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-    holdIcon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+    icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.bool]),
+    holdIcon: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.bool]),
     variant: PropTypes.oneOf(['simple', 'inverted', 'contained']),
     disabled: PropTypes.bool,
     name: PropTypes.string,

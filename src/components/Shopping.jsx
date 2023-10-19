@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import {produce} from 'immer';
 import CheckCircle from '../ui/Icons/CheckCircle.jsx';
-import CircleOutline from '../ui/Icons/CircleOutline.jsx';
 import Button from '../ui/Button.jsx';
 import Editable from '../ui/Editable.jsx';
 import {selectShowDone} from '../state/selectors.js';
@@ -20,6 +19,7 @@ import ShoppingSuggestions from './ShoppingSuggestions.jsx';
 import FormatListBulletedSquare from '../ui/Icons/FormatListBulletedSquare.jsx';
 import {burstAtMouse} from '../ui/Fireworks.jsx';
 import collapse from '../system/collapse.js';
+import CircleSmall from '../ui/Icons/CircleSmall.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -122,9 +122,8 @@ class Shopping extends React.PureComponent {
                             <Button
                                 key={index}
                                 cssNormal={SX.buttonItem}
-                                icon={isDone ? CheckCircle : CircleOutline}
+                                icon={showDone && isDone ? CheckCircle : CircleSmall}
                                 label={text.replace(/<.*?>/g, '')}
-                                holdIcon={isDone ? CircleOutline : CheckCircle}
                                 onHold={this.onDoneHold}
                                 variant={'simple'}
                                 data={index}
@@ -135,7 +134,7 @@ class Shopping extends React.PureComponent {
                             <div key={index} css={SX.emptyItem}>
                                 <Button
                                     key={index}
-                                    icon={CircleOutline}
+                                    icon={CircleSmall}
                                     holdIcon={TrashCan}
                                     onClick={this.onEmptyClick}
                                     variant={'simple'}

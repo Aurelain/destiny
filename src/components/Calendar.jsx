@@ -71,6 +71,7 @@ class Calendar extends React.PureComponent {
                     reminders={reminders}
                     recurringEventId={recurringEventId}
                     recurrence={recurrence}
+                    showDone={showDone}
                 />,
             );
         }
