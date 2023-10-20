@@ -65,6 +65,9 @@ const createEvent = async (summary) => {
     setState((state) => {
         const event = findEvent(state, calendarId, eventId);
         event.id = cloudEvent.id;
+        state.options.expandedEvents = {
+            [event.id]: true,
+        };
     });
 };
 
