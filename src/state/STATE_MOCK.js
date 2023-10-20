@@ -84,7 +84,6 @@ const STATE_MOCK = {
             // urm29vfme6ebe49npr1hrn5kdg: true,
             urm29vfme6ebe49npr1hrn5k2: true,
         },
-        preferredCalendar: '',
         showDone: false,
     },
     volatile: {},

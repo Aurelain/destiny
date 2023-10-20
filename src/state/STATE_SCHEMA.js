@@ -116,11 +116,8 @@ export default {
                     type: 'boolean',
                     default: false,
                 },
-                preferredCalendar: {
-                    type: 'string',
-                },
             },
-            required: ['expandedEvents', 'showDone', 'preferredCalendar'],
+            required: ['expandedEvents', 'showDone'],
         },
         volatile: {
             type: 'object',
