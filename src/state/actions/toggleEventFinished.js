@@ -1,5 +1,6 @@
 import {setState} from '../store.js';
 import findEvent from '../../system/findEvent.js';
+import {DONE_MARKER, DONE_MATCH} from '../../SETTINGS.js';
 import saveEvent from '../../system/saveEvent.js';
 
 // =====================================================================================================================
@@ -8,32 +9,19 @@ import saveEvent from '../../system/saveEvent.js';
 /**
  *
  */
-const toggleReminder = async (calendarId, eventId) => {
-    // Change the state as soon as possible, without waiting for the cloud:
+const toggleEventFinished = async (calendarId, eventId) => {
     setState((state) => {
         const event = findEvent(state, calendarId, eventId);
-        if (!event.reminders?.overrides?.length) {
-            event.reminders = {
-                useDefault: false,
-                overrides: [
-                    {
-                        method: 'popup',
-                        minutes: 0,
-                    },
-                ],
-            };
+        if (event.summary.match(DONE_MATCH)) {
+            event.summary = event.summary.replace(DONE_MATCH, '');
         } else {
-            event.reminders = {
-                useDefault: false,
-                overrides: [],
-            };
+            event.summary = DONE_MARKER + event.summary;
         }
     });
-
     await saveEvent(calendarId, eventId);
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default toggleReminder;
+export default toggleEventFinished;

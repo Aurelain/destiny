@@ -1,14 +1,11 @@
-import requestApi from '../../system/requestApi.js';
 import getYYYYMMDD from '../../utils/getYYYYMMDD.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
-import EventSchema from '../../schemas/EventSchema.js';
-import {selectCalendars, selectEvents} from '../selectors.js';
+import {selectEvents} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
-import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import toggleEvent from './toggleEvent.js';
-import findCalendar from '../../system/findCalendar.js';
+import saveEvent from '../../system/saveEvent.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -18,7 +15,6 @@ import findCalendar from '../../system/findCalendar.js';
  */
 const scheduleEvent = async (calendarId, eventId, destination) => {
     const {freshStart, freshEnd} = analyzeDestination(calendarId, eventId, destination);
-    const patchProp = freshStart.length === 10 ? 'date' : 'dateTime';
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {
@@ -29,39 +25,8 @@ const scheduleEvent = async (calendarId, eventId, destination) => {
         sortEvents(events);
     });
 
-    toggleEvent(eventId, false);
-
-    if (checkOffline()) {
-        // TODO: add to pending operations
-        return;
-    }
-
-    /*
-    Note: We're using PUT instead of PATCH because the PATCH fails when switching an event from "all-day" to a
-    precise timestamp or the other way around.
-     */
-
-    const state = getState();
-    const calendars = selectCalendars(state);
-    const {timeZone} = findCalendar(calendarId, calendars);
-    const existingEvent = findEvent(state, calendarId, eventId);
-    await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
-        method: 'PUT',
-        body: {
-            start: {
-                [patchProp]: freshStart,
-                timeZone,
-            },
-            end: {
-                [patchProp]: freshEnd,
-                timeZone,
-            },
-            // Ensure we don't lose the other properties, since we're using `update` (PUT):
-            summary: existingEvent.summary,
-            reminders: existingEvent.reminders,
-        },
-        schema: EventSchema,
-    });
+    await toggleEvent(eventId, false);
+    await saveEvent(calendarId, eventId);
 };
 
 // =====================================================================================================================

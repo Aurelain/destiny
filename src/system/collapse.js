@@ -1,4 +1,6 @@
 import gsap from 'gsap';
+import {getState} from '../state/store.js';
+import {selectShowDone} from '../state/selectors.js';
 
 // =================================================================================================================
 //  P U B L I C
@@ -7,6 +9,10 @@ import gsap from 'gsap';
  *
  */
 const collapse = (event) => {
+    if (selectShowDone(getState())) {
+        // We're not collapsing when all items should be kept visible
+        return;
+    }
     const target = event.currentTarget || event.target.closest('[role="button"]');
     gsap.to(target, {
         opacity: 0,

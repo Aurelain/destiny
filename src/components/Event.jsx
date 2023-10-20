@@ -6,7 +6,7 @@ import CalendarMonth from '../ui/Icons/CalendarMonth.jsx';
 import scheduleEvent from '../state/actions/scheduleEvent.js';
 import Bell from '../ui/Icons/Bell.jsx';
 import CheckCircle from '../ui/Icons/CheckCircle.jsx';
-import classifyEvent from '../state/actions/classifyEvent.js';
+import toggleEventFinished from '../state/actions/toggleEventFinished.js';
 import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, FOOTER_SAFETY, NEW_HEIGHT} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import SelectCalendar from './SelectCalendar.jsx';
@@ -252,7 +252,7 @@ class Event extends React.PureComponent {
         await burstAtMouse(event);
 
         const {calendarId, eventId} = this.props;
-        classifyEvent(calendarId, eventId);
+        toggleEventFinished(calendarId, eventId);
     };
 
     onSummaryChange = ({value}) => {
@@ -261,7 +261,6 @@ class Event extends React.PureComponent {
     };
 
     onMonthTimeSelect = (startAndEnd) => {
-        console.log('onMonthTimeSelect:', startAndEnd);
         const {calendarId, eventId} = this.props;
         scheduleEvent(calendarId, eventId, startAndEnd);
     };
