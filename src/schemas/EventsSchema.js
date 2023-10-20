@@ -1,90 +1,13 @@
+import cloneShallow from '../utils/cloneShallow.js';
+import EventSchema from './EventSchema.js';
+
 export default {
-    $id: 'CalendarEventsSchema',
+    $id: 'EventsSchema',
     type: 'object',
     properties: {
         items: {
             type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    id: {
-                        type: 'string',
-                        minLength: 1,
-                    },
-                    summary: {
-                        type: 'string',
-                    },
-                    start: {
-                        type: 'object',
-                        properties: {
-                            date: {
-                                type: 'string',
-                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
-                            },
-                            dateTime: {
-                                type: 'string',
-                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T',
-                            },
-                        },
-                        oneOf: [
-                            {
-                                required: ['date'],
-                            },
-                            {
-                                required: ['dateTime'],
-                            },
-                        ],
-                    },
-                    end: {
-                        type: 'object',
-                        properties: {
-                            date: {
-                                type: 'string',
-                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
-                            },
-                            dateTime: {
-                                type: 'string',
-                                pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T',
-                            },
-                        },
-                        oneOf: [
-                            {
-                                required: ['date'],
-                            },
-                            {
-                                required: ['dateTime'],
-                            },
-                        ],
-                    },
-                    status: {
-                        enum: ['confirmed', 'tentative', 'cancelled'],
-                    },
-                    reminders: {
-                        // optional, this is missing in `en.romanian#holiday@group.v.calendar.google.com`
-                        type: 'object',
-                        properties: {
-                            useDefault: {
-                                type: 'boolean',
-                            },
-                            overrides: {
-                                type: 'array',
-                            },
-                        },
-                    },
-                    recurringEventId: {
-                        // optional
-                        type: 'string',
-                    },
-                    recurrence: {
-                        // optional
-                        type: 'array',
-                        items: {
-                            type: 'string',
-                        },
-                    },
-                },
-                required: ['id', 'summary', 'start', 'end', 'status'],
-            },
+            items: cloneShallow(EventSchema, '$id'),
         },
     },
     required: ['items'],

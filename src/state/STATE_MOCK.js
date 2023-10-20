@@ -14,8 +14,9 @@ const STATE_MOCK = {
             id: 'first',
             summary: 'First',
             backgroundColor: '#f4511e',
-            selected: true,
             timeZone: 'Europe/Bucharest',
+            selected: true,
+            primary: true,
         },
         {
             id: 'foo@gmail.com',
@@ -23,6 +24,7 @@ const STATE_MOCK = {
             backgroundColor: '#0b8043',
             selected: true,
             timeZone: 'Europe/Bucharest',
+            primary: false,
         },
     ],
     events: sortEvents([

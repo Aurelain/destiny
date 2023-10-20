@@ -2,7 +2,7 @@ import {selectCalendars, selectEvents} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
-import CalendarEventsSchema from '../../schemas/CalendarEventsSchema.js';
+import EventsSchema from '../../schemas/EventsSchema.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
 
@@ -52,8 +52,7 @@ const getCalendarEvents = async (calendarId) => {
     const now = Date.now();
     const lastWeek = now - 7 * MILLISECONDS_IN_A_DAY;
     const nextMonth = now + 31 * MILLISECONDS_IN_A_DAY;
-    const safeCalendarId = encodeURIComponent(calendarId);
-    const result = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${safeCalendarId}/events`, {
+    const result = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
         searchParams: {
             timeMin: new Date(lastWeek).toISOString(),
             timeMax: new Date(nextMonth).toISOString(),
@@ -63,7 +62,7 @@ const getCalendarEvents = async (calendarId) => {
             // maxResults: 3,
             orderBy: 'startTime',
         },
-        schema: CalendarEventsSchema,
+        schema: EventsSchema,
     });
     const cleanEvents = result.items.map((event) => sanitizeAndEnhanceEvent(event, calendarId));
     return cleanEvents;

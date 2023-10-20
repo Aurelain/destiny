@@ -9,8 +9,7 @@ import gsap from 'gsap';
 const collapse = (event) => {
     const target = event.currentTarget || event.target.closest('[role="button"]');
     gsap.to(target, {
-        height: 0,
-        padding: 0,
+        opacity: 0,
         duration: 0.5,
     });
 };

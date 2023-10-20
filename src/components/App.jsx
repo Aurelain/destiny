@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
-import New from './New.jsx';
+import Footer from './Footer.jsx';
 import {selectIsAuthenticated} from '../state/selectors.js';
 import requestCalendars from '../state/actions/requestCalendars.js';
 import requestEvents from '../state/actions/requestEvents.js';
@@ -30,7 +30,7 @@ class App extends React.PureComponent {
                 <Bar />
                 {!isAuthenticated && <Connect />}
                 {isAuthenticated && <Calendar />}
-                {isAuthenticated && <New />}
+                {isAuthenticated && <Footer />}
                 <Fireworks />
             </>
         );

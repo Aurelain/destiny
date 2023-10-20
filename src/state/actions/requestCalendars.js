@@ -53,13 +53,14 @@ const requestCalendars = async () => {
     });
 
     const calendars = [];
-    for (const {id, summary, backgroundColor, selected, timeZone} of result.items) {
+    for (const {id, summary, backgroundColor, selected, timeZone, primary} of result.items) {
         calendars.push({
             id,
             summary,
             backgroundColor: convertColor(backgroundColor),
-            selected: Boolean(selected),
             timeZone,
+            selected: Boolean(selected),
+            primary: Boolean(primary),
         });
     }
     calendars.sort(compareCalendars);

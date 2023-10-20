@@ -55,8 +55,7 @@ export default {
             enum: ['confirmed', 'tentative', 'cancelled'],
         },
         reminders: {
-            // optional, this is missing in `en.romanian#holiday@group.v.calendar.google.com`
-            type: 'object',
+            type: 'object', // optional, this is missing in `en.romanian#holiday@group.v.calendar.google.com`
             properties: {
                 useDefault: {
                     type: 'boolean',
@@ -67,12 +66,10 @@ export default {
             },
         },
         recurringEventId: {
-            // optional
-            type: 'string',
+            type: 'string', // optional
         },
         recurrence: {
-            // optional
-            type: 'array',
+            type: 'array', // optional
             items: {
                 type: 'string',
             },

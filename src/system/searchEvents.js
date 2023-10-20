@@ -2,7 +2,7 @@ import requestApi from './requestApi.js';
 import {selectCalendars, selectEvents} from '../state/selectors.js';
 import {getState} from '../state/store.js';
 import checkOffline from './checkOffline.js';
-import CalendarEventsSchema from '../schemas/CalendarEventsSchema.js';
+import EventsSchema from '../schemas/EventsSchema.js';
 import {MILLISECONDS_IN_A_DAY} from '../SETTINGS.js';
 
 // =====================================================================================================================
@@ -44,7 +44,7 @@ const searchEvents = async (query, isSmart = false) => {
                 orderBy: 'startTime',
                 q: query,
             },
-            schema: CalendarEventsSchema,
+            schema: EventsSchema,
         });
         // TODO: use the list
         for (const event of foundEvents.items) {

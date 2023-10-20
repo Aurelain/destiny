@@ -13,6 +13,9 @@ import OauthRefreshSchema from '../schemas/OauthRefreshSchema.js';
 const requestApi = async (url, options = {}) => {
     const accessToken = await getAccessToken();
 
+    // Ensure url safety (e.g. `en.romanian#holiday@group.v.calendar.google.com`)
+    url = url.replaceAll('#', '%23');
+
     const result = await requestJson(url, {
         ...options,
         headers: {

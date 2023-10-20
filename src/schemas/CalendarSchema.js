@@ -14,11 +14,18 @@ export default {
             type: 'string',
             pattern: '#[0-9a-f]{6}',
         },
+        timeZone: {
+            type: 'string',
+            minLength: 1,
+        },
         selected: {
-            type: 'boolean',
+            type: 'boolean', // optional
+        },
+        primary: {
+            type: 'boolean', // optional
         },
     },
-    required: ['id', 'summary', 'backgroundColor'],
+    required: ['id', 'summary', 'backgroundColor', 'timeZone'],
 };
 
 /*

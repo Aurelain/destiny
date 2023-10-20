@@ -35,14 +35,17 @@ export default {
                         type: 'string',
                         pattern: '#[0-9a-f]{6}',
                     },
-                    selected: {
-                        type: 'boolean',
-                    },
                     timeZone: {
                         type: 'string',
                     },
+                    selected: {
+                        type: 'boolean',
+                    },
+                    primary: {
+                        type: 'boolean',
+                    },
                 },
-                required: ['id', 'summary', 'backgroundColor', 'selected', 'timeZone'],
+                required: ['id', 'summary', 'backgroundColor', 'timeZone', 'selected', 'primary'],
             },
         },
         events: {

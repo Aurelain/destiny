@@ -2,14 +2,8 @@ import React from 'react';
 import {FOOTER_SAFETY, NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../ui/Button.jsx';
 import Plus from '../ui/Icons/Plus.jsx';
-import SelectCalendar from './SelectCalendar.jsx';
-import PropTypes from 'prop-types';
-import {selectCalendars, selectEvents, selectPreferredCalendar} from '../state/selectors.js';
-import {connect} from 'react-redux';
-import memoize from 'memoize-one';
-import changePreferredCalendar from '../state/actions/changePreferredCalendar.js';
+import {selectEvents} from '../state/selectors.js';
 import createEvent from '../state/actions/createEvent.js';
-import findCalendar from '../system/findCalendar.js';
 import clearShopping from '../state/actions/clearShopping.js';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import checkShopping from '../system/checkShopping.js';
@@ -43,7 +37,7 @@ const SX = {
         border: 'none',
         borderRadius: 20,
         padding: '0 16px',
-        margin: '8px 2px',
+        margin: 8,
         appearance: 'none',
         background: '#fff',
     },
@@ -62,22 +56,15 @@ const SX = {
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class New extends React.PureComponent {
+class Footer extends React.PureComponent {
     state = {
         value: '',
     };
 
     render() {
-        const {preferredCalendar, calendars} = this.props;
         const {value} = this.state;
-        const backgroundColor = this.memoBackgroundColor(preferredCalendar, calendars);
         return (
-            <div css={SX.root} style={{backgroundColor}}>
-                <SelectCalendar
-                    styling={SX.selectCalendar}
-                    calendarId={preferredCalendar}
-                    onSelect={this.onCalendarSelect}
-                />
+            <div css={SX.root}>
                 <input
                     type={'search'} // https://stackoverflow.com/a/73466347/844393
                     autoComplete={'off'}
@@ -126,13 +113,6 @@ class New extends React.PureComponent {
     /**
      *
      */
-    onCalendarSelect = ({name}) => {
-        changePreferredCalendar(name);
-    };
-
-    /**
-     *
-     */
     onPlusClick = () => {
         this.create();
     };
@@ -149,7 +129,6 @@ class New extends React.PureComponent {
      *
      */
     create = () => {
-        const {calendars, preferredCalendar} = this.props;
         const {value} = this.state;
         this.setState({value: ''});
 
@@ -170,36 +149,11 @@ class New extends React.PureComponent {
             }
         }
 
-        const calendar = findCalendar(preferredCalendar, calendars);
-        createEvent(calendar.id, value);
+        createEvent(value);
     };
-
-    /**
-     *
-     */
-    memoBackgroundColor = memoize((preferredCalendar, calendars) => {
-        const calendar = findCalendar(preferredCalendar, calendars);
-        return calendar?.backgroundColor || '#000';
-    });
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-New.propTypes = {
-    // -------------------------------- redux:
-    calendars: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            backgroundColor: PropTypes.string.isRequired,
-        }),
-    ).isRequired,
-    preferredCalendar: PropTypes.string,
-};
-
-const mapStateToProps = (state) => ({
-    calendars: selectCalendars(state),
-    preferredCalendar: selectPreferredCalendar(state),
-});
-
-export default connect(mapStateToProps)(New);
+export default Footer;

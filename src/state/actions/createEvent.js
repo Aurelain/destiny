@@ -1,8 +1,8 @@
 import requestApi from '../../system/requestApi.js';
 import getYYYYMMDD from '../../utils/getYYYYMMDD.js';
 import EventSchema from '../../schemas/EventSchema.js';
-import {selectEvents} from '../selectors.js';
-import {setState} from '../store.js';
+import {selectCalendars, selectEvents} from '../selectors.js';
+import {getState, setState} from '../store.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
@@ -15,10 +15,14 @@ import sanitizeSummary from '../../system/sanitizeSummary.js';
 /**
  *
  */
-const createEvent = async (calendarId, summary) => {
+const createEvent = async (summary) => {
     const today = getYYYYMMDD();
     const eventId = Math.random().toString();
     summary = sanitizeSummary(summary);
+
+    const state = getState();
+    const calendars = selectCalendars(state);
+    const calendarId = calendars.find((calendar) => calendar.primary).id;
 
     // Change the state as soon as possible, without waiting for the cloud:
     setState((state) => {

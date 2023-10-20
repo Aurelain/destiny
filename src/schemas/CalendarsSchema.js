@@ -1,3 +1,6 @@
+import CalendarSchema from './CalendarSchema.js';
+import cloneShallow from '../utils/cloneShallow.js';
+
 export default {
     $id: 'CalendarsSchema',
     type: 'object',
@@ -5,31 +8,7 @@ export default {
         items: {
             type: 'array',
             minItems: 1,
-            items: {
-                type: 'object',
-                properties: {
-                    id: {
-                        type: 'string',
-                        minLength: 1,
-                    },
-                    summary: {
-                        type: 'string',
-                        minLength: 1,
-                    },
-                    backgroundColor: {
-                        type: 'string',
-                        pattern: '#[0-9a-f]{6}',
-                    },
-                    selected: {
-                        type: 'boolean',
-                    },
-                    timeZone: {
-                        type: 'string',
-                        minLength: 1,
-                    },
-                },
-                required: ['id', 'summary', 'backgroundColor', 'timeZone'],
-            },
+            items: cloneShallow(CalendarSchema, '$id'),
         },
     },
     required: ['items'],
