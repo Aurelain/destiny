@@ -34,7 +34,9 @@ const createEvent = async (summary) => {
             start: today,
             end: today,
             status: 'confirmed',
-            reminders: false,
+            reminders: {
+                useDefault: false,
+            },
         });
         sortEvents(events);
     });

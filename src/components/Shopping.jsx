@@ -164,8 +164,12 @@ class Shopping extends React.PureComponent {
     componentDidUpdate(prevProps) {
         if (prevProps.html !== this.props.html && !this.shoppingStructure.items.at(-1)?.text) {
             // An empty item has just been added
-            const editableElements = this.rootRef.current.querySelectorAll('[contenteditable="true"]');
-            editableElements[editableElements.length - 1].focus();
+            const root = this.rootRef.current;
+            if (root) {
+                // TODO: how can root be missing? Happens when you apply a suggested list over an empty shopping list.
+                const editableElements = this.rootRef.current.querySelectorAll('[contenteditable="true"]');
+                editableElements[editableElements.length - 1]?.focus();
+            }
         }
     }
 

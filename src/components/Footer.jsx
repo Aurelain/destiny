@@ -134,18 +134,20 @@ class Footer extends React.PureComponent {
 
         if (checkShopping(value)) {
             const {title, items} = parseShopping(value);
-            const state = getState();
-            const events = selectEvents(state);
-            const pendingEvent = events.find((event) => {
-                const {summary} = event;
-                return checkShopping(summary) && parseShopping(summary).title === title;
-            });
-            if (pendingEvent) {
-                const {summary, calendarId, id} = pendingEvent;
-                const shoppingStructure = parseShopping(summary);
-                shoppingStructure.items.push(...items);
-                updateSummary(calendarId, id, stringifyShopping(shoppingStructure));
-                return;
+            if (items[0]?.text) {
+                const state = getState();
+                const events = selectEvents(state);
+                const pendingEvent = events.find((event) => {
+                    const {summary} = event;
+                    return checkShopping(summary) && parseShopping(summary).title === title;
+                });
+                if (pendingEvent) {
+                    const {summary, calendarId, id} = pendingEvent;
+                    const shoppingStructure = parseShopping(summary);
+                    shoppingStructure.items.push(...items);
+                    updateSummary(calendarId, id, stringifyShopping(shoppingStructure));
+                    return;
+                }
             }
         }
 
