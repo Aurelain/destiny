@@ -154,7 +154,8 @@ const mockCalendarEvents = (url) => {
  *
  */
 const sanitizeAndEnhanceEvent = (event, calendarId) => {
-    const {id, summary, start, end, status, reminders, recurringEventId, recurrence, locked, visibility} = event;
+    const {id, summary, start, end, status, reminders, recurringEventId, recurrence, locked, visibility, privateCopy} =
+        event;
     // if (summary.includes('nazurro')) {
     //     console.log('event: ' + JSON.stringify(event, null, 4));
     // }
@@ -170,7 +171,7 @@ const sanitizeAndEnhanceEvent = (event, calendarId) => {
         reminders,
         recurringEventId,
         recurrence: recurrence ? recurrence[0] : undefined,
-        isLocked: locked || visibility === 'private',
+        isLocked: locked || privateCopy || visibility === 'private',
     };
 };
 

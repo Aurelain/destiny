@@ -80,6 +80,9 @@ export default {
         locked: {
             type: 'boolean',
         },
+        privateCopy: {
+            type: 'boolean',
+        },
     },
     required: ['id', 'summary', 'start', 'end', 'status'],
 };
