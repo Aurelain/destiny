@@ -53,12 +53,13 @@ const requestCalendars = async () => {
     });
 
     const calendars = [];
-    for (const {id, summary, backgroundColor, selected, timeZone, primary} of result.items) {
+    for (const {id, summary, backgroundColor, selected, timeZone, accessRole, primary} of result.items) {
         calendars.push({
             id,
             summary,
             backgroundColor: convertColor(backgroundColor),
             timeZone,
+            isReadOnly: accessRole === 'reader',
             selected: Boolean(selected),
             primary: Boolean(primary),
         });

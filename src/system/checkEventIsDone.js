@@ -6,7 +6,11 @@ import {DONE_MATCH} from '../SETTINGS.js';
 /**
  *
  */
-const checkEventIsDone = (summary, status) => {
+const checkEventIsDone = (event, forcedDone = {}) => {
+    const {id, summary, status} = event;
+    if (id in forcedDone) {
+        return true;
+    }
     return Boolean(summary.match(DONE_MATCH)) || status === 'cancelled';
 };
 

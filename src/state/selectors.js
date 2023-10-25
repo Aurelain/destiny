@@ -5,5 +5,6 @@ export const selectCalendars = (state) => state.calendars;
 export const selectEvents = (state) => state.events;
 export const selectOptions = (state) => state.options;
 export const selectExpandedEvents = (state) => state.options.expandedEvents;
+export const selectForcedDone = (state) => state.options.forcedDone;
 export const selectShowDone = (state) => state.options.showDone;
 export const selectIsAuthenticated = (state) => state.volatile.isAuthenticated;

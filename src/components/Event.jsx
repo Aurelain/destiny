@@ -156,6 +156,7 @@ class Event extends React.PureComponent {
             isDone,
             showDone,
             recurringEventId,
+            isReadOnly,
         } = this.props;
         const {contentHeight} = this.state;
 
@@ -171,36 +172,38 @@ class Event extends React.PureComponent {
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
                     // icon={showDone && (isDone ? CheckCircle : CircleOutline)}
                     // holdIcon={showDone && (isDone ? CircleOutline : CheckCircle)}
-                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, showDone, isDone)}
+                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, showDone, isDone, isReadOnly)}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
                 {(isExpanded || contentHeight !== null) && (
                     <div css={this.memoContentCss(backgroundColor)} style={{height: contentHeight}}>
                         <SummaryComponent html={sanitizedTitle} onChange={this.onSummaryChange} />
-                        <div css={SX.toolbar}>
-                            <div css={SX.grow} />
-                            <Select
-                                buttonProps={TIME_BUTTON_PROPS}
-                                list={MonthTime}
-                                listProps={this.memoListProps(start, end, timeZone)}
-                                onSelect={this.onMonthTimeSelect}
-                                onHold={this.onMonthTimeHold}
-                                // forcedOpen={true}
-                            />
-                            <Button // Bell
-                                cssNormal={[SX.btn, hasReminders && SX.btnSpecial]}
-                                icon={hasReminders ? BellRing : Bell}
-                                onClick={this.onBellClick}
-                            />
-                            <Select
-                                buttonProps={recurringEventId ? FAN_ALERT_BUTTON_PROPS : FAN_BUTTON_PROPS}
-                                list={Recurrence}
-                                onOpen={this.onFanOpen}
-                                onSelect={this.onFanSelect}
-                            />
-                            <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
-                        </div>
+                        {!isReadOnly && (
+                            <div css={SX.toolbar}>
+                                <div css={SX.grow} />
+                                <Select
+                                    buttonProps={TIME_BUTTON_PROPS}
+                                    list={MonthTime}
+                                    listProps={this.memoListProps(start, end, timeZone)}
+                                    onSelect={this.onMonthTimeSelect}
+                                    onHold={this.onMonthTimeHold}
+                                    // forcedOpen={true}
+                                />
+                                <Button // Bell
+                                    cssNormal={[SX.btn, hasReminders && SX.btnSpecial]}
+                                    icon={hasReminders ? BellRing : Bell}
+                                    onClick={this.onBellClick}
+                                />
+                                <Select
+                                    buttonProps={recurringEventId ? FAN_ALERT_BUTTON_PROPS : FAN_BUTTON_PROPS}
+                                    list={Recurrence}
+                                    onOpen={this.onFanOpen}
+                                    onSelect={this.onFanSelect}
+                                />
+                                <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -298,7 +301,7 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoTitleLabel = memoize((title, timeInterval, showDone, isDone) => {
+    memoTitleLabel = memoize((title, timeInterval, showDone, isDone, isReadOnly) => {
         let DoneIcon = null;
         if (showDone) {
             DoneIcon = isDone ? CheckCircle : CircleOutline;
@@ -317,14 +320,16 @@ class Event extends React.PureComponent {
                 {DoneIcon && <DoneIcon styling={SX.doneIcon} />}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
-                <Button
-                    cssNormal={SX.titleHeading}
-                    icon={ArrowDownThin}
-                    holdIcon={ChevronDoubleDown}
-                    onClick={this.onHeadingClick}
-                    onHold={this.onHeadingHold}
-                    variant={'inverted'}
-                />
+                {!isReadOnly && (
+                    <Button
+                        cssNormal={SX.titleHeading}
+                        icon={ArrowDownThin}
+                        holdIcon={ChevronDoubleDown}
+                        onClick={this.onHeadingClick}
+                        onHold={this.onHeadingHold}
+                        variant={'inverted'}
+                    />
+                )}
             </div>
         );
     });
@@ -376,5 +381,6 @@ Event.propTypes = {
     backgroundColor: PropTypes.string.isRequired,
     recurringEventId: PropTypes.string,
     recurrence: PropTypes.string,
+    isReadOnly: PropTypes.bool.isRequired,
 };
 export default Event;

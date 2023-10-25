@@ -13,10 +13,11 @@ const collectShoppingSuggestions = async (title) => {
     const similarEvents = await searchEvents(title + ':', true); // smart searching only one calendar, if possible
 
     const candidateItems = [];
-    for (const {summary, status} of similarEvents) {
+    for (const event of similarEvents) {
+        const {summary} = event;
         const similarShopping = checkShopping(summary) && parseShopping(summary);
         if (similarShopping?.title === title) {
-            const isEventDone = checkEventIsDone(summary, status);
+            const isEventDone = checkEventIsDone(event);
             for (const {text, isDone} of similarShopping.items) {
                 candidateItems.push({
                     text,

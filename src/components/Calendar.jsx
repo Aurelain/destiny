@@ -6,7 +6,13 @@ import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
-import {selectCalendars, selectEvents, selectExpandedEvents, selectShowDone} from '../state/selectors.js';
+import {
+    selectCalendars,
+    selectEvents,
+    selectExpandedEvents,
+    selectForcedDone,
+    selectShowDone,
+} from '../state/selectors.js';
 import checkEventIsDone from '../system/checkEventIsDone.js';
 
 // =====================================================================================================================
@@ -38,18 +44,18 @@ class Calendar extends React.PureComponent {
     };
 
     render() {
-        const {calendars, events, showDone, expandedEvents} = this.props;
+        const {calendars, events, showDone, expandedEvents, forcedDone} = this.props;
 
         const calendarsById = objectify(calendars, 'id');
         const list = [];
         const knownDays = [];
         for (const event of events) {
             const {id, calendarId, summary, start, end, status, reminders, recurringEventId, recurrence} = event;
-            const {backgroundColor, selected, timeZone} = calendarsById[calendarId];
+            const {backgroundColor, selected, timeZone, isReadOnly} = calendarsById[calendarId];
             if (!selected) {
                 continue;
             }
-            const isDone = checkEventIsDone(summary, status);
+            const isDone = checkEventIsDone(event, forcedDone);
             if (!showDone && isDone) {
                 continue;
             }
@@ -72,6 +78,7 @@ class Calendar extends React.PureComponent {
                     recurringEventId={recurringEventId}
                     recurrence={recurrence}
                     showDone={showDone}
+                    isReadOnly={isReadOnly}
                 />,
             );
         }
@@ -126,7 +133,8 @@ Calendar.propTypes = {
             start: PropTypes.string.isRequired,
         }),
     ).isRequired,
-    expandedEvents: PropTypes.objectOf(PropTypes.bool).isRequired,
+    expandedEvents: PropTypes.objectOf(PropTypes.oneOf([true])).isRequired,
+    forcedDone: PropTypes.objectOf(PropTypes.oneOf([true])).isRequired,
     showDone: PropTypes.bool.isRequired,
 };
 
@@ -134,6 +142,7 @@ const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     events: selectEvents(state),
     expandedEvents: selectExpandedEvents(state),
+    forcedDone: selectForcedDone(state),
     showDone: selectShowDone(state),
 });
 

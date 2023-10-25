@@ -18,6 +18,10 @@ export default {
             type: 'string',
             minLength: 1,
         },
+        accessRole: {
+            type: 'string',
+            minLength: 1,
+        },
         selected: {
             type: 'boolean', // optional
         },
@@ -25,7 +29,7 @@ export default {
             type: 'boolean', // optional
         },
     },
-    required: ['id', 'summary', 'backgroundColor', 'timeZone'],
+    required: ['id', 'summary', 'backgroundColor', 'timeZone', 'accessRole'],
 };
 
 /*

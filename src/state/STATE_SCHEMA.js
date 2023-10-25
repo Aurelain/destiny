@@ -38,6 +38,9 @@ export default {
                     timeZone: {
                         type: 'string',
                     },
+                    isReadOnly: {
+                        type: 'boolean',
+                    },
                     selected: {
                         type: 'boolean',
                     },
@@ -45,7 +48,7 @@ export default {
                         type: 'boolean',
                     },
                 },
-                required: ['id', 'summary', 'backgroundColor', 'timeZone', 'selected', 'primary'],
+                required: ['id', 'summary', 'backgroundColor', 'timeZone', 'isReadOnly', 'selected', 'primary'],
             },
         },
         events: {
@@ -112,12 +115,20 @@ export default {
                         },
                     },
                 },
+                forcedDone: {
+                    type: 'object',
+                    patternProperties: {
+                        '.': {
+                            const: true,
+                        },
+                    },
+                },
                 showDone: {
                     type: 'boolean',
                     default: false,
                 },
             },
-            required: ['expandedEvents', 'showDone'],
+            required: ['expandedEvents', 'forcedDone', 'showDone'],
         },
         volatile: {
             type: 'object',

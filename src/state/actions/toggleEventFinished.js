@@ -1,7 +1,9 @@
-import {setState} from '../store.js';
+import {getState, setState} from '../store.js';
 import findEvent from '../../system/findEvent.js';
 import {DONE_MARKER, DONE_MATCH} from '../../SETTINGS.js';
 import saveEvent from '../../system/saveEvent.js';
+import {selectCalendars, selectForcedDone} from '../selectors.js';
+import findCalendar from '../../system/findCalendar.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -10,15 +12,31 @@ import saveEvent from '../../system/saveEvent.js';
  *
  */
 const toggleEventFinished = async (calendarId, eventId) => {
+    const state = getState();
+    const calendars = selectCalendars(state);
+    const {isReadOnly} = findCalendar(calendarId, calendars);
+
     setState((state) => {
-        const event = findEvent(state, calendarId, eventId);
-        if (event.summary.match(DONE_MATCH)) {
-            event.summary = event.summary.replace(DONE_MATCH, '');
+        if (isReadOnly) {
+            const forcedDone = selectForcedDone(state);
+            if (forcedDone[eventId]) {
+                delete forcedDone[eventId];
+            } else {
+                forcedDone[eventId] = true;
+            }
         } else {
-            event.summary = DONE_MARKER + event.summary;
+            const event = findEvent(state, calendarId, eventId);
+            if (event.summary.match(DONE_MATCH)) {
+                event.summary = event.summary.replace(DONE_MATCH, '');
+            } else {
+                event.summary = DONE_MARKER + event.summary;
+            }
         }
     });
-    await saveEvent(calendarId, eventId);
+
+    if (!isReadOnly) {
+        await saveEvent(calendarId, eventId);
+    }
 };
 
 // =====================================================================================================================
