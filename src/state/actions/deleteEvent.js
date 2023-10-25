@@ -3,6 +3,7 @@ import {setState} from '../store.js';
 import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import assume from '../../utils/assume.js';
+import {USE_MOCK} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -21,6 +22,11 @@ const deleteEvent = async (calendarId, eventId) => {
         // TODO: add to pending operations
         return;
     }
+
+    if (USE_MOCK) {
+        return;
+    }
+
     const response = await requestApi(
         `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`,
         {

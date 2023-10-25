@@ -25,17 +25,38 @@ const toggleCalendar = async (calendarId) => {
         // TODO: add to pending operations
         return;
     }
-    await requestApi(`https://www.googleapis.com/calendar/v3/users/me/calendarList/${calendarId}`, {
-        method: 'PATCH',
-        body: {
-            selected: futureSelected,
-        },
-        schema: CalendarSchema,
-    });
+
+    await requestCalendarPatch(calendarId, futureSelected);
 
     if (futureSelected) {
         await requestEvents(calendarId);
     }
+};
+
+// =====================================================================================================================
+//  P U B L I C
+// =====================================================================================================================
+/**
+ *
+ */
+const requestCalendarPatch = async (calendarId, selected) => {
+    return await requestApi(`https://www.googleapis.com/calendar/v3/users/me/calendarList/${calendarId}`, {
+        method: 'PATCH',
+        body: {
+            selected,
+        },
+        schema: CalendarSchema,
+        mock: {
+            selected,
+            // TODO: properly mock the other props...
+            id: 'foo',
+            summary: 'foo',
+            backgroundColor: '#f4511e',
+            timeZone: 'foo',
+            accessRole: 'owner',
+            primary: true,
+        },
+    });
 };
 
 // =====================================================================================================================

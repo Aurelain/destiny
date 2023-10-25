@@ -48,12 +48,10 @@ const requestCalendars = async () => {
         return;
     }
 
-    const result = await requestApi('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
-        schema: CalendarsSchema,
-    });
+    const calendarList = await requestCalendarList();
 
     const calendars = [];
-    for (const {id, summary, backgroundColor, selected, timeZone, accessRole, primary} of result.items) {
+    for (const {id, summary, backgroundColor, selected, timeZone, accessRole, primary} of calendarList.items) {
         calendars.push({
             id,
             summary,
@@ -74,6 +72,46 @@ const requestCalendars = async () => {
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
+/**
+ *
+ */
+const requestCalendarList = async () => {
+    return await requestApi('https://www.googleapis.com/calendar/v3/users/me/calendarList', {
+        schema: CalendarsSchema,
+        mock: {
+            items: [
+                {
+                    id: 'first',
+                    summary: 'First',
+                    backgroundColor: '#f4511e',
+                    timeZone: 'Europe/Bucharest',
+                    accessRole: 'owner',
+                    selected: true,
+                    primary: true,
+                },
+                {
+                    id: 'foo@gmail.com',
+                    summary: 'Foo',
+                    backgroundColor: '#0b8043',
+                    timeZone: 'Europe/Bucharest',
+                    accessRole: 'owner',
+                    selected: true,
+                    primary: false,
+                },
+                {
+                    id: 'MyReadOnlyCalendar',
+                    summary: 'My read-only calendar',
+                    backgroundColor: '#fa573c',
+                    timeZone: 'Europe/Bucharest',
+                    accessRole: 'reader',
+                    selected: true,
+                    primary: false,
+                },
+            ],
+        },
+    });
+};
+
 /**
  *
  */

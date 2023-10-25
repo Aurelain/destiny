@@ -59,6 +59,10 @@ const refreshTokens = async (refreshToken) => {
             grant_type: 'refresh_token',
         },
         schema: OauthRefreshSchema,
+        mock: {
+            access_token: 'foo',
+            expires_in: 3599,
+        },
     });
 
     setState((state) => {

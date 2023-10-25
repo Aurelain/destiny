@@ -30,7 +30,19 @@ const saveEvent = async (calendarId, eventId) => {
 
     const {start, end, summary, reminders} = existingEvent;
     const patchProp = start.length === 10 ? 'date' : 'dateTime';
-    await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
+
+    await requestPut({calendarId, eventId, patchProp, start, end, timeZone, summary, reminders});
+    // console.log('saveResult: ' + JSON.stringify(saveResult, null, 4));
+};
+
+// =====================================================================================================================
+//  P U B L I C
+// =====================================================================================================================
+/**
+ *
+ */
+const requestPut = async ({calendarId, eventId, patchProp, start, end, timeZone, summary, reminders}) => {
+    return await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`, {
         method: 'PUT',
         body: {
             start: {
@@ -45,8 +57,21 @@ const saveEvent = async (calendarId, eventId) => {
             reminders,
         },
         schema: EventSchema,
+        mock: {
+            id: eventId,
+            start: {
+                [patchProp]: start,
+                timeZone,
+            },
+            end: {
+                [patchProp]: end,
+                timeZone,
+            },
+            summary,
+            reminders,
+            status: 'confirmed',
+        },
     });
-    // console.log('saveResult: ' + JSON.stringify(saveResult, null, 4));
 };
 
 // =====================================================================================================================

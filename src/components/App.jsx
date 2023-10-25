@@ -11,6 +11,7 @@ import requestEvents from '../state/actions/requestEvents.js';
 import Fireworks from '../ui/Fireworks.jsx';
 import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
+import {USE_MOCK} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -37,6 +38,9 @@ class App extends React.PureComponent {
     }
 
     componentDidMount() {
+        if (USE_MOCK) {
+            document.title += ' (MOCK)';
+        }
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 

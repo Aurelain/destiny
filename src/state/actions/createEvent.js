@@ -47,7 +47,25 @@ const createEvent = async (summary) => {
         // TODO: add to pending operations
         return;
     }
-    const cloudEvent = await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
+    const cloudEvent = await requestCreateEvent(calendarId, summary, today);
+
+    setState((state) => {
+        const event = findEvent(state, calendarId, eventId);
+        event.id = cloudEvent.id;
+        state.options.expandedEvents = {
+            [event.id]: true,
+        };
+    });
+};
+
+// =====================================================================================================================
+//  P R I V A T E
+// =====================================================================================================================
+/**
+ *
+ */
+const requestCreateEvent = async (calendarId, summary, today) => {
+    return await requestApi(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
         method: 'POST',
         body: {
             summary,
@@ -62,14 +80,21 @@ const createEvent = async (summary) => {
             },
         },
         schema: EventSchema,
-    });
-
-    setState((state) => {
-        const event = findEvent(state, calendarId, eventId);
-        event.id = cloudEvent.id;
-        state.options.expandedEvents = {
-            [event.id]: true,
-        };
+        mock: {
+            id: Math.random().toString(16),
+            summary,
+            status: 'confirmed',
+            start: {
+                date: today,
+            },
+            end: {
+                date: today,
+            },
+            reminders: {
+                useDefault: false,
+            },
+            eventType: 'default',
+        },
     });
 };
 

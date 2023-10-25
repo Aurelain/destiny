@@ -1,5 +1,5 @@
-export const USE_MOCK = Boolean(window.location.href.match(/\d/));
-// export const USE_MOCK = true;
+export const USE_MOCK = Boolean(window.location.href.match(/\d/)) || window.localStorage.MOCK === 'yes';
+window.USE_MOCK = USE_MOCK; // for the benefit of `requestJson()`
 
 export const STORE_KEY = 'destiny-store'; // the name in IndexedDB
 export const LOCALE = 'ro-RO'; // todo configure this
