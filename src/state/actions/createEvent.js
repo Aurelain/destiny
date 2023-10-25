@@ -37,6 +37,7 @@ const createEvent = async (summary) => {
             reminders: {
                 useDefault: false,
             },
+            isLocked: false,
         });
         sortEvents(events);
     });

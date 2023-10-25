@@ -32,7 +32,7 @@ const SX = {
     selectCalendar: {
         padding: '0 8px',
     },
-    input: {
+    field: {
         flexGrow: 1,
         width: '100%',
         border: 'none',
@@ -41,6 +41,11 @@ const SX = {
         margin: 8,
         appearance: 'none',
         background: '#fff',
+        resize: 'none',
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        lineHeight: '30px',
+        overflow: 'hidden',
     },
     plus: {
         height: '100%',
@@ -60,13 +65,17 @@ class Footer extends React.PureComponent {
         const {value} = this.state;
         return (
             <div css={SX.root}>
-                <input
-                    type={'search'} // https://stackoverflow.com/a/73466347/844393
+                {/*
+                  We avoid issues with autoComplete and the credit-card bar showing by using <textarea>.
+                  Reference:
+                  - https://stackoverflow.com/a/73466347/844393
+                  - https://gist.github.com/niksumeiko/360164708c3b326bd1c8
+                */}
+                <textarea
                     autoComplete={'off'}
-                    css={SX.input}
+                    css={SX.field}
                     spellCheck={false}
                     value={value}
-                    placeholder={'Event'}
                     onChange={this.onInputChange}
                     onKeyDown={this.onInputKeyDown}
                 />
