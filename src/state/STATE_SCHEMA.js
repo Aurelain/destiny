@@ -78,6 +78,9 @@ export default {
                         enum: ['confirmed', 'tentative', 'cancelled'],
                         default: 'confirmed',
                     },
+                    isLocked: {
+                        type: 'boolean',
+                    },
                     reminders: {
                         // optional
                         type: 'object',
@@ -100,7 +103,7 @@ export default {
                         type: 'string',
                     },
                 },
-                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status'],
+                required: ['id', 'calendarId', 'summary', 'start', 'end', 'status', 'isLocked'],
             },
         },
         options: {

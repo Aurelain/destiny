@@ -50,7 +50,8 @@ class Calendar extends React.PureComponent {
         const list = [];
         const knownDays = [];
         for (const event of events) {
-            const {id, calendarId, summary, start, end, status, reminders, recurringEventId, recurrence} = event;
+            const {id, calendarId, summary, start, end, status, reminders, recurringEventId, recurrence, isLocked} =
+                event;
             const {backgroundColor, selected, timeZone, isReadOnly} = calendarsById[calendarId];
             if (!selected) {
                 continue;
@@ -79,6 +80,7 @@ class Calendar extends React.PureComponent {
                     recurrence={recurrence}
                     showDone={showDone}
                     isReadOnly={isReadOnly}
+                    isLocked={isLocked}
                 />,
             );
         }

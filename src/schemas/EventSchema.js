@@ -74,6 +74,12 @@ export default {
                 type: 'string',
             },
         },
+        visibility: {
+            type: 'string',
+        },
+        locked: {
+            type: 'boolean',
+        },
     },
     required: ['id', 'summary', 'start', 'end', 'status'],
 };

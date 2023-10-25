@@ -157,6 +157,7 @@ class Event extends React.PureComponent {
             showDone,
             recurringEventId,
             isReadOnly,
+            isLocked,
         } = this.props;
         const {contentHeight} = this.state;
 
@@ -172,7 +173,14 @@ class Event extends React.PureComponent {
                     cssNormal={this.memoTitleCss(backgroundColor, isExpanded)}
                     // icon={showDone && (isDone ? CheckCircle : CircleOutline)}
                     // holdIcon={showDone && (isDone ? CircleOutline : CheckCircle)}
-                    label={this.memoTitleLabel(titleWithoutAnchors, timeInterval, showDone, isDone, isReadOnly)}
+                    label={this.memoTitleLabel(
+                        titleWithoutAnchors,
+                        timeInterval,
+                        showDone,
+                        isDone,
+                        isReadOnly,
+                        isLocked,
+                    )}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
                 />
@@ -301,7 +309,8 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoTitleLabel = memoize((title, timeInterval, showDone, isDone, isReadOnly) => {
+    memoTitleLabel = memoize((title, timeInterval, showDone, isDone, isReadOnly, isLocked) => {
+        const isEditable = !isReadOnly && !isLocked;
         let DoneIcon = null;
         if (showDone) {
             DoneIcon = isDone ? CheckCircle : CircleOutline;
@@ -320,7 +329,7 @@ class Event extends React.PureComponent {
                 {DoneIcon && <DoneIcon styling={SX.doneIcon} />}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
-                {!isReadOnly && (
+                {isEditable && (
                     <Button
                         cssNormal={SX.titleHeading}
                         icon={ArrowDownThin}
@@ -382,5 +391,6 @@ Event.propTypes = {
     recurringEventId: PropTypes.string,
     recurrence: PropTypes.string,
     isReadOnly: PropTypes.bool.isRequired,
+    isLocked: PropTypes.bool.isRequired,
 };
 export default Event;
