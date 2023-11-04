@@ -140,8 +140,7 @@ class Bar extends React.PureComponent {
                 window.location.reload();
                 break;
             case MENU_LOG_OUT:
-                await localforage.removeItem(STORE_KEY);
-                window.location.reload();
+                window.refreshHard();
                 break;
             default: {
                 const {calendars} = this.props;
