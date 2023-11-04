@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
-import localforage from 'localforage';
 import Button from '../ui/Button.jsx';
 import Reload from '../ui/Icons/Reload.jsx';
 import Menu from '../ui/Icons/Menu.jsx';
 import SideMenu from '../ui/SideMenu.jsx';
 import Console from '../ui/Icons/Console.jsx';
 import LocationExit from '../ui/Icons/LocationExit.jsx';
-import {BAR_HEIGHT, BAR_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, PRIMARY_COLOR} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
@@ -41,7 +40,9 @@ const SX = {
         borderBottom: 'solid 1px rgba(0,0,0,0.1)',
     },
     grow: {
+        padding: 8,
         flexGrow: 1,
+        justifyContent: 'start',
     },
     btn: {
         padding: 8,
@@ -55,6 +56,7 @@ const SX = {
         textOverflow: 'ellipsis',
     },
 };
+const SX_GROW = [SX.grow, SX.hamburger];
 
 const MENU_SHOW_DONE = 'MENU_SHOW_DONE';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
@@ -75,13 +77,7 @@ class Bar extends React.PureComponent {
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
-                <Button
-                    icon={Menu}
-                    cssNormal={[SX.btn, SX.hamburger]}
-                    onClick={this.onMenuClick}
-                    variant={'inverted'}
-                />
-                <div css={SX.grow} />
+                <Button icon={Menu} cssNormal={SX_GROW} onClick={this.onMenuClick} variant={'inverted'} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <SideMenu
                     isOpen={isMenuOpen}
