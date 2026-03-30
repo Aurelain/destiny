@@ -5,14 +5,17 @@ import process from 'node:process';
 import path from 'path';
 import url from 'url';
 import {hashElement} from 'folder-hash';
-import findFiles from './utils/findFiles.js';
-import EsbuildEmotionPlugin from './plugins/EsbuildEmotionPlugin.js';
-import assume from './utils/assume.js';
+import findFiles from '../utils/findFiles.js';
+import EsbuildEmotionPlugin from '../plugins/EsbuildEmotionPlugin.js';
+import assume from '../utils/assume.js';
+import preview from '../preview/preview.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const OUTPUT_DIR = 'docs';
+const isDev = process.argv.includes('--dev');
+const isFocus = process.argv.includes('--focus');
+const OUTPUT_DIR = isDev? 'dev' : 'docs';
 const CLIENT_PATH_MARKER = '@CLIENT_PATH';
 const CACHED_PATHS_MARKER = '@CACHED_PATHS';
 
@@ -24,19 +27,17 @@ const CACHED_PATHS_MARKER = '@CACHED_PATHS';
  */
 const build = async () => {
     const time = Date.now();
-    const isDev = process.argv.includes('--dev');
-    const isFocus = process.argv.includes('--focus');
 
     // Build fresh:
     const entryPath = isFocus ? getFocusedPath() : 'src/main.jsx';
     fsExtra.emptyDirSync(OUTPUT_DIR);
     fsExtra.copySync('public', OUTPUT_DIR);
-    const clientBundle = await createBundle(entryPath, 'js/[name]', isDev);
+    const clientBundle = await createBundle(entryPath, 'js/[name]');
 
     // Create service-worker:
     let swBundle;
     if (!isFocus) {
-        swBundle = await createBundle('sw/sw.js', '[name]', isDev);
+        swBundle = await createBundle('sw/sw.js', '[name]');
     }
 
     // Rename `main.js`:
@@ -56,7 +57,7 @@ const build = async () => {
 
     console.log(cleanHash);
     console.log(`Done in ${Date.now() - time} ms.`);
-    await refreshBrowser();
+    await preview();
 };
 
 // =====================================================================================================================
@@ -65,7 +66,7 @@ const build = async () => {
 /**
  *
  */
-const createBundle = async (target, outputPattern, isDev) => {
+const createBundle = async (target, outputPattern) => {
     await esbuild.build({
         entryPoints: [target],
         bundle: true,
@@ -148,15 +149,6 @@ const updateIndex = (clientBundle) => {
     const relativePath = clientBundle.filePath.substring(OUTPUT_DIR.length + 1);
     const freshIndexContent = indexContent.replace(CLIENT_PATH_MARKER, relativePath);
     fs.writeFileSync(indexPath, freshIndexContent);
-};
-
-/**
- *
- */
-const refreshBrowser = async () => {
-    // await sendkeys.activate('Google Chrome');
-    // sendkeys.send('^r');
-    // await sendkeys.activate('destiny –'); // reactivate WebStorm
 };
 
 /**

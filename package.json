@@ -4,9 +4,9 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "refresh": "node scripts/build --dev",
-        "focus": "node scripts/build --dev --focus",
-        "build": "node scripts/build"
+        "refresh": "node scripts/build/build --dev",
+        "focus": "node scripts/build/build --dev --focus",
+        "build": "node scripts/build/build"
     },
     "dependencies": {
         "@emotion/css": "^11.13.5",
