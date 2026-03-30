@@ -20,5 +20,5 @@ export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement)
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
 // eslint-disable-next-line max-len
-export const GOOGLE_CLIENT_ID = atob('NjQ2ODk2ODY2NjY2LWdsb2ZvbnVjOTZoaTY5Z3I0N3FhczY3MnFncGI2bnA4LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t');
-export const GOOGLE_CLIENT_SECRET = atob('R09DU1BYLW9tVW5nMjVNbnZxVkxia19OWS1BaHpCSlFzTzI=');
+export const GCI = atob('NjQ2ODk2ODY2NjY2LWdsb2ZvbnVjOTZoaTY5Z3I0N3FhczY3MnFncGI2bnA4LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t');
+export const GCS = atob('R09DU1BYLW9tVW5nMjVNbnZxVkxia19OWS1BaHpCSlFzTzI=');

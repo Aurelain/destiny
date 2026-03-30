@@ -1,7 +1,6 @@
 import fs from 'fs';
 import fsExtra from 'fs-extra';
 import esbuild from 'esbuild';
-import sendkeys from 'sendkeys-js';
 import process from 'node:process';
 import path from 'path';
 import url from 'url';
@@ -155,9 +154,9 @@ const updateIndex = (clientBundle) => {
  *
  */
 const refreshBrowser = async () => {
-    await sendkeys.activate('Google Chrome');
-    sendkeys.send('^r');
-    await sendkeys.activate('destiny –'); // reactivate WebStorm
+    // await sendkeys.activate('Google Chrome');
+    // sendkeys.send('^r');
+    // await sendkeys.activate('destiny –'); // reactivate WebStorm
 };
 
 /**

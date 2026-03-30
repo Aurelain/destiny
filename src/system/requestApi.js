@@ -1,5 +1,5 @@
 import requestJson from '../utils/requestJson.js';
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../SETTINGS.js';
+import {GCI, GCS} from '../SETTINGS.js';
 import {getState, setState} from '../state/store.js';
 import {selectAccessToken, selectExpirationTimestamp, selectRefreshToken} from '../state/selectors.js';
 import OauthRefreshSchema from '../schemas/OauthRefreshSchema.js';
@@ -53,8 +53,8 @@ const refreshTokens = async (refreshToken) => {
     // This is the same endpoint as the one for the initial login, but with different parameters and schema.
     const freshTokens = await requestJson('https://oauth2.googleapis.com/token', {
         body: {
-            client_id: GOOGLE_CLIENT_ID,
-            client_secret: GOOGLE_CLIENT_SECRET,
+            client_id: GCI,
+            client_secret: GCS,
             refresh_token: refreshToken,
             grant_type: 'refresh_token',
         },

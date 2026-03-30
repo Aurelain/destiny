@@ -1,4 +1,4 @@
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '../../SETTINGS.js';
+import {GCI, GCS} from '../../SETTINGS.js';
 import embedScriptFile from '../../utils/embedScriptFile.js';
 import assume from '../../utils/assume.js';
 import {setState} from '../store.js';
@@ -34,7 +34,7 @@ const connectGoogle = async () => {
 
         // https://developers.google.com/identity/oauth2/web/guides/use-code-model
         const client = initCodeClient({
-            client_id: GOOGLE_CLIENT_ID,
+            client_id: GCI,
             scope: SCOPES.join(' '),
             ux_mode: 'popup',
             access_type: 'offline',
@@ -56,8 +56,8 @@ const onCodeReceived = async (codeClientResponse) => {
     const tokensFromGoogle = await requestJson('https://oauth2.googleapis.com/token', {
         method: 'POST',
         body: {
-            client_id: GOOGLE_CLIENT_ID,
-            client_secret: GOOGLE_CLIENT_SECRET,
+            client_id: GCI,
+            client_secret: GCS,
             code: codeClientResponse.code,
             grant_type: 'authorization_code',
             redirect_uri: window.location.origin,
