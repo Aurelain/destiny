@@ -3,6 +3,8 @@ import announceClients from './announceClients.js';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+const VERBOSE = false;
+// const VERBOSE = true;
 let isUnregistered = false;
 let currentVersion;
 let currentOptions;
@@ -16,6 +18,7 @@ let currentOptions;
 const setupSw = async (version, options = {}) => {
     currentVersion = version;
     currentOptions = options;
+    log('Setup');
 
     self.skipWaiting(); // TODO find out if this is working
     self.addEventListener('install', onWorkerInstall);
@@ -37,7 +40,7 @@ const getSwHome = () => {
  *
  */
 const onWorkerInstall = (event) => {
-    // console.log('SW: Install of', currentVersion);
+    log('Install event');
     self.skipWaiting(); // TODO find out if this is working
     event.waitUntil(
         (async () => {
@@ -57,7 +60,7 @@ const onWorkerInstall = (event) => {
  *
  */
 const onWorkerActivate = (event) => {
-    // console.log('SW: Activation of', currentVersion);
+    log('Activate event');
     event.waitUntil(
         (async () => {
             const names = await caches.keys();
@@ -82,8 +85,11 @@ const onWorkerFetch = (event) => {
         return;
     }
 
-    // console.log('SW: Fetch', event.request.url);
-    const {url, mode} = event.request;
+    const {url} = event.request;
+    if (!url.startsWith('http')) {
+        // e.g. chrome-extension://
+        return;
+    }
 
     const {ignoredFetches = []} = currentOptions;
     for (const key of ignoredFetches) {
@@ -92,17 +98,15 @@ const onWorkerFetch = (event) => {
         }
     }
 
+    log('Fetching ' + event.request.url);
+    const fileName = url.split('/').pop();
     let responsePromise;
-    if (mode === 'navigate') {
-        // TODO: find a better way
-        if (url.split('/').pop().includes('.')) {
-            responsePromise = respondToFile(url);
-        } else {
-            responsePromise = respondToRoot();
-        }
+    if (fileName === 'index.html' || !fileName.includes('.')) {
+        responsePromise = respondToRoot();
     } else {
         responsePromise = respondToFile(url);
     }
+
     event.respondWith(responsePromise);
 };
 
@@ -114,20 +118,20 @@ const respondToRoot = async () => {
     const cachedResponse = await caches.match(home + '/');
     const freshResponse = await fetchUrl(home + '/index.html?' + Math.random());
     if (freshResponse) {
-        // console.log('We are online.');
+        log('We are online.');
         if (cachedResponse) {
-            // console.log('We have cache.');
+            log('We have cache.');
             const cachedText = await cachedResponse.clone().text();
             const freshText = await freshResponse.clone().text();
             if (cachedText !== freshText) {
-                // console.log('Something changed!');
+                log('Something changed!');
                 isUnregistered = true;
                 await self.registration.unregister();
             }
         }
         return freshResponse;
     } else {
-        // console.log('We are offline!');
+        log('We are offline!');
         return cachedResponse;
     }
 };
@@ -150,6 +154,15 @@ const respondToFile = async (url) => {
     const cachedResponse = await caches.match(url);
     // return cachedResponse || (await fetch(url)) || new Response(null, {status: 404});
     return cachedResponse || (await fetch(url));
+};
+
+/**
+ *
+ */
+const log = (message) => {
+    if (VERBOSE) {
+        console.log(`SW (${currentVersion}): ` + message);
+    }
 };
 
 // =====================================================================================================================

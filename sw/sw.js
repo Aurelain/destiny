@@ -18,7 +18,7 @@ const IGNORED_FETCHES = [
  *
  */
 const run = async () => {
-    const version = JSON.stringify(CACHED_PATHS);
+    const version = JSON.stringify(CACHED_PATHS).match(/-(.*?)\.js/)[1];
     await setupSw(version, {
         cachedPaths: CACHED_PATHS,
         ignoredFetches: IGNORED_FETCHES,

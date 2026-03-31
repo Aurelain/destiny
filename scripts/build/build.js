@@ -7,6 +7,7 @@ import url from 'url';
 import {hashElement} from 'folder-hash';
 import findFiles from '../utils/findFiles.js';
 import EsbuildEmotionPlugin from '../plugins/EsbuildEmotionPlugin.js';
+import EsbuildMuteReact from '../plugins/EsbuildMuteReact.js';
 import assume from '../utils/assume.js';
 import preview from '../preview/preview.js';
 
@@ -44,7 +45,7 @@ const build = async () => {
     const {hash} = await hashElement(OUTPUT_DIR);
     const cleanHash = hash.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
     renameClient(clientBundle, cleanHash);
-    updateIndex(clientBundle);
+    updateIndex(clientBundle/*, cleanHash*/);
 
     // Adapt service-worker:
     if (!isFocus) {
@@ -78,7 +79,7 @@ const createBundle = async (target, outputPattern) => {
         legalComments: 'none',
         jsx: 'automatic', // this option, along with the next one, allow us to avoid using the jsx emotion pragma
         jsxImportSource: '@emotion/react',
-        plugins: [EsbuildEmotionPlugin],
+        plugins: [EsbuildMuteReact, EsbuildEmotionPlugin],
     });
 
     const filePath = getOutputFilePath(outputPattern);
@@ -143,11 +144,14 @@ const updateCachedPaths = (swBundle) => {
 /**
  *
  */
-const updateIndex = (clientBundle) => {
+const updateIndex = (clientBundle, cleanHash) => {
     const indexPath = OUTPUT_DIR + '/index.html';
     const indexContent = fs.readFileSync(indexPath, 'utf8');
     const relativePath = clientBundle.filePath.substring(OUTPUT_DIR.length + 1);
-    const freshIndexContent = indexContent.replace(CLIENT_PATH_MARKER, relativePath);
+    let freshIndexContent = indexContent.replace(CLIENT_PATH_MARKER, relativePath);
+    if (cleanHash) {
+        freshIndexContent = freshIndexContent.replace(/(<title>)/, '$1' + cleanHash +' - ');
+    }
     fs.writeFileSync(indexPath, freshIndexContent);
 };
 

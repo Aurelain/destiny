@@ -41,7 +41,7 @@ const getAccessToken = async () => {
     } else {
         // Tokens expired
         const refreshToken = selectRefreshToken(state);
-        console.log('refreshToken:', refreshToken);
+        // console.log('refreshToken:', refreshToken);
         return await refreshTokens(refreshToken);
     }
 };
