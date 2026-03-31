@@ -4,6 +4,7 @@ window.USE_MOCK = USE_MOCK; // for the benefit of `requestJson()`
 export const STORE_KEY = 'destiny-store'; // the name in IndexedDB
 export const LOCALE = 'ro-RO'; // todo configure this
 export const MILLISECONDS_IN_A_DAY = 1000 * 3600 * 24;
+export const TASK_DAY = '2000-01-10';
 export const PRIMARY_COLOR = '#528c1e';
 export const DONE_MATCH = /^--+/;
 export const DONE_MARKER = '-'.repeat(4);

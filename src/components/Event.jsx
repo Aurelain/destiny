@@ -7,7 +7,7 @@ import scheduleEvent from '../state/actions/scheduleEvent.js';
 import Bell from '../ui/Icons/Bell.jsx';
 import CheckCircle from '../ui/Icons/CheckCircle.jsx';
 import toggleEventFinished from '../state/actions/toggleEventFinished.js';
-import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, FOOTER_SAFETY, NEW_HEIGHT} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, FOOTER_SAFETY, NEW_HEIGHT, TASK_DAY} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import SelectCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
@@ -19,14 +19,12 @@ import updateSummary from '../state/actions/updateSummary.js';
 import Shopping from './Shopping.jsx';
 import Editable from '../ui/Editable.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
-import Fan from '../ui/Icons/Fan.jsx';
 import ArrowDownThin from '../ui/Icons/ArrowDownThin.jsx';
 import ChevronDoubleDown from '../ui/Icons/ChevronDoubleDown.jsx';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import Select from '../ui/Select.jsx';
 import MonthTime from './MonthTime/MonthTime.jsx';
-import FanAlert from '../ui/Icons/FanAlert.jsx';
-import Recurrence from './Recurrence.jsx';
+import Infinity from '../ui/Icons/Infinity.jsx';
 import checkShopping from '../system/checkShopping.js';
 import scrollIntoView from '../utils/scrollIntoView.js';
 import {burstAtMouse} from '../ui/Fireworks.jsx';
@@ -124,16 +122,6 @@ const TIME_BUTTON_PROPS = {
     holdIcon: TrashCan,
 };
 
-const FAN_BUTTON_PROPS = {
-    cssNormal: SX.btn,
-    icon: Fan,
-};
-
-const FAN_ALERT_BUTTON_PROPS = {
-    cssNormal: [SX.btn, SX.btnSpecial],
-    icon: FanAlert,
-};
-
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
@@ -203,11 +191,10 @@ class Event extends React.PureComponent {
                                     icon={hasReminders ? BellRing : Bell}
                                     onClick={this.onBellClick}
                                 />
-                                <Select
-                                    buttonProps={recurringEventId ? FAN_ALERT_BUTTON_PROPS : FAN_BUTTON_PROPS}
-                                    list={Recurrence}
-                                    onOpen={this.onFanOpen}
-                                    onSelect={this.onFanSelect}
+                                <Button // Infinity
+                                    cssNormal={SX.btn}
+                                    icon={Infinity}
+                                    onClick={this.onInfinityClick}
                                 />
                                 <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             </div>
@@ -286,12 +273,9 @@ class Event extends React.PureComponent {
         toggleReminder(calendarId, eventId);
     };
 
-    onFanOpen = () => {
-        console.log('onFanOpen:');
-    };
-
-    onFanSelect = (value) => {
-        console.log('onFanSelect:', value);
+    onInfinityClick = async () => {
+        const {calendarId, eventId} = this.props;
+        await scheduleEvent(calendarId, eventId, {start:TASK_DAY, end: TASK_DAY});
     };
 
     onCalendarSelect = ({name: destinationCalendarId}) => {

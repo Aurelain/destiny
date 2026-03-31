@@ -1,10 +1,16 @@
 import {selectCalendars, selectEvents} from '../selectors.js';
 import {getState, setState} from '../store.js';
-import {MILLISECONDS_IN_A_DAY} from '../../SETTINGS.js';
+import {MILLISECONDS_IN_A_DAY, TASK_DAY} from '../../SETTINGS.js';
 import requestApi from '../../system/requestApi.js';
 import EventsSchema from '../../schemas/EventsSchema.js';
 import sortEvents from '../../system/sortEvents.js';
 import checkOffline from '../../system/checkOffline.js';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const TASK_START = new Date(TASK_DAY).getTime();
+const TASK_END = TASK_START + 1000;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -52,8 +58,10 @@ const getCalendarEvents = async (calendarId) => {
     const now = Date.now();
     const lastWeek = now - 7 * MILLISECONDS_IN_A_DAY;
     const nextMonth = now + 31 * MILLISECONDS_IN_A_DAY;
-    const result = await requestCalendarEvents(calendarId, lastWeek, nextMonth);
-    const cleanEvents = result.items.map((event) => sanitizeAndEnhanceEvent(event, calendarId));
+    const normalResults = await requestCalendarEvents(calendarId, lastWeek, nextMonth);
+    const taskResults = await requestCalendarEvents(calendarId, TASK_START, TASK_END);
+    const allEvents = [...normalResults.items, ...taskResults.items];
+    const cleanEvents = allEvents.map((event) => sanitizeAndEnhanceEvent(event, calendarId));
     return cleanEvents;
 };
 

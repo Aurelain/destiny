@@ -21,6 +21,8 @@ import Avatar from '../ui/Avatar.jsx';
 import EyeCircle from '../ui/Icons/EyeCircle.jsx';
 import EyeOutline from '../ui/Icons/EyeOutline.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
+import CalendarMonth from '../ui/Icons/CalendarMonth.jsx';
+import Infinity from '../ui/Icons/Infinity.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -45,18 +47,20 @@ const SX = {
         justifyContent: 'start',
     },
     btn: {
-        padding: 8,
-    },
-    hamburger: {
-        paddingRight: 64,
+        padding: 16,
     },
     listItem: {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
     },
+    selected: {
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        opacity: '1 !important',
+        color: 'yellow',
+    },
 };
-const SX_GROW = [SX.grow, SX.hamburger];
+const SX_SELECTED = [SX.btn, SX.selected];
 
 const MENU_SHOW_DONE = 'MENU_SHOW_DONE';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
@@ -69,15 +73,32 @@ class Bar extends React.PureComponent {
     state = {
         isMenuOpen: false,
         isLoading: false,
+        isTasks: false,
     };
 
     render() {
         const {calendars, showDone} = this.props;
-        const {isMenuOpen, isLoading} = this.state;
+        const {isMenuOpen, isLoading, isTasks} = this.state;
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
-                <Button icon={Menu} cssNormal={SX_GROW} onClick={this.onMenuClick} variant={'inverted'} />
+                <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
+                <div css={SX.grow} />
+                <Button
+                    icon={CalendarMonth}
+                    cssNormal={isTasks ? SX.btn : SX_SELECTED}
+                    onClick={this.onTimelineClick}
+                    variant={'inverted'}
+                    disabled={!isTasks}
+                />
+                <Button
+                    icon={Infinity}
+                    cssNormal={isTasks ? SX_SELECTED : SX.btn}
+                    onClick={this.onInfinityClick}
+                    variant={'inverted'}
+                    disabled={isTasks}
+                />
+                <div css={SX.grow} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <SideMenu
                     isOpen={isMenuOpen}
@@ -149,6 +170,20 @@ class Bar extends React.PureComponent {
                 assume(false, `Unexpected menu choice "${name}"!`);
             }
         }
+    };
+
+    /**
+     *
+     */
+    onTimelineClick = () => {
+
+    };
+
+    /**
+     *
+     */
+    onInfinityClick = () => {
+
     };
 
     /**
