@@ -5,13 +5,14 @@ import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Calendar from './Calendar.jsx';
 import Footer from './Footer.jsx';
-import {selectIsAuthenticated} from '../state/selectors.js';
+import {selectIsAuthenticated, selectShowTasks} from '../state/selectors.js';
 import requestCalendars from '../state/actions/requestCalendars.js';
 import requestEvents from '../state/actions/requestEvents.js';
 import Fireworks from '../ui/Fireworks.jsx';
 import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
 import {USE_MOCK} from '../SETTINGS.js';
+import Tasks from './Tasks.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -25,12 +26,13 @@ class App extends React.PureComponent {
     constructionTimestamp = Date.now();
 
     render() {
-        const {isAuthenticated} = this.props;
+        const {isAuthenticated, showTasks} = this.props;
         return (
             <>
                 <Bar />
                 {!isAuthenticated && <Connect />}
-                {isAuthenticated && <Calendar />}
+                {isAuthenticated && !showTasks && <Calendar />}
+                {isAuthenticated && showTasks && <Tasks />}
                 {isAuthenticated && <Footer />}
                 <Fireworks />
             </>
@@ -91,10 +93,12 @@ class App extends React.PureComponent {
 // =====================================================================================================================
 App.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
+    showTasks: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     isAuthenticated: selectIsAuthenticated(state),
+    showTasks: selectShowTasks(state),
 });
 
 export default connect(mapStateToProps)(App);

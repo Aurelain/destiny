@@ -7,4 +7,5 @@ export const selectOptions = (state) => state.options;
 export const selectExpandedEvents = (state) => state.options.expandedEvents;
 export const selectForcedDone = (state) => state.options.forcedDone;
 export const selectShowDone = (state) => state.options.showDone;
+export const selectShowTasks = (state) => state.options.showTasks;
 export const selectIsAuthenticated = (state) => state.volatile.isAuthenticated;

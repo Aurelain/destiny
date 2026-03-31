@@ -13,7 +13,7 @@ import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
 import CheckboxBlankOutline from '../ui/Icons/CheckboxBlankOutline.jsx';
-import {selectCalendars, selectShowDone} from '../state/selectors.js';
+import {selectCalendars, selectShowDone, selectShowTasks} from '../state/selectors.js';
 import toggleCalendar from '../state/actions/toggleCalendar.js';
 import toggleShowDone from '../state/actions/toggleShowDone.js';
 import Separator from '../ui/Separator.jsx';
@@ -23,6 +23,7 @@ import EyeOutline from '../ui/Icons/EyeOutline.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import CalendarMonth from '../ui/Icons/CalendarMonth.jsx';
 import Infinity from '../ui/Icons/Infinity.jsx';
+import toggleShowTasks from '../state/actions/toggleShowTasks.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -73,12 +74,11 @@ class Bar extends React.PureComponent {
     state = {
         isMenuOpen: false,
         isLoading: false,
-        isTasks: false,
     };
 
     render() {
-        const {calendars, showDone} = this.props;
-        const {isMenuOpen, isLoading, isTasks} = this.state;
+        const {calendars, showDone, showTasks} = this.props;
+        const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
@@ -86,17 +86,17 @@ class Bar extends React.PureComponent {
                 <div css={SX.grow} />
                 <Button
                     icon={CalendarMonth}
-                    cssNormal={isTasks ? SX.btn : SX_SELECTED}
+                    cssNormal={showTasks ? SX.btn : SX_SELECTED}
                     onClick={this.onTimelineClick}
                     variant={'inverted'}
-                    disabled={!isTasks}
+                    disabled={!showTasks}
                 />
                 <Button
                     icon={Infinity}
-                    cssNormal={isTasks ? SX_SELECTED : SX.btn}
+                    cssNormal={showTasks ? SX_SELECTED : SX.btn}
                     onClick={this.onInfinityClick}
                     variant={'inverted'}
-                    disabled={isTasks}
+                    disabled={showTasks}
                 />
                 <div css={SX.grow} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
@@ -176,14 +176,14 @@ class Bar extends React.PureComponent {
      *
      */
     onTimelineClick = () => {
-
+        toggleShowTasks();
     };
 
     /**
      *
      */
     onInfinityClick = () => {
-
+        toggleShowTasks();
     };
 
     /**
@@ -262,6 +262,7 @@ Bar.propTypes = {
 const mapStateToProps = (state) => ({
     calendars: selectCalendars(state),
     showDone: selectShowDone(state),
+    showTasks: selectShowTasks(state),
 });
 
 export default connect(mapStateToProps)(Bar);

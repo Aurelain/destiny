@@ -130,8 +130,12 @@ export default {
                     type: 'boolean',
                     default: false,
                 },
+                showTasks: {
+                    type: 'boolean',
+                    default: false,
+                },
             },
-            required: ['expandedEvents', 'forcedDone', 'showDone'],
+            required: ['expandedEvents', 'forcedDone', 'showDone', 'showTasks'],
         },
         volatile: {
             type: 'object',
