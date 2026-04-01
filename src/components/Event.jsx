@@ -143,7 +143,6 @@ class Event extends React.PureComponent {
             reminders,
             isDone,
             showDone,
-            recurringEventId,
             isReadOnly,
             isLocked,
         } = this.props;
@@ -372,8 +371,6 @@ Event.propTypes = {
     title: PropTypes.string.isRequired,
     reminders: PropTypes.object,
     backgroundColor: PropTypes.string.isRequired,
-    recurringEventId: PropTypes.string,
-    recurrence: PropTypes.string,
     isReadOnly: PropTypes.bool.isRequired,
     isLocked: PropTypes.bool.isRequired,
 };

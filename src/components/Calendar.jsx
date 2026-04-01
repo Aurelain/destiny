@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, MILLISECONDS_IN_A_DAY, NEW_HEIGHT, TASK_DAY} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, MILLISECONDS_IN_A_DAY, NEW_HEIGHT} from '../SETTINGS.js';
 import Event from './Event.jsx';
 import objectify from '../utils/objectify.js';
 import Day from './Day.jsx';
@@ -14,6 +14,7 @@ import {
     selectShowDone,
 } from '../state/selectors.js';
 import checkEventIsDone from '../system/checkEventIsDone.js';
+import checkTask from '../utils/checkTask.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -52,11 +53,11 @@ class Calendar extends React.PureComponent {
         for (const event of events) {
             const {id, calendarId, summary, start, end, status, reminders, recurringEventId, recurrence, isLocked} =
                 event;
-            if (start === TASK_DAY) {
-                continue;
-            }
             const {backgroundColor, selected, timeZone, isReadOnly} = calendarsById[calendarId];
             if (!selected) {
+                continue;
+            }
+            if (checkTask(start)) {
                 continue;
             }
             const isDone = checkEventIsDone(event, forcedDone);

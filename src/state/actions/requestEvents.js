@@ -9,8 +9,8 @@ import checkOffline from '../../system/checkOffline.js';
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const TASK_START = new Date(TASK_DAY).getTime();
-const TASK_END = TASK_START + 1000;
+const TASK_START = new Date(TASK_DAY).getTime() - MILLISECONDS_IN_A_DAY;
+const TASK_END = new Date(TASK_DAY).getTime() + MILLISECONDS_IN_A_DAY;
 
 // =====================================================================================================================
 //  P U B L I C
