@@ -8,6 +8,7 @@ import checkOffline from '../../system/checkOffline.js';
 import findEvent from '../../system/findEvent.js';
 import toggleEvent from './toggleEvent.js';
 import sanitizeSummary from '../../system/sanitizeSummary.js';
+import {TASK_DAY} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -15,8 +16,8 @@ import sanitizeSummary from '../../system/sanitizeSummary.js';
 /**
  *
  */
-const createEvent = async (summary) => {
-    const today = getYYYYMMDD();
+const createEvent = async (summary, showTasks) => {
+    const today = showTasks ? TASK_DAY : getYYYYMMDD();
     const eventId = Math.random().toString();
     summary = sanitizeSummary(summary);
 

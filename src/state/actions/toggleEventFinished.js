@@ -4,6 +4,9 @@ import {DONE_MARKER, DONE_MATCH} from '../../SETTINGS.js';
 import saveEvent from '../../system/saveEvent.js';
 import {selectCalendars, selectForcedDone} from '../selectors.js';
 import findCalendar from '../../system/findCalendar.js';
+import checkTask from '../../utils/checkTask.js';
+import scheduleEvent from './scheduleEvent.js';
+import getYYYYMMDD from '../../utils/getYYYYMMDD.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -15,8 +18,13 @@ const toggleEventFinished = async (calendarId, eventId) => {
     const state = getState();
     const calendars = selectCalendars(state);
     const {isReadOnly} = findCalendar(calendarId, calendars);
-    const {isLocked} = findEvent(state, calendarId, eventId);
+    const {isLocked, start} = findEvent(state, calendarId, eventId);
     const isEditable = !isReadOnly && !isLocked;
+
+    if (checkTask(start)) {
+        const ymd = getYYYYMMDD();
+        await scheduleEvent(calendarId, eventId, {start: ymd, end: ymd});
+    }
 
     setState((state) => {
         if (isEditable) {

@@ -33,7 +33,7 @@ class App extends React.PureComponent {
                 {!isAuthenticated && <Connect />}
                 {isAuthenticated && !showTasks && <Calendar />}
                 {isAuthenticated && showTasks && <Tasks />}
-                {isAuthenticated && <Footer />}
+                {isAuthenticated && <Footer showTasks={showTasks} />}
                 <Fireworks />
             </>
         );

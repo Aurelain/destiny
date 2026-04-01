@@ -132,6 +132,7 @@ class Footer extends React.PureComponent {
      *
      */
     create = () => {
+        const {showTasks} = this.props;
         const {value} = this.state;
         this.setState({value: ''});
 
@@ -154,7 +155,7 @@ class Footer extends React.PureComponent {
             }
         }
 
-        createEvent(value);
+        createEvent(value, showTasks);
     };
 }
 

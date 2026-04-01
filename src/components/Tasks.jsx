@@ -72,6 +72,9 @@ class Tasks extends React.PureComponent {
             if (calendarId !== targetCalendarId) {
                 continue;
             }
+            if (checkEventIsDone(event)) {
+                continue;
+            }
             if (checkTask(start)) {
                 const isDone = checkEventIsDone(event, {});
                 const isExpanded = id in expandedEvents;
