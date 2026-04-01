@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {BOX_SHADOW} from '../../SETTINGS.js';
+import {BOX_SHADOW, TASK_DAY} from '../../SETTINGS.js';
 import Month from '../../ui/Month/Month.jsx';
 import Stepper from '../../ui/Stepper.jsx';
 import Button from '../../ui/Button.jsx';
 import dissectStartEnd from './dissectStartEnd.js';
 import produceStartEnd from './produceStartEnd.js';
+import Infinity from '../../ui/Icons/Infinity.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -22,6 +23,13 @@ const SX = {
     },
     apply: {
         width: '100%',
+    },
+    infinityContainer: {
+        width: '100%',
+        marginTop: 6,
+        paddingTop: 6,
+        textAlign: 'right',
+        borderTop: 'solid 1px gray',
     },
 };
 
@@ -44,7 +52,7 @@ class MonthTime extends React.PureComponent {
     }
 
     render() {
-        const {innerRef, styling} = this.props;
+        const {innerRef, styling, isTask} = this.props;
         const {monthDate, startMinute, hasDuration, duration, timeZone} = this.state;
 
         const {pretty} = produceStartEnd({monthDate, startMinute, duration, timeZone});
@@ -67,6 +75,11 @@ class MonthTime extends React.PureComponent {
                     <Stepper value={duration} step={15} min={0} max={24 * 60} onChange={this.onDurationChange} />
                 )}
                 <Button cssNormal={SX.apply} label={pretty} onClick={this.onApplyClick} />
+                {!isTask && (
+                    <div css={SX.infinityContainer}>
+                        <Button cssNormal={SX.infinity} label={Infinity} onClick={this.onInfinityClick} />
+                    </div>
+                )}
             </div>
         );
     }
@@ -108,6 +121,15 @@ class MonthTime extends React.PureComponent {
         const {startMinute, duration, monthDate} = this.state;
         const {onRelease, timeZone} = this.props;
         const {start, end} = produceStartEnd({monthDate, startMinute, duration, timeZone});
+        onRelease({start, end});
+    };
+
+    /**
+     *
+     */
+    onInfinityClick = () => {
+        const {onRelease} = this.props;
+        const {start, end} = produceStartEnd({monthDate: TASK_DAY});
         onRelease({start, end});
     };
 
@@ -163,6 +185,7 @@ MonthTime.propTypes = {
     // -------------------------------- direct:
     start: PropTypes.string.isRequired,
     end: PropTypes.string.isRequired,
+    isTask: PropTypes.bool.isRequired,
     timeZone: PropTypes.string.isRequired,
     styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,

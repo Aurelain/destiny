@@ -23,6 +23,10 @@ const SX = {
         margin: 'auto',
         maxWidth: 640,
     },
+    none: {
+        marginTop: 100,
+        textAlign: 'center',
+    },
 };
 
 // =====================================================================================================================
@@ -42,6 +46,13 @@ class Tasks extends React.PureComponent {
             if (tasks.length) {
                 list.push(...tasks);
             }
+        }
+        if (!list.length) {
+            list.push(
+                <div css={SX.none} key={0}>
+                    You have no permanent tasks...
+                </div>,
+            );
         }
         return <div css={SX.root}>{list}</div>;
     }

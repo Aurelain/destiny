@@ -7,7 +7,7 @@ import scheduleEvent from '../state/actions/scheduleEvent.js';
 import Bell from '../ui/Icons/Bell.jsx';
 import CheckCircle from '../ui/Icons/CheckCircle.jsx';
 import toggleEventFinished from '../state/actions/toggleEventFinished.js';
-import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, FOOTER_SAFETY, NEW_HEIGHT, TASK_DAY} from '../SETTINGS.js';
+import {BAR_HEIGHT, BAR_SAFETY, DONE_MATCH, FOOTER_SAFETY, NEW_HEIGHT} from '../SETTINGS.js';
 import toggleEvent from '../state/actions/toggleEvent.js';
 import SelectCalendar from './SelectCalendar.jsx';
 import deleteEvent from '../state/actions/deleteEvent.js';
@@ -24,11 +24,12 @@ import ChevronDoubleDown from '../ui/Icons/ChevronDoubleDown.jsx';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import Select from '../ui/Select.jsx';
 import MonthTime from './MonthTime/MonthTime.jsx';
-import Infinity from '../ui/Icons/Infinity.jsx';
 import checkShopping from '../system/checkShopping.js';
 import scrollIntoView from '../utils/scrollIntoView.js';
 import {burstAtMouse} from '../ui/Fireworks.jsx';
 import collapse from '../system/collapse.js';
+import checkTask from '../utils/checkTask.js';
+import getYYYYMMDD from '../utils/getYYYYMMDD.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -149,7 +150,8 @@ class Event extends React.PureComponent {
         const {contentHeight} = this.state;
 
         const hasReminders = Boolean(reminders?.overrides?.length);
-
+        const hasBell = this.memoHasBell(start);
+        const isTask = this.memoCheckTask(start);
         const timeInterval = this.memoTimeInterval(start, end);
         const sanitizedTitle = this.memoSanitizeTitle(title);
         const titleWithoutAnchors = this.memoTitleWithoutAnchors(sanitizedTitle);
@@ -177,23 +179,20 @@ class Event extends React.PureComponent {
                         {!isReadOnly && (
                             <div css={SX.toolbar}>
                                 <div css={SX.grow} />
+                                {hasBell && (
+                                    <Button // Bell
+                                        cssNormal={[SX.btn, hasReminders && SX.btnSpecial]}
+                                        icon={hasReminders ? BellRing : Bell}
+                                        onClick={this.onBellClick}
+                                    />
+                                )}
                                 <Select
                                     buttonProps={TIME_BUTTON_PROPS}
                                     list={MonthTime}
-                                    listProps={this.memoListProps(start, end, timeZone)}
+                                    listProps={this.memoListProps(start, end, timeZone, isTask)}
                                     onSelect={this.onMonthTimeSelect}
                                     onHold={this.onMonthTimeHold}
                                     // forcedOpen={true}
-                                />
-                                <Button // Bell
-                                    cssNormal={[SX.btn, hasReminders && SX.btnSpecial]}
-                                    icon={hasReminders ? BellRing : Bell}
-                                    onClick={this.onBellClick}
-                                />
-                                <Button // Infinity
-                                    cssNormal={SX.btn}
-                                    icon={Infinity}
-                                    onClick={this.onInfinityClick}
                                 />
                                 <SelectCalendar calendarId={calendarId} onSelect={this.onCalendarSelect} />
                             </div>
@@ -221,6 +220,14 @@ class Event extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    memoHasBell = memoize((start) => {
+        return start.includes('T');
+    });
+
+    memoCheckTask = memoize((start) => {
+        return checkTask(start);
+    });
+
     memoTimeInterval = memoize((start, end) => {
         start = start.substring(11, 16);
         if (start) {
@@ -270,11 +277,6 @@ class Event extends React.PureComponent {
     onBellClick = () => {
         const {calendarId, eventId} = this.props;
         toggleReminder(calendarId, eventId);
-    };
-
-    onInfinityClick = async () => {
-        const {calendarId, eventId} = this.props;
-        await scheduleEvent(calendarId, eventId, {start:TASK_DAY, end: TASK_DAY});
     };
 
     onCalendarSelect = ({name: destinationCalendarId}) => {
@@ -344,8 +346,12 @@ class Event extends React.PureComponent {
         return checkShopping(title) ? Shopping : Editable;
     });
 
-    memoListProps = memoize((start, end, timeZone) => {
-        return {start, end, timeZone};
+    memoListProps = memoize((start, end, timeZone, isTask) => {
+        if (isTask) {
+            start = getYYYYMMDD();
+            end = start;
+        }
+        return {start, end, timeZone, isTask};
     });
 
     ensureVisibility = () => {

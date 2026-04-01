@@ -21,7 +21,7 @@ import Avatar from '../ui/Avatar.jsx';
 import EyeCircle from '../ui/Icons/EyeCircle.jsx';
 import EyeOutline from '../ui/Icons/EyeOutline.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
-import CalendarMonth from '../ui/Icons/CalendarMonth.jsx';
+import ClockOutline from '../ui/Icons/ClockOutline.jsx';
 import Infinity from '../ui/Icons/Infinity.jsx';
 import toggleShowTasks from '../state/actions/toggleShowTasks.js';
 
@@ -85,7 +85,7 @@ class Bar extends React.PureComponent {
                 <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
                 <div css={SX.grow} />
                 <Button
-                    icon={CalendarMonth}
+                    icon={ClockOutline}
                     cssNormal={showTasks ? SX.btn : SX_SELECTED}
                     onClick={this.onTimelineClick}
                     variant={'inverted'}
