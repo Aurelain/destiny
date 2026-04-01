@@ -11,12 +11,7 @@ import TrashCan from '../ui/Icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
 import Plus from '../ui/Icons/Plus.jsx';
-import Pencil from '../ui/Icons/Pencil.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
-import collectShoppingSuggestions from '../system/collectShoppingSuggestions.js';
-import DotsCircle from '../ui/Animations/DotsCircle.jsx';
-import ShoppingSuggestions from './ShoppingSuggestions.jsx';
-import FormatListBulletedSquare from '../ui/Icons/FormatListBulletedSquare.jsx';
 import {burstAtMouse} from '../ui/Fireworks.jsx';
 import collapse from '../system/collapse.js';
 import CircleSmall from '../ui/Icons/CircleSmall.jsx';
@@ -66,6 +61,10 @@ const SX = {
     btn: {
         margin: 2,
     },
+    title: {
+        cursor: 'text',
+        padding: 8,
+    },
 };
 
 // =====================================================================================================================
@@ -77,13 +76,11 @@ class Shopping extends React.PureComponent {
     rootRef = React.createRef();
     state = {
         isRawEditing: false,
-        isLoadingSuggestions: false,
-        shoppingSuggestions: null,
     };
 
     render() {
         const {html, showDone} = this.props;
-        const {isRawEditing, isLoadingSuggestions, shoppingSuggestions} = this.state;
+        const {isRawEditing} = this.state;
 
         if (isRawEditing) {
             return (
@@ -96,22 +93,13 @@ class Shopping extends React.PureComponent {
             );
         }
 
-        if (shoppingSuggestions) {
-            return (
-                <ShoppingSuggestions
-                    list={shoppingSuggestions}
-                    onToggle={this.onSuggestionsToggle}
-                    onApply={this.onSuggestionsApply}
-                    onCancel={this.onSuggestionsCancel}
-                />
-            );
-        }
-
         const shoppingStructure = this.memoShoppingStructure(html);
 
         return (
-            <div css={[SX.root, isLoadingSuggestions && SX.rootDisabled]} ref={this.rootRef}>
-                <Editable html={shoppingStructure.title} onChange={this.onTitleChange} />
+            <div css={[SX.root]} ref={this.rootRef}>
+                <div css={SX.title} onClick={this.onPencilClick}>
+                    {shoppingStructure.title}
+                </div>
                 {shoppingStructure.items.map((item, index) => {
                     const {text, isDone} = item;
                     if (text) {
@@ -151,12 +139,6 @@ class Shopping extends React.PureComponent {
                     }
                 })}
                 <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
-                <Button
-                    cssNormal={SX.btn}
-                    icon={isLoadingSuggestions ? DotsCircle : FormatListBulletedSquare}
-                    onClick={this.onBulletsClick}
-                />
-                <Button cssNormal={SX.btn} icon={Pencil} onClick={this.onPencilClick} />
             </div>
         );
     }
@@ -201,62 +183,6 @@ class Shopping extends React.PureComponent {
             });
         });
         this.announceChange(freshShopping);
-    };
-
-    /**
-     *
-     */
-    onBulletsClick = async () => {
-        const {title} = this.shoppingStructure;
-        this.setState({
-            isLoadingSuggestions: true,
-        });
-        const shoppingSuggestions = await collectShoppingSuggestions(title);
-        this.setState({
-            isLoadingSuggestions: false,
-            shoppingSuggestions,
-        });
-    };
-
-    /**
-     *
-     */
-    onSuggestionsToggle = ({index}) => {
-        const {shoppingSuggestions} = this.state;
-        const freshSuggestions = produce(shoppingSuggestions, (draft) => {
-            draft[index].isSelected = !draft[index].isSelected;
-        });
-        this.setState({
-            shoppingSuggestions: freshSuggestions,
-        });
-    };
-
-    /**
-     *
-     */
-    onSuggestionsApply = () => {
-        const {shoppingSuggestions} = this.state;
-        const selectedItems = shoppingSuggestions.filter((item) => item.isSelected);
-        const freshShopping = {
-            title: this.shoppingStructure.title,
-            items: selectedItems.map((item) => ({
-                text: item.text,
-                isDone: false,
-            })),
-        };
-        this.announceChange(freshShopping);
-        this.setState({
-            shoppingSuggestions: null,
-        });
-    };
-
-    /**
-     *
-     */
-    onSuggestionsCancel = () => {
-        this.setState({
-            shoppingSuggestions: null,
-        });
     };
 
     /**

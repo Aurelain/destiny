@@ -5,9 +5,7 @@
  *
  */
 const checkShopping = (text) => {
-    const shoppingTitle = text.match(/^[\s-]*\S+:/)?.[0];
-    const isShopping = shoppingTitle && !shoppingTitle.match(/http/i);
-    return isShopping;
+    return text.includes(':') && !text.match(/http/i);
 };
 
 // =================================================================================================================

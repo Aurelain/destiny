@@ -169,6 +169,7 @@ class Event extends React.PureComponent {
                         isDone,
                         isReadOnly,
                         isLocked,
+                        isTask,
                     )}
                     onClick={this.onTitleClick}
                     onHold={this.onTitleHold}
@@ -294,7 +295,7 @@ class Event extends React.PureComponent {
         return output;
     });
 
-    memoTitleLabel = memoize((title, timeInterval, showDone, isDone, isReadOnly, isLocked) => {
+    memoTitleLabel = memoize((title, timeInterval, showDone, isDone, isReadOnly, isLocked, isTask) => {
         const isEditable = !isReadOnly && !isLocked;
         let DoneIcon = null;
         if (showDone) {
@@ -314,7 +315,7 @@ class Event extends React.PureComponent {
                 {DoneIcon && <DoneIcon styling={SX.doneIcon} />}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
-                {isEditable && (
+                {isEditable && !isTask && (
                     <Button
                         cssNormal={SX.titleHeading}
                         icon={ArrowDownThin}

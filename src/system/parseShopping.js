@@ -7,10 +7,9 @@ import sanitizeSummary from './sanitizeSummary.js';
  *
  */
 const parseShopping = (summary) => {
-    const head = summary.match(/^[\s-]*\S+:/)[0];
-    const title = head.replace(/[:\s-]/g, '');
-
-    const body = summary.substring(head.length);
+    const colonIndex = summary.indexOf(':');
+    const title = summary.substring(0, colonIndex + 1).trim();
+    const body = summary.substring(colonIndex + 1);
     const parts = body.split(',');
     const items = [];
     for (const part of parts) {

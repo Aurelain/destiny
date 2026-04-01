@@ -2,15 +2,9 @@ import React from 'react';
 import {FOOTER_SAFETY, NEW_HEIGHT, PRIMARY_COLOR} from '../SETTINGS.js';
 import Button from '../ui/Button.jsx';
 import Plus from '../ui/Icons/Plus.jsx';
-import {selectEvents} from '../state/selectors.js';
 import createEvent from '../state/actions/createEvent.js';
 import clearShopping from '../state/actions/clearShopping.js';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
-import checkShopping from '../system/checkShopping.js';
-import {getState} from '../state/store.js';
-import parseShopping from '../system/parseShopping.js';
-import stringifyShopping from '../system/stringifyShopping.js';
-import updateSummary from '../state/actions/updateSummary.js';
 import defocus from '../utils/defocus.js';
 
 // =====================================================================================================================
@@ -135,26 +129,6 @@ class Footer extends React.PureComponent {
         const {showTasks} = this.props;
         const {value} = this.state;
         this.setState({value: ''});
-
-        if (checkShopping(value)) {
-            const {title, items} = parseShopping(value);
-            if (items[0]?.text) {
-                const state = getState();
-                const events = selectEvents(state);
-                const pendingEvent = events.find((event) => {
-                    const {summary} = event;
-                    return checkShopping(summary) && parseShopping(summary).title === title;
-                });
-                if (pendingEvent) {
-                    const {summary, calendarId, id} = pendingEvent;
-                    const shoppingStructure = parseShopping(summary);
-                    shoppingStructure.items.push(...items);
-                    updateSummary(calendarId, id, stringifyShopping(shoppingStructure));
-                    return;
-                }
-            }
-        }
-
         createEvent(value, showTasks);
     };
 }
