@@ -19,6 +19,7 @@ class Editable extends React.PureComponent {
     backupInnerHtml = null;
     isEnter = false;
     rootRef = React.createRef();
+    timeout = null;
 
     render() {
         const {html, innerCss, innerRef} = this.props;
@@ -43,6 +44,10 @@ class Editable extends React.PureComponent {
             const root = (innerRef || this.rootRef).current;
             root.focus();
         }
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.timeout);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -79,6 +84,9 @@ class Editable extends React.PureComponent {
             case 'Enter':
                 this.isEnter = true;
                 defocus();
+                if (this.props.stickyFocus) {
+                    this.timeout = setTimeout(this.onTimeoutPassed, 0);
+                }
                 break;
             case 'Escape':
                 event.currentTarget.innerHTML = this.backupInnerHtml;
@@ -95,6 +103,15 @@ class Editable extends React.PureComponent {
     memoCss = memoize((innerCss) => {
         return [SX.root, innerCss];
     });
+
+    /**
+     *
+     */
+    onTimeoutPassed = () => {
+        const {innerRef} = this.props;
+        const root = (innerRef || this.rootRef).current;
+        root.focus();
+    };
 }
 
 // =====================================================================================================================
@@ -108,5 +125,6 @@ Editable.propTypes = {
     innerRef: PropTypes.object,
     data: PropTypes.any,
     autoFocus: PropTypes.bool,
+    stickyFocus: PropTypes.bool,
 };
 export default Editable;

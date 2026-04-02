@@ -8,16 +8,19 @@ import sanitizeSummary from './sanitizeSummary.js';
  */
 const parseShopping = (summary) => {
     const colonIndex = summary.indexOf(':');
-    const title = summary.substring(0, colonIndex + 1).trim();
-    const body = summary.substring(colonIndex + 1);
+    const title = summary.substring(0, colonIndex).trim();
+    const body = summary.substring(colonIndex + 1).replaceAll(':', '');
     const parts = body.split(',');
     const items = [];
     for (const part of parts) {
         let text = sanitizeSummary(part);
         let isDone = false;
         if (text.startsWith('-')) {
-            text = text.replace(/^-+/, '');
+            text = text.replace(/^[-\s]+/, '');
             isDone = true;
+        }
+        if (!text) {
+            continue;
         }
         items.push({text, isDone});
     }

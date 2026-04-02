@@ -3,18 +3,14 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import memoize from 'memoize-one';
 import {produce} from 'immer';
-import CheckCircle from '../ui/Icons/CheckCircle.jsx';
 import Button from '../ui/Button.jsx';
 import Editable from '../ui/Editable.jsx';
-import {selectShowDone} from '../state/selectors.js';
-import TrashCan from '../ui/Icons/TrashCan.jsx';
 import parseShopping from '../system/parseShopping.js';
 import stringifyShopping from '../system/stringifyShopping.js';
 import Plus from '../ui/Icons/Plus.jsx';
 import sanitizeSummary from '../system/sanitizeSummary.js';
-import {burstAtMouse} from '../ui/Fireworks.jsx';
-import collapse from '../system/collapse.js';
-import CircleSmall from '../ui/Icons/CircleSmall.jsx';
+import CheckboxMarked from '../ui/Icons/CheckboxMarked.jsx';
+import CheckboxBlankOutline from '../ui/Icons/CheckboxBlankOutline.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -30,6 +26,9 @@ const SX = {
         display: 'flex',
         alignItems: 'start',
         marginTop: 4,
+        '& > svg': {
+            marginTop: 4,
+        },
     },
     buttonItem: {
         display: 'block',
@@ -42,21 +41,17 @@ const SX = {
             position: 'relative',
             display: 'inline-block',
             verticalAlign: 'text-bottom',
-            top: 2,
+            top: 4,
         },
         minHeight: 0,
-    },
-    emptyItem: {
-        display: 'flex',
-        alignItems: 'start',
-        marginTop: 5,
     },
     itemDone: {
         flexShrink: 0,
     },
-    itemText: {
+    plusEditable: {
         paddingLeft: 4,
         flexGrow: 1,
+        borderBottom: '1px solid gray',
     },
     btn: {
         margin: 2,
@@ -79,7 +74,7 @@ class Shopping extends React.PureComponent {
     };
 
     render() {
-        const {html, showDone} = this.props;
+        const {html} = this.props;
         const {isRawEditing} = this.state;
 
         if (isRawEditing) {
@@ -97,48 +92,28 @@ class Shopping extends React.PureComponent {
 
         return (
             <div css={[SX.root]} ref={this.rootRef}>
-                <div css={SX.title} onClick={this.onPencilClick}>
-                    {shoppingStructure.title}
+                <div css={SX.title} onClick={this.onTitleClick}>
+                    {shoppingStructure.title}:
                 </div>
                 {shoppingStructure.items.map((item, index) => {
                     const {text, isDone} = item;
-                    if (text) {
-                        if (!showDone && isDone) {
-                            return null;
-                        }
-                        return (
-                            <Button
-                                key={index}
-                                cssNormal={SX.buttonItem}
-                                icon={showDone && isDone ? CheckCircle : CircleSmall}
-                                label={text.replace(/<.*?>/g, '')}
-                                onHold={this.onDoneHold}
-                                variant={'simple'}
-                                data={index}
-                            />
-                        );
-                    } else {
-                        return (
-                            <div key={index} css={SX.emptyItem}>
-                                <Button
-                                    key={index}
-                                    icon={CircleSmall}
-                                    holdIcon={TrashCan}
-                                    onClick={this.onEmptyClick}
-                                    variant={'simple'}
-                                    data={index}
-                                />
-                                <Editable
-                                    html={text}
-                                    onChange={this.onItemChange}
-                                    innerCss={SX.itemText}
-                                    data={index}
-                                />
-                            </div>
-                        );
-                    }
+                    return (
+                        <Button
+                            key={index}
+                            cssNormal={SX.buttonItem}
+                            icon={isDone ? CheckboxMarked : CheckboxBlankOutline}
+                            label={text.replace(/<.*?>/g, '')}
+                            onClick={this.onItemClick}
+                            onHold={this.onItemHold}
+                            variant={'simple'}
+                            data={index}
+                        />
+                    );
                 })}
-                <Button cssNormal={SX.btn} icon={Plus} onClick={this.onPlusClick} />
+                <div css={SX.item}>
+                    <Plus />
+                    <Editable html={''} onChange={this.onPlusChange} innerCss={SX.plusEditable} stickyFocus={true} />
+                </div>
             </div>
         );
     }
@@ -165,57 +140,43 @@ class Shopping extends React.PureComponent {
     /**
      *
      */
-    onTitleChange = ({value}) => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.title = value;
-        });
-        this.announceChange(freshShopping);
+    onTitleClick = () => {
+        this.setState({isRawEditing: true});
     };
 
     /**
      *
      */
-    onPlusClick = () => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items.push({
-                text: '',
-                isDone: false,
+    onPlusChange = ({value, event}) => {
+        if (value) {
+            const freshShopping = produce(this.shoppingStructure, (draft) => {
+                draft.items.push({
+                    text: value,
+                    isDone: false,
+                });
             });
-        });
-        this.announceChange(freshShopping);
+            this.announceChange(freshShopping);
+            event.currentTarget.innerHTML = '';
+        }
     };
 
     /**
      *
      */
-    onItemChange = ({value, data: index}) => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items[index].text = value;
-        });
-        this.announceChange(freshShopping);
-    };
-
-    /**
-     *
-     */
-    onEmptyClick = ({data: index}) => {
-        const freshShopping = produce(this.shoppingStructure, (draft) => {
-            draft.items.splice(index, 1);
-        });
-        this.announceChange(freshShopping);
-    };
-
-    /**
-     *
-     */
-    onDoneHold = async ({data: index, event}) => {
-        collapse(event);
-        await burstAtMouse(event);
+    onItemClick = async ({data: index}) => {
         const freshShopping = produce(this.shoppingStructure, (draft) => {
             const item = draft.items[index];
-            if (item.text) {
-                item.isDone = !item.isDone;
-            }
+            item.isDone = !item.isDone;
+        });
+        this.announceChange(freshShopping);
+    };
+
+    /**
+     *
+     */
+    onItemHold = async ({data: index}) => {
+        const freshShopping = produce(this.shoppingStructure, (draft) => {
+            draft.items.splice(index, 1);
         });
         this.announceChange(freshShopping);
     };
@@ -226,13 +187,6 @@ class Shopping extends React.PureComponent {
     announceChange = (freshShopping) => {
         const {onChange} = this.props;
         onChange({value: stringifyShopping(freshShopping)});
-    };
-
-    /**
-     *
-     */
-    onPencilClick = () => {
-        this.setState({isRawEditing: true});
     };
 
     /**
@@ -266,12 +220,6 @@ class Shopping extends React.PureComponent {
 Shopping.propTypes = {
     html: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    // -------------------------------- redux:
-    showDone: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-    showDone: selectShowDone(state),
-});
-
-export default connect(mapStateToProps)(Shopping);
+export default Shopping;

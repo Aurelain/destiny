@@ -301,17 +301,15 @@ class Event extends React.PureComponent {
         if (showDone) {
             DoneIcon = isDone ? CheckCircle : CircleOutline;
         }
+        if (checkShopping(title)) {
+            title = title.replaceAll(/-[^,-]*/g, '');
+            title = title.replaceAll(/,\s*,/g, '');
+            title = title.replace(/,\s*$/, '');
+            title = title.replace(/:\s*,/, ':');
+        }
 
         return (
             <div css={SX.titleContent}>
-                {/*<Button*/}
-                {/*    cssNormal={SX.titleStatus}*/}
-                {/*    icon={isDone ? CheckCircle : CircleOutline}*/}
-                {/*    holdIcon={TrashCan}*/}
-                {/*    onClick={this.onStatusClick}*/}
-                {/*    onHold={this.onStatusHold}*/}
-                {/*    variant={'inverted'}*/}
-                {/*/>*/}
                 {DoneIcon && <DoneIcon styling={SX.doneIcon} />}
                 <div css={SX.titleText}>{title.replace(DONE_MATCH, '')}</div>
                 {timeInterval && <div css={SX.titleTime}>{timeInterval}</div>}
