@@ -30,6 +30,7 @@ import {burstAtMouse} from '../ui/Fireworks.jsx';
 import collapse from '../system/collapse.js';
 import checkTask from '../utils/checkTask.js';
 import getYYYYMMDD from '../utils/getYYYYMMDD.js';
+import parseShopping from '../system/parseShopping.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -302,10 +303,9 @@ class Event extends React.PureComponent {
             DoneIcon = isDone ? CheckCircle : CircleOutline;
         }
         if (checkShopping(title)) {
-            title = title.replaceAll(/-[^,-]*/g, '');
-            title = title.replaceAll(/,\s*,/g, '');
-            title = title.replace(/,\s*$/, '');
-            title = title.replace(/:\s*,/, ':');
+            const structure = parseShopping(title);
+            const validItems = structure.items.filter((item) => !item.isDone);
+            title = structure.title + ': ' + validItems.map((item) => item.text).join(', ');
         }
 
         return (
