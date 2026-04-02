@@ -1,6 +1,6 @@
 /**
  *
- */
+
 const computeSafety = () => {
     const div = document.createElement('div');
 
@@ -23,6 +23,25 @@ const computeSafety = () => {
     document.body.removeChild(div);
 
     return insets;
+}; */
+
+/**
+ *
+ */
+const computeSafety = () => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        return {
+            top: 48, // Sufficient for most Dynamic Islands/Notches
+            bottom: 32, // Sufficient for the iOS Home Indicator
+        };
+    }
+
+    return {
+        top: 0,
+        bottom: 0,
+    };
 };
 
 export default computeSafety;
