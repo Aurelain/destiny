@@ -1,7 +1,15 @@
 /**
  *
-
+ */
 const computeSafety = () => {
+    const isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isApple) {
+        return {
+            top: 48, // Sufficient for most Dynamic Islands/Notches
+            bottom: 32, // Sufficient for the iOS Home Indicator
+        };
+    }
+
     const div = document.createElement('div');
 
     // Set properties so we can measure both top and bottom
@@ -23,25 +31,6 @@ const computeSafety = () => {
     document.body.removeChild(div);
 
     return insets;
-}; */
-
-/**
- *
- */
-const computeSafety = () => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-        return {
-            top: 48, // Sufficient for most Dynamic Islands/Notches
-            bottom: 32, // Sufficient for the iOS Home Indicator
-        };
-    }
-
-    return {
-        top: 0,
-        bottom: 0,
-    };
 };
 
 export default computeSafety;
