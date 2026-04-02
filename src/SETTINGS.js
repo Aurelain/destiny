@@ -1,3 +1,7 @@
+import computeSafety from './utils/computeSafety.js';
+
+const safety = computeSafety();
+
 export const USE_MOCK = Boolean(window.location.href.match(/\d/)) || window.localStorage.MOCK === 'yes';
 window.USE_MOCK = USE_MOCK; // for the benefit of `requestJson()`
 
@@ -14,9 +18,9 @@ export const BOX_SHADOW = `
     0px 1px 5px 0px rgba(0,0,0,0.12)`.replace(/\s+/g, ' ');
 
 export const BAR_HEIGHT = 60;
-export const BAR_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
+export const BAR_SAFETY = safety.top;
 export const NEW_HEIGHT = 48;
-export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')) || 0;
+export const FOOTER_SAFETY = safety.bottom;
 
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
